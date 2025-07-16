@@ -2,7 +2,6 @@ import { useEffect, useState} from "react"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import { useGetAllQuestionsQuery } from "../service/questions"
 import { deleteAllQuestions, setAllQuestions } from "../features/questions/questionSlice"
-import Error from "./Error"
 import QuestionCard from "./QuestionCard"
 import { useNetworkState } from "@uidotdev/usehooks"
 
@@ -17,7 +16,6 @@ const QuestionsList = () => {
   const {
     data: questions,
     isSuccess,
-    error: questionsError
   } = useGetAllQuestionsQuery(undefined, {
     skip: !success || !userInfo || !online,
     refetchOnMountOrArgChange: true,
