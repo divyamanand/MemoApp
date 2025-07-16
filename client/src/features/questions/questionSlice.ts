@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     loading: false,
-    questions: {},
+    allQuestions: {},
+    revisionQuestions: {},
     revisions: [],
     error: null,
     success: false,
@@ -12,8 +13,11 @@ const questionSlice = createSlice({
     name: "questions",
     initialState,
     reducers : {
-        setQuestions: (state, action) => {
-            state.questions = action.payload
+        setAllQuestions: (state, action) => {
+            state.allQuestions = action.payload
+        },
+        setAllRevisionQuestions: (state, action) => {
+            state.revisionQuestions = action.payload
         },
         deleteAllQuestions: () => initialState,
         setRevisions: (state, action) => {
@@ -22,5 +26,5 @@ const questionSlice = createSlice({
     }
 })
 
-export const { setQuestions, deleteAllQuestions, setRevisions } = questionSlice.actions
+export const { setAllQuestions, setAllRevisionQuestions, deleteAllQuestions, setRevisions } = questionSlice.actions
 export default questionSlice.reducer

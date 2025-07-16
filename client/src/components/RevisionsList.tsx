@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { useGetTodaysRevisionsQuery } from "../service/questions";
 import {
   deleteAllQuestions,
-  setQuestions,
+  setAllRevisionQuestions,
   setRevisions,
 } from "../features/questions/questionSlice";
 import Error from "./Error";
@@ -31,7 +31,7 @@ const RevisionsList = () => {
   // Store fetched revisions in Redux
   useEffect(() => {
     if (revisions && userSuccess && userInfo && revisionsFetched) {
-      dispatch(setQuestions(revisions.data));
+      dispatch(setAllRevisionQuestions(revisions.data));
     }
 
     if (!userInfo || !userSuccess) {

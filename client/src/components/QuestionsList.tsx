@@ -1,7 +1,7 @@
-import { useEffect} from "react"
+import { useEffect, useState} from "react"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import { useGetAllQuestionsQuery } from "../service/questions"
-import { deleteAllQuestions, setQuestions } from "../features/questions/questionSlice"
+import { deleteAllQuestions, setAllQuestions } from "../features/questions/questionSlice"
 import Error from "./Error"
 import QuestionCard from "./QuestionCard"
 import { useNetworkState } from "@uidotdev/usehooks"
@@ -9,9 +9,10 @@ import { useNetworkState } from "@uidotdev/usehooks"
 
 const QuestionsList = () => {
   const { success, userInfo } = useAppSelector(state => state.auth);
-  const {questions: storedQuestions} = useAppSelector(state => state.questions)
+  const {allQuestions, revisionQuestions} = useAppSelector(state => state.questions)
   const dispatch = useAppDispatch();
   const { online } = useNetworkState()
+  const [filter, setFilter] = useState(0)
 
   const {
     data: questions,
@@ -25,7 +26,7 @@ const QuestionsList = () => {
 
   useEffect(() => {
     if (questions && isSuccess && userInfo && success) {
-      dispatch(setQuestions(questions));
+      dispatch(setAllQuestions(questions.data));
     }
 
     if (!success && !userInfo) {
@@ -33,23 +34,17 @@ const QuestionsList = () => {
     }
   }, [dispatch, questions, isSuccess, success, userInfo]);
 
-
-  if (questionsError && !storedQuestions) {
-    return (
-      <Error
-        errorMessage="Something went wrong"
-        statusCode={501}
-      />
-    );
-  }
-
   return (
     <>
-        {storedQuestions && storedQuestions.questions?.map(ques => (
+        {filter == 0 ? revisionQuestions.questions?.map(ques => (
             <div key={ques._id}>
                 <QuestionCard question={ques}/>
             </div>
-        ))}
+        )) : allQuestions.questions?.map(ques => (
+            <div key={ques._id}>
+                <QuestionCard question={ques}/>
+            </div>))
+            }
     </>
   );
 };
