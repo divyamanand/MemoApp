@@ -1,4 +1,3 @@
-import { useAppSelector } from "@/store/hooks";
 import store from "@/store/store";
 import axios from "axios"
 
@@ -17,3 +16,18 @@ axios.interceptors.request.use(config => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const customError = {
+      statusCode: error?.response?.status || 500,
+      message: error?.response?.data?.message || "Something Went Wrong",
+      errors: error?.response?.data?.errors || [],
+      success: false,
+      data: null,
+      stack: error.stack || "",
+    };
+    return Promise.reject(customError);
+  }
+);

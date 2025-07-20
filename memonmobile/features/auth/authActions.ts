@@ -1,61 +1,47 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../service/api/api";
-import * as SecureStorage from "expo-secure-store"
+import * as SecureStorage from "expo-secure-store";
 
 export const registerUser = createAsyncThunk(
-    "auth/register",
-    async (payload, { rejectWithValue }) => {
-        try {
-            const { data } = await api.post("/api/v1/user/register", payload);
-            
-            const accessToken = data?.accessToken
-            await SecureStorage.setItemAsync("accessToken", accessToken)
-
-            return data;
-        } catch (error) {
-            console.log(error)
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message)
-            } else {
-                return rejectWithValue(error.message)
-            }
-        }
-});
-
+  "auth/register",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post("/api/v1/user/register", payload);
+      const accessToken = data?.accessToken;
+      await SecureStorage.setItemAsync("accessToken", accessToken);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const loginUser = createAsyncThunk(
-    "auth/login",
-    async (payload, {rejectWithValue}) => {
-        try {
-            const {data} = await api.post("/api/v1/user/login", payload);
-            const accessToken = data?.accessToken
-            await SecureStorage.setItemAsync("accessToken", accessToken)
-            return data
-        } catch (error) {
-            console.log(error)
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message)
-            } else {
-                return rejectWithValue(error.message)
-            }
-        }
+  "auth/login",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post("/api/v1/user/login", payload);
+      const accessToken = data?.accessToken;
+      await SecureStorage.setItemAsync("accessToken", accessToken);
+      return data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
     }
-)
+  }
+);
 
 export const logoutUser = createAsyncThunk(
-    "auth/logout",
-    async (_, {rejectWithValue}) => {
-        try {
-            const {data} = await api.post("/api/v1/user/logout", {})
-            await SecureStorage.deleteItemAsync("accessToken");
-            return data
-        } catch (error) {
-            console.log(error)
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message)
-            } else {
-                return rejectWithValue(error.message)
-            }
-        }
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.post("/api/v1/user/logout", {});
+      await SecureStorage.deleteItemAsync("accessToken");
+      return data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
     }
-)
+  }
+);
