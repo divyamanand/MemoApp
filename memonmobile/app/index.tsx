@@ -4,7 +4,7 @@ import React from 'react'
 export default function index() {
   return (
     <View>
-      <Text className='font-extrabold text-xl'>index</Text>
+      <Text className='text-red-800'>index</Text>
     </View>
   )
 }
