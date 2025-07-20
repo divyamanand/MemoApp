@@ -4,7 +4,7 @@ import type { RootState } from '@/store/store'
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.EXPO__PUBLIC_SERVER,
+    baseUrl: process.env.EXPO_PUBLIC_SERVER,
     prepareHeaders: (headers, {getState}) => {
                 const accessToken = (getState() as RootState).auth.accessToken
                 headers.set("Authorization", `Bearer ${accessToken}`)

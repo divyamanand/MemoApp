@@ -9,7 +9,7 @@ export const registerUser = createAsyncThunk(
         try {
             const { data } = await api.post("/api/v1/user/register", payload, {
             headers: { 
-                "Content-Type": "application/json" 
+                "Content-Type": "application/json" ,
             }
             });
             return data;
@@ -29,10 +29,7 @@ export const loginUser = createAsyncThunk(
     async (payload, {rejectWithValue}) => {
         try {
             const {data} = await api.post("/api/v1/user/login", payload, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+);
             return data
         } catch (error) {
             console.log(error)
@@ -53,8 +50,7 @@ export const logoutUser = createAsyncThunk(
             const {accessToken} = useAppSelector(state => state.auth)
             const {data} = await api.post("/api/v1/user/logout", {}, {
                 headers: {
-                    "Authorization": `Bearer ${accessToken}`,
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
                 }
             })
             return data
