@@ -1,10 +1,38 @@
-import { Text, View } from 'react-native'
-import React from 'react'
+import { Redirect } from 'expo-router'
+import { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { logoutUser } from '@/features/auth/authActions'
+import { useAccessToken } from '@/hooks/useAccessToken'
+import { useGetUserDetailsQuery } from '@/service/auth'
+import { useRefreshAccessToken } from '@/hooks/useRefreshAccessToken'
+import { setCredentials } from '@/features/auth/authSlice'
+import { Text } from 'react-native'
 
 export default function index() {
-  return (
-    <View>
-      <Text className='text-red-800'>index</Text>
-    </View>
-  )
+  // const { success } = useAppSelector(state => state.auth)
+  // const dispatch = useAppDispatch()
+  // useAccessToken()
+  // useRefreshAccessToken()
+  
+  // const { data, isSuccess, isError } = useGetUserDetailsQuery(undefined, { skip: !success })
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     dispatch(logoutUser())
+  //   } else if (isSuccess && data) {
+  //     dispatch(setCredentials(data))
+  //   }
+  // }, [data, isError, isSuccess, dispatch])
+
+  // if (isSuccess) {
+  //   return <Redirect href="/tabs/home" />
+  // }
+
+  // if (isError || !success) {
+  //   return <Redirect href="/auth/login" />
+  // }
+
+  // return <Text className='justify-center align-middle'>loading</Text>
+
+  return <Redirect href="/auth/login"/>
 }

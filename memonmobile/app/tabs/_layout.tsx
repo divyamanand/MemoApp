@@ -1,14 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Tabs } from 'expo-router'
 
-const _layout = () => {
+export default function TabsLayout() {
   return (
-    <View>
-      <Text>_layout</Text>
-    </View>
+    <Tabs>
+      <Tabs.Screen name="home" options={{ title: 'Home' }} />
+      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
+    </Tabs>
   )
 }
-
-export default _layout
-
-const styles = StyleSheet.create({})

@@ -47,8 +47,8 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.success = true;
-        state.userInfo = action.payload;
-        state.accessToken = action.payload.accessToken
+        state.userInfo = action.payload.data?.loggedInUser
+        state.accessToken = action.payload.data.accessToken
       })
       .addCase(loginUser.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
@@ -61,8 +61,8 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.success = true;
-        state.userInfo = action.payload;
-        state.accessToken = action.payload.accessToken
+        state.userInfo = action.payload.data?.loggedInUser
+        state.accessToken = action.payload.data.accessToken
       })
       .addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
         state.loading = false;
@@ -83,3 +83,5 @@ const authSlice = createSlice({
 
 export const {setCredentials, setAccessToken} = authSlice.actions
 export default authSlice.reducer;
+
+

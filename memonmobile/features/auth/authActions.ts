@@ -7,7 +7,7 @@ export const registerUser = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const { data } = await api.post("/api/v1/user/register", payload);
-      const accessToken = data?.accessToken;
+      const accessToken = data?.data.accessToken;
       await SecureStorage.setItemAsync("accessToken", accessToken);
       return data;
     } catch (error) {
@@ -21,13 +21,15 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (payload, { rejectWithValue }) => {
     try {
+      console.log(payload)
       const { data } = await api.post("/api/v1/user/login", payload);
-      const accessToken = data?.accessToken;
+      console.log(data)
+      const accessToken = data?.data.accessToken;
       await SecureStorage.setItemAsync("accessToken", accessToken);
       return data;
     } catch (error) {
       console.log(error);
-      return rejectWithValue(error);
+      // return rejectWithValue(error);
     }
   }
 );

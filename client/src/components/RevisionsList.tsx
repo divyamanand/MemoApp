@@ -28,7 +28,6 @@ const RevisionsList = () => {
     skip: !userInfo || !userSuccess || !online,
   });
 
-  // Store fetched revisions in Redux
   useEffect(() => {
     if (revisions && userSuccess && userInfo && revisionsFetched) {
       dispatch(setAllRevisionQuestions(revisions.data));
