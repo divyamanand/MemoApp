@@ -1,35 +1,34 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import type { RootState } from "@/store/store"
+import { axiosBaseQuery } from './api/axiosQuery';
 
 export const questionApi = createApi({
     reducerPath: "questionsApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: process.env.EXPO_PUBLIC_SERVER,
-        prepareHeaders: (headers, {getState}) => {
-            const accessToken = (getState() as RootState).auth.accessToken
-            headers.set("Authorization", `Bearer ${accessToken}`)
-            return headers
-        },
-    }),
+    baseQuery: axiosBaseQuery(),
     tagTypes: ["Questions", "Revisions"],
     endpoints: (build) => ({   
 
         getAllQuestions: build.query({
-            query: () => "/api/v1/question/get-questions",
+            query: () => ({
+                url: "/api/v1/question/get-questions",
+                method: "GET"
+            }),
             providesTags: ["Questions"]
         }),
 
         addQuestion: build.mutation({
-            query: (body) => ({
+            query: (data) => ({
                 url: "/api/v1/question/add-question",
                 method: "POST",
-                body,
+                data,
             }),
             invalidatesTags: ["Questions"]
         }),
 
         getTodaysRevisions: build.query({
-            query: () => "/api/v1/question/todays-revisions",
+            query: () => ({
+                url: "/api/v1/question/todays-revisions",
+                method: "GET"
+            }),
             providesTags: ["Revisions"]
         }),
 

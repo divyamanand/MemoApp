@@ -1,17 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-// import type { ApiErrorResponse, RegisterPayload, RegisterResponse } from "../../service/Types/authType";
 import { api } from "../../service/api/api";
-import { useAppSelector } from "@/store/hooks";
+import * as SecureStorage from "expo-secure-store"
 
 export const registerUser = createAsyncThunk(
     "auth/register",
     async (payload, { rejectWithValue }) => {
         try {
-            const { data } = await api.post("/api/v1/user/register", payload, {
-            headers: { 
-                "Content-Type": "application/json" ,
-            }
-            });
+            const { data } = await api.post("/api/v1/user/register", payload);
+            
+            const accessToken = data?.accessToken
+            await SecureStorage.setItemAsync("accessToken", accessToken)
+
             return data;
         } catch (error) {
             console.log(error)
@@ -28,8 +27,9 @@ export const loginUser = createAsyncThunk(
     "auth/login",
     async (payload, {rejectWithValue}) => {
         try {
-            const {data} = await api.post("/api/v1/user/login", payload, {
-);
+            const {data} = await api.post("/api/v1/user/login", payload);
+            const accessToken = data?.accessToken
+            await SecureStorage.setItemAsync("accessToken", accessToken)
             return data
         } catch (error) {
             console.log(error)
@@ -46,13 +46,8 @@ export const logoutUser = createAsyncThunk(
     "auth/logout",
     async (_, {rejectWithValue}) => {
         try {
-
-            const {accessToken} = useAppSelector(state => state.auth)
-            const {data} = await api.post("/api/v1/user/logout", {}, {
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            })
+            const {data} = await api.post("/api/v1/user/logout", {})
+            await SecureStorage.deleteItemAsync("accessToken");
             return data
         } catch (error) {
             console.log(error)
