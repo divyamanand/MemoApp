@@ -1,6 +1,6 @@
-import { createSlice} from '@reduxjs/toolkit'
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { loginUser, logoutUser, registerUser } from './authActions'
+import { loginUser,registerUser } from './authActions';
 
 interface UserInfo {
   name?: string;
@@ -9,79 +9,45 @@ interface UserInfo {
   [key: string]: any;
 }
 
-interface authState {
-  loading: boolean;
+interface AuthState {
   userInfo: UserInfo;
-  error: string | null;
-  success: boolean;
   accessToken: string | null;
+  tokenValid: boolean;
 }
 
-const initialState: authState = {
-  loading: false,
+const initialState: AuthState = {
   userInfo: {},
-  error: null,
-  success: false,
   accessToken: null,
-}
+  tokenValid: false,
+};
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     setCredentials: (state, action) => {
-      state.loading = false,
-      state.success = true,
-      state.userInfo = action.payload
+      state.userInfo = action.payload;
+      state.tokenValid = true;
     },
     setAccessToken: (state, action) => {
-      state.accessToken = action.payload
-    }
+      state.accessToken = action.payload;
+      state.tokenValid = true;
+    },
+    resetUser: () => initialState
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.success = true;
-        state.userInfo = action.payload.data?.loggedInUser
-        state.accessToken = action.payload.data.accessToken
-      })
-      .addCase(loginUser.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.success = true;
-        state.userInfo = action.payload.data?.loggedInUser
-        state.accessToken = action.payload.data.accessToken
-      })
-      .addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(logoutUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(logoutUser.fulfilled, () => initialState
+      .addMatcher(
+        isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
+        (state, action: PayloadAction<any>) => {
+          state.userInfo = action.payload.data?.loggedInUser;
+          state.accessToken = action.payload.data.accessToken;
+          state.tokenValid = true;
+        }
       )
-      .addCase(logoutUser.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
-  }
+
+  },
 });
 
-export const {setCredentials, setAccessToken} = authSlice.actions
+export const { setCredentials, setAccessToken, resetUser } = authSlice.actions;
 export default authSlice.reducer;
-
-

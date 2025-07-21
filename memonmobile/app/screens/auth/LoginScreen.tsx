@@ -2,25 +2,27 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { loginUser } from '@/features/auth/authActions'
+import { useNavigation } from '@react-navigation/native'
 
-export default function Register() {
-  const { loading, userInfo, error, success } = useAppSelector((state) => state.auth)
+export default function LoginScreen() {
+  const {tokenValid } = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch()
+  const navigation = useNavigation()
 
-  // Local form state
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (userInfo) console.log(userInfo)
-    if (success) {
-      Alert.alert('Success', 'Login successful')
+    if (tokenValid) {
+      navigation.navigate("Dashboard")
     }
-  }, [userInfo, success])
+  }, [tokenValid])
 
   const validateEmail = (val) => /^\S+@\S+\.\S+$/.test(val)
 
-  const submitForm = () => {
+  const submitForm = async () => {
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Please enter a valid email address')
       return
@@ -29,12 +31,21 @@ export default function Register() {
       Alert.alert('Error', 'Password must be at least 6 characters')
       return
     }
-    dispatch(loginUser({ email: email.toLowerCase(), password }))
+
+    try {
+      setLoading(true)
+      await dispatch(loginUser({ email: email.toLowerCase(), password }))
+    } catch (error) {
+      const errorMessage = error?.message || "Something Went Wrong"
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <View className="flex-1 justify-center items-center bg-white px-4">
-      {error && <Text className="text-red-500 mb-2">{error.message}</Text>}
+      {error && <Text className="text-red-500 mb-2">{error}</Text>}
       <Text>{email}{password}</Text>
       {/* Email */}
       <Text className="font-bold mt-2 mb-1 w-full">Email</Text>

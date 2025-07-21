@@ -2,59 +2,66 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
 import { registerUser } from '@/features/auth/authActions'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useNavigation } from 'expo-router'
 
-export default function Register() {
-  const { loading, userInfo, error, success } = useAppSelector(state => state.auth)
+export default function RegisterScreen() {
+  const { userInfo } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
+  const navigation = useNavigation()
 
-  // Local state for all fields:
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    if (userInfo) console.log(userInfo)
-    if (success) {
-      Alert.alert('Success', 'Registration successful')
+    if (userInfo) {
+      navigation.navigate("Dashboard")
     }
-  }, [userInfo, success])
+  }, [userInfo])
 
   const validateEmail = val => /^\S+@\S+\.\S+$/.test(val)
 
-  const submitForm = () => {
-    // Required fields check
+  const submitForm = async () => {
     if (!name.trim() || !email.trim() || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill out all fields')
       return
     }
-    // Email format
     if (!validateEmail(email)) {
       Alert.alert('Error', 'Enter a valid email address')
       return
     }
-    // Password match
     if (password !== confirmPassword) {
       Alert.alert('Error', "Passwords don't match")
       return
     }
-    // Password length
     if (password.length < 6) {
       Alert.alert('Error', 'Password must be at least 6 characters')
       return
     }
-    dispatch(registerUser({
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      password
-    }))
+
+    try {
+      setLoading(true)
+      await dispatch(registerUser({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password
+      })).unwrap()
+    } catch (err) {
+      const errorMessage = err?.message || "Something went wrong"
+      setError(errorMessage)
+      Alert.alert('Registration Failed', errorMessage)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <View className="flex-1 justify-center items-center bg-white px-4">
-      {error && <Text className="text-red-500 mb-2">{error.message}</Text>}
+      {error && <Text className="text-red-500 mb-2">{error}</Text>}
 
-      {/* Name */}
       <Text className="font-bold mt-2 mb-1 w-full">Name</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-2 w-full"
@@ -64,7 +71,6 @@ export default function Register() {
         onChangeText={setName}
       />
 
-      {/* Email */}
       <Text className="font-bold mt-2 mb-1 w-full">Email</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-2 w-full"
@@ -75,7 +81,6 @@ export default function Register() {
         onChangeText={setEmail}
       />
 
-      {/* Password */}
       <Text className="font-bold mt-2 mb-1 w-full">Password</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-2 w-full"
@@ -85,7 +90,6 @@ export default function Register() {
         onChangeText={setPassword}
       />
 
-      {/* Confirm Password */}
       <Text className="font-bold mt-2 mb-1 w-full">Confirm Password</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-4 w-full"

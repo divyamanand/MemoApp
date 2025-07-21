@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const home = () => {
+const RevisionScreen = () => {
   return (
     <View>
-      <Text>home</Text>
+      <Text>RevisionScreen</Text>
     </View>
   )
 }
 
-export default home
+export default RevisionScreen
 
 const styles = StyleSheet.create({})

@@ -89,10 +89,9 @@ export const loginUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, loggedInUser, "User Logged In Successfully"));
 });
 
-// Get current user controller
+
 export const currentUser = asyncHandler(async (req, res) => {
   const user = req.user;
-  const clientType = req.get("x-client-type");
 
   if (!user) {
     throw new ApiError(404, "Login or create a new account");

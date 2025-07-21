@@ -21,7 +21,6 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async (payload, { rejectWithValue }) => {
     try {
-      console.log(payload)
       const { data } = await api.post("/api/v1/user/login", payload);
       console.log(data)
       const accessToken = data?.data.accessToken;
