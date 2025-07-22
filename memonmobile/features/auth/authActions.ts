@@ -13,7 +13,7 @@ const authHandler = async (endpoint: string, payload: any, rejectWithValue: any)
 
     await SecureStorage.setItemAsync("accessToken", accessToken);
     await SecureStorage.setItemAsync("refreshToken", refreshToken);
-
+    console.log(data)
     return { accessToken, ...userInfo };
   } catch (error) {
     return rejectWithValue(error);

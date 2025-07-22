@@ -14,10 +14,10 @@ import { useGetAndRefreshToken } from '@/hooks/useGetAndRefreshToken';
 import { useGetUserDetailsQuery } from '@/service/auth';
 import { setCredentials } from '@/features/auth/authSlice';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+
 
 const AppNavigator = () => {
-
+    const Stack = createNativeStackNavigator<RootStackParamList>();
     const {tokenValid} = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch()
 
@@ -37,6 +37,7 @@ const AppNavigator = () => {
 
     useEffect(() => {
         if (data) dispatch(setCredentials(data))
+        console.log(data)
     }, [data, dispatch])
 
     return (

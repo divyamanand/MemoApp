@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
 import { registerUser } from '@/features/auth/authActions'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { useNavigation } from 'expo-router'
+import { useNavigation } from '@react-navigation/native'
 
 export default function RegisterScreen() {
   const { userInfo } = useAppSelector(state => state.auth)
