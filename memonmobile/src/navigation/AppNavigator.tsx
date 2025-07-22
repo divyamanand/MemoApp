@@ -4,15 +4,14 @@ import DashboardScreen from '../screens/DashboardScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import { RootStackParamList } from './types';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RevisionScreen from '../screens/questions/RevisionScreen';
 import QuestionScreen from '../screens/questions/QuestionScreen';
 import AboutScreen from '../screens/AboutScreen';
 import HelpScreen from '../screens/HelpScreen';
-import { useGetAndRefreshToken } from '@/hooks/useGetAndRefreshToken';
-import { useGetUserDetailsQuery } from '@/service/auth';
-import { setCredentials } from '@/features/auth/authSlice';
+import { useGetUserDetailsQuery } from '@/src/service/auth';
+import { setCredentials } from '@/src/features/auth/authSlice';
 
 
 

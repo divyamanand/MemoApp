@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import store from '@/store/store'
+import store from '@/src/store/store'
 import { NavigationContainer } from '@react-navigation/native'
 import AppNavigator from './navigation/AppNavigator'
 import "../global.css"

@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../service/api/api";
 import * as SecureStorage from "expo-secure-store";
-import { useResponse } from "@/hooks/useResponse";
+import { useResponse } from "@/src/hooks/useResponse";
 
 
 const authHandler = async (endpoint: string, payload: any, rejectWithValue: any) => {

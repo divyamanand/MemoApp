@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
-import { registerUser } from '@/features/auth/authActions'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { registerUser } from '@/src/features/auth/authActions'
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks'
 import { useNavigation } from '@react-navigation/native'
 
 export default function RegisterScreen() {

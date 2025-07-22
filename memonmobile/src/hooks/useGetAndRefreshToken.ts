@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { logoutUser } from "@/features/auth/authActions";
-import { setAccessToken } from "@/features/auth/authSlice";
-import { useAppDispatch } from "@/store/hooks";
+import { logoutUser } from "@/src/features/auth/authActions";
+import { setAccessToken } from "@/src/features/auth/authSlice";
+import { useAppDispatch } from "@/src/store/hooks";
 import * as SecureStore from "expo-secure-store";
-import { useUpdateAccessTokenMutation } from "@/service/auth";
+import { useUpdateAccessTokenMutation } from "@/src/service/auth";
 
 export const useGetAndRefreshToken = () => {
   const dispatch = useAppDispatch();
