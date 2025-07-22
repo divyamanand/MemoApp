@@ -1,6 +1,6 @@
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { loginUser,registerUser } from './authActions';
+import { loginUser,logoutUser,registerUser } from './authActions';
 
 interface UserInfo {
   name?: string;
@@ -37,15 +37,17 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(logoutUser.fulfilled, 
+        () => initialState
+      )
       .addMatcher(
         isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
         (state, action: PayloadAction<any>) => {
-          state.userInfo = action.payload.data?.loggedInUser;
-          state.accessToken = action.payload.data.accessToken;
+          state.userInfo = action.payload.userInfo;
+          state.accessToken = action.payload.accessToken;
           state.tokenValid = true;
         }
       )
-
   },
 });
 

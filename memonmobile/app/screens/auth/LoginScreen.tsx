@@ -2,25 +2,33 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { loginUser } from '@/features/auth/authActions'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
 
-export default function LoginScreen() {
-  const {tokenValid } = useAppSelector((state) => state.auth)
-  const dispatch = useAppDispatch()
-  const navigation = useNavigation()
+type RootStackParamList = {
+  Login: undefined;
+  Dashboard: undefined;
+};
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
+type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+
+export default function LoginScreen() {
+  const { tokenValid } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
+  const navigation = useNavigation<LoginScreenNavigationProp>()
+
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [error, setError] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     if (tokenValid) {
       navigation.navigate("Dashboard")
     }
-  }, [tokenValid])
+  }, [tokenValid, navigation])
 
-  const validateEmail = (val) => /^\S+@\S+\.\S+$/.test(val)
+  const validateEmail = (val: string): boolean => /^\S+@\S+\.\S+$/.test(val)
 
   const submitForm = async () => {
     if (!validateEmail(email)) {
@@ -34,9 +42,9 @@ export default function LoginScreen() {
 
     try {
       setLoading(true)
-      await dispatch(loginUser({ email: email.toLowerCase(), password }))
-    } catch (error) {
-      const errorMessage = error?.message || "Something Went Wrong"
+      await dispatch(loginUser({ email: email.toLowerCase(), password })).unwrap()
+    } catch (err: any) {
+      const errorMessage = err?.message || "Something Went Wrong"
       setError(errorMessage)
     } finally {
       setLoading(false)
@@ -46,8 +54,7 @@ export default function LoginScreen() {
   return (
     <View className="flex-1 justify-center items-center bg-white px-4">
       {error && <Text className="text-red-500 mb-2">{error}</Text>}
-      <Text>{email}{password}</Text>
-      {/* Email */}
+      
       <Text className="font-bold mt-2 mb-1 w-full">Email</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-2 w-full"
@@ -58,7 +65,6 @@ export default function LoginScreen() {
         onChangeText={setEmail}
       />
 
-      {/* Password */}
       <Text className="font-bold mt-2 mb-1 w-full">Password</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-4 w-full"

@@ -20,9 +20,8 @@ const AppNavigator = () => {
 
     const {tokenValid} = useAppSelector(state => state.auth)
     const dispatch = useAppDispatch()
-    const tokenStatus = useGetAndRefreshToken()
 
-    if (tokenStatus == "loggedOut" || !tokenValid) return (
+    if (!tokenValid) return (
         <Stack.Navigator>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="About" component={AboutScreen}/>
@@ -30,7 +29,7 @@ const AppNavigator = () => {
         </Stack.Navigator>
     )
     
-    const {data } = useGetUserDetailsQuery(undefined, 
+    const { data } = useGetUserDetailsQuery(undefined, 
         {
             skip: !tokenValid,
             refetchOnReconnect: true,

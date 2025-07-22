@@ -10,35 +10,22 @@ export const useGetAndRefreshToken = () => {
   const [status, setStatus] = useState<'booting' | 'loggedOut' | 'loggedIn'>('booting');
   const [updateAccessToken] = useUpdateAccessTokenMutation();
 
-  useEffect(() => {
-    (async () => {
-      const token = await SecureStore.getItemAsync('accessToken');
-      if (!token) return setStatus('loggedOut');
-      dispatch(setAccessToken(token));
-      setStatus('loggedIn');
-    })();
-  }, []);
-
-
-  useEffect(() => {
-    if (status !== 'loggedIn') return;
-    let timer: ReturnType<typeof setTimeout>;
-    const schedule = () =>
-      timer = setTimeout(async () => {
+  const updateOnBoot = async () => {
         try {
+          setStatus("booting")
           const res = await updateAccessToken().unwrap();
           await SecureStore.setItemAsync('accessToken', res.data.accessToken);
           dispatch(setAccessToken(res.data.accessToken));
-          schedule();
+          setStatus("loggedIn")
         } catch (e) {
-          clearTimeout(timer);
           dispatch(logoutUser());
           setStatus('loggedOut');
         }
-      }, 15 * 60 * 1000);
-    schedule();
-    return () => clearTimeout(timer);
-  }, [status, dispatch, updateAccessToken]);
+  }
+
+  useEffect(() => {
+        updateOnBoot()
+  }, []);
 
   return status;
 };
