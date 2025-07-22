@@ -43,7 +43,7 @@ const authSlice = createSlice({
       .addMatcher(
         isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
         (state, action: PayloadAction<any>) => {
-          state.userInfo = action.payload.userInfo;
+          state.userInfo = action.payload.user;
           state.accessToken = action.payload.accessToken;
           state.tokenValid = true;
         }

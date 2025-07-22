@@ -9,12 +9,12 @@ const authHandler = async (endpoint: string, payload: any, rejectWithValue: any)
     const response = await api.post(endpoint, payload);
     const { data } = useResponse(response);
 
-    const { accessToken, refreshToken, ...userInfo } = data;
+    const { accessToken, refreshToken, user} = data;
 
     await SecureStorage.setItemAsync("accessToken", accessToken);
     await SecureStorage.setItemAsync("refreshToken", refreshToken);
     console.log(data)
-    return { accessToken, ...userInfo };
+    return { accessToken, user };
   } catch (error) {
     return rejectWithValue(error);
   }

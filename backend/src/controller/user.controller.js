@@ -38,7 +38,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (clientType === "mobile") {
     return res
       .status(201)
-      .json(new ApiResponse(201, { createdUser, accessToken, refreshToken }, "User Created Successfully"))
+      .json(new ApiResponse(201, { user: createdUser, accessToken, refreshToken }, "User Created Successfully"))
   }
 
   const options = { httpOnly: true, secure: true }
@@ -73,7 +73,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   if (clientType === "mobile") {
     return res
       .status(200)
-      .json(new ApiResponse(200, { loggedInUser, accessToken, refreshToken }, "User Logged In Successfully"))
+      .json(new ApiResponse(200, { user: loggedInUser, accessToken, refreshToken }, "User Logged In Successfully"))
   }
 
   const options = { httpOnly: true, secure: true }
