@@ -11,13 +11,11 @@ interface UserInfo {
 
 interface AuthState {
   userInfo: UserInfo;
-  accessToken: string | null;
   tokenValid: boolean;
 }
 
 const initialState: AuthState = {
   userInfo: {},
-  accessToken: null,
   tokenValid: false,
 };
 
@@ -27,10 +25,6 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (state, action) => {
       state.userInfo = action.payload;
-      state.tokenValid = true;
-    },
-    setAccessToken: (state, action) => {
-      state.accessToken = action.payload;
       state.tokenValid = true;
     },
     resetUser: () => initialState
@@ -44,12 +38,11 @@ const authSlice = createSlice({
         isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
         (state, action: PayloadAction<any>) => {
           state.userInfo = action.payload.user;
-          state.accessToken = action.payload.accessToken;
           state.tokenValid = true;
         }
       )
   },
 });
 
-export const { setCredentials, setAccessToken, resetUser } = authSlice.actions;
+export const { setCredentials, resetUser } = authSlice.actions;
 export default authSlice.reducer;

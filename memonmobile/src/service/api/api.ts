@@ -1,5 +1,3 @@
-import { setAccessToken } from "@/src/features/auth/authSlice"
-import store from "@/src/store/store"
 import axios, { AxiosError, AxiosRequestConfig } from "axios"
 import * as SecureStorage from "expo-secure-store"
 
@@ -51,8 +49,6 @@ api.interceptors.response.use(
           await SecureStorage.setItemAsync("accessToken", newAccessToken)
           await SecureStorage.setItemAsync("refreshToken", newRefreshToken)
 
-          store.dispatch(setAccessToken(newAccessToken))
-          
           originalRequest.headers = {
             ...originalRequest.headers,
             Authorization: `Bearer ${newAccessToken}`,
