@@ -10,18 +10,10 @@ export const authApi = createApi({
         url: '/api/v1/user/getCurrentUser',
         method: 'GET',
       }),
-    }),
-
-    updateAccessToken: build.mutation<any, void>({
-      query: () => ({
-        url: '/api/v1/user/refresh-token',
-        method: 'POST',
-      }),
-    }),
+    })
   }),
 });
 
 export const {
-  useGetUserDetailsQuery,
-  useUpdateAccessTokenMutation,
+  useGetUserDetailsQuery
 } = authApi;

@@ -14,7 +14,6 @@ import { useGetUserDetailsQuery } from '@/src/service/auth';
 import { setCredentials } from '@/src/features/auth/authSlice';
 
 
-
 const AppNavigator = () => {
     const Stack = createNativeStackNavigator<RootStackParamList>();
     const {tokenValid} = useAppSelector(state => state.auth)
