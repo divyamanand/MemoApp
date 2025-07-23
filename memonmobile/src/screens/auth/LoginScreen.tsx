@@ -4,27 +4,29 @@ import { useAppDispatch, useAppSelector } from '@/src/store/hooks'
 import { loginUser } from '@/src/features/auth/authActions'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useNavigation } from '@react-navigation/native'
+import { ErrorResponse } from '@/src/constants/types'
+import { handleError } from '@/src/service/errorService'
 
 type RootStackParamList = {
-  Login: undefined;
-  Dashboard: undefined;
-};
+  Login: undefined
+  Dashboard: undefined
+}
 
-type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>
 
 export default function LoginScreen() {
-  const { tokenValid } = useAppSelector((state) => state.auth)
+  const { tokenValid } = useAppSelector(state => state.auth)
   const dispatch = useAppDispatch()
   const navigation = useNavigation<LoginScreenNavigationProp>()
 
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const [error, setError] = useState<string>("")
+  const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     if (tokenValid) {
-      navigation.navigate("Dashboard")
+      navigation.navigate('Dashboard')
     }
   }, [tokenValid, navigation])
 
@@ -44,8 +46,8 @@ export default function LoginScreen() {
       setLoading(true)
       await dispatch(loginUser({ email: email.toLowerCase(), password })).unwrap()
     } catch (err: any) {
-      const errorMessage = err?.message || "Something Went Wrong"
-      setError(errorMessage)
+      const formattedError: ErrorResponse = handleError(err)
+      setError(formattedError.message)
     } finally {
       setLoading(false)
     }
@@ -54,7 +56,7 @@ export default function LoginScreen() {
   return (
     <View className="flex-1 justify-center items-center bg-white px-4">
       {error && <Text className="text-red-500 mb-2">{error}</Text>}
-      
+
       <Text className="font-bold mt-2 mb-1 w-full">Email</Text>
       <TextInput
         className="border border-gray-300 rounded px-3 py-2 mb-2 w-full"
@@ -79,10 +81,11 @@ export default function LoginScreen() {
         onPress={submitForm}
         disabled={loading}
       >
-        {loading
-          ? <ActivityIndicator color="white" />
-          : <Text className="text-white font-bold text-lg">Login</Text>
-        }
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-white font-bold text-lg">Login</Text>
+        )}
       </Pressable>
     </View>
   )

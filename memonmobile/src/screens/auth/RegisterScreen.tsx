@@ -3,6 +3,8 @@ import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'reac
 import { registerUser } from '@/src/features/auth/authActions'
 import { useAppDispatch, useAppSelector } from '@/src/store/hooks'
 import { useNavigation } from '@react-navigation/native'
+import { ErrorResponse } from '@/src/constants/types'
+import { handleError } from '@/src/service/errorService'
 
 export default function RegisterScreen() {
   const { userInfo } = useAppSelector(state => state.auth)
@@ -14,11 +16,11 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string>('')
 
   useEffect(() => {
     if (userInfo) {
-      navigation.navigate("Dashboard")
+      navigation.navigate('Dashboard')
     }
   }, [userInfo])
 
@@ -44,15 +46,16 @@ export default function RegisterScreen() {
 
     try {
       setLoading(true)
-      await dispatch(registerUser({
-        name: name.trim(),
-        email: email.trim().toLowerCase(),
-        password
-      })).unwrap()
+      await dispatch(
+        registerUser({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+        })
+      ).unwrap()
     } catch (err) {
-      const errorMessage = err?.message || "Something went wrong"
-      setError(errorMessage)
-      Alert.alert('Registration Failed', errorMessage)
+      const formattedError: ErrorResponse = handleError(err)
+      setError(formattedError.message)
     } finally {
       setLoading(false)
     }
@@ -104,10 +107,11 @@ export default function RegisterScreen() {
         onPress={submitForm}
         disabled={loading}
       >
-        {loading
-          ? <ActivityIndicator color="white" />
-          : <Text className="text-white font-bold text-lg">Register</Text>
-        }
+        {loading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-white font-bold text-lg">Register</Text>
+        )}
       </Pressable>
     </View>
   )

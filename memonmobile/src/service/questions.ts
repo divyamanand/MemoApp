@@ -2,26 +2,26 @@ import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from './api/axiosQuery'
 
 type Question = {
-  _id: string;
-  question: string;
-};
+  _id: string
+  question: string
+}
 
 type Metadata = {
-  total: number;
-  page: number;
-  pageSize: number;
-};
+  total: number
+  page: number
+  pageSize: number
+}
 
 type TransformedResponse = {
-  questions: Question[];
-  metadata: Metadata;
-};
+  questions: Question[]
+  metadata: Metadata
+}
 
 export const questionApi = createApi({
   reducerPath: 'questionApi',
   baseQuery: axiosBaseQuery(),
   tagTypes: ['Questions', 'Revisions'],
-  endpoints: (build) => ({
+  endpoints: build => ({
     getAllQuestions: build.infiniteQuery<TransformedResponse, string, number>({
       infiniteQueryOptions: {
         initialPageParam: 0,
@@ -35,17 +35,17 @@ export const questionApi = createApi({
       }),
       keepUnusedDataFor: Infinity,
       transformResponse: (response: any): TransformedResponse => response.data,
-      providesTags: (result) =>
+      providesTags: result =>
         result
           ? [
-              ...result.questions.map((q) => ({ type: 'Questions' as const, id: q._id })),
+              ...result.questions.map(q => ({ type: 'Questions' as const, id: q._id })),
               { type: 'Questions', id: 'LIST' },
             ]
           : [{ type: 'Questions', id: 'LIST' }],
     }),
 
     addQuestion: build.mutation({
-      query: (data) => ({
+      query: data => ({
         url: '/api/v1/question/add-question',
         method: 'POST',
         data,
@@ -69,11 +69,11 @@ export const questionApi = createApi({
         questions: response.data.questions,
         metadata: response.data.metadata,
       }),
-      providesTags: (result) =>
+      providesTags: result =>
         result
           ? [
-              ...result.questions.map((q) => ({ type: 'Questions' as const, id: q._id })),
-              ...result.questions.map((q) => ({ type: 'Revisions' as const, id: q._id })),
+              ...result.questions.map(q => ({ type: 'Questions' as const, id: q._id })),
+              ...result.questions.map(q => ({ type: 'Revisions' as const, id: q._id })),
               { type: 'Questions', id: 'LIST' },
               { type: 'Revisions', id: 'LIST' },
             ]
@@ -84,7 +84,7 @@ export const questionApi = createApi({
     }),
 
     deleteQuestion: build.mutation({
-      query: (id) => ({
+      query: id => ({
         url: `api/v1/question/delete-question/${id}`,
         method: 'DELETE',
       }),
@@ -98,4 +98,4 @@ export const {
   useAddQuestionMutation,
   useGetTodaysRevisionsInfiniteQuery,
   useDeleteQuestionMutation,
-} = questionApi;
+} = questionApi

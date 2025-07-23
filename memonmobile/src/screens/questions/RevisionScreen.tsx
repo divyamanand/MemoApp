@@ -1,7 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import React from 'react'
+import { useAppSelector } from '@/src/store/hooks'
 
 const RevisionScreen = () => {
+  const { revisionQuestions } = useAppSelector(state => state.questions)
+
   return (
     <View>
       <Text>RevisionScreen</Text>
@@ -10,5 +13,3 @@ const RevisionScreen = () => {
 }
 
 export default RevisionScreen
-
-const styles = StyleSheet.create({})

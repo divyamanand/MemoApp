@@ -1,12 +1,12 @@
-import type { AxiosRequestConfig } from 'axios';
-import { api } from './api';
+import type { AxiosRequestConfig } from 'axios'
+import { api } from './api'
 
 interface AxiosBaseQueryArgs {
-  url: string;
-  method: AxiosRequestConfig['method'];
-  data?: AxiosRequestConfig['data'];
-  params?: AxiosRequestConfig['params'];
-  headers?: AxiosRequestConfig['headers'];
+  url: string
+  method: AxiosRequestConfig['method']
+  data?: AxiosRequestConfig['data']
+  params?: AxiosRequestConfig['params']
+  headers?: AxiosRequestConfig['headers']
 }
 
 export const axiosBaseQuery =
@@ -18,15 +18,15 @@ export const axiosBaseQuery =
         method,
         data,
         params,
-        headers
-      });
-      return { data: result.data };
+        headers,
+      })
+      return { data: result.data }
     } catch (error: any) {
       return {
         error: {
           status: error.response?.status,
           data: error.response?.data || error.message,
         },
-      };
+      }
     }
-  };
+  }
