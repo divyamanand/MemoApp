@@ -1,65 +1,72 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
-import { registerUser } from '@/src/features/auth/authActions'
-import { useAppDispatch, useAppSelector } from '@/src/store/hooks'
-import { useNavigation } from '@react-navigation/native'
-import { ErrorResponse } from '@/src/constants/types'
-import { handleError } from '@/src/service/errorService'
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import { registerUser } from '@/src/features/auth/authActions';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
+import { useNavigation } from '@react-navigation/native';
+import { ErrorResponse } from '@/src/constants/types';
+import { handleError } from '@/src/service/errorService';
 
 export default function RegisterScreen() {
-  const { userInfo } = useAppSelector(state => state.auth)
-  const dispatch = useAppDispatch()
-  const navigation = useNavigation()
+  const { userInfo } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string>('')
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (userInfo) {
-      navigation.navigate('Dashboard')
+      navigation.navigate('Dashboard');
     }
-  }, [userInfo])
+  }, [userInfo]);
 
-  const validateEmail = val => /^\S+@\S+\.\S+$/.test(val)
+  const validateEmail = (val) => /^\S+@\S+\.\S+$/.test(val);
 
   const submitForm = async () => {
     if (!name.trim() || !email.trim() || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill out all fields')
-      return
+      Alert.alert('Error', 'Please fill out all fields');
+      return;
     }
     if (!validateEmail(email)) {
-      Alert.alert('Error', 'Enter a valid email address')
-      return
+      Alert.alert('Error', 'Enter a valid email address');
+      return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('Error', "Passwords don't match")
-      return
+      Alert.alert('Error', "Passwords don't match");
+      return;
     }
     if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters')
-      return
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
       await dispatch(
         registerUser({
           name: name.trim(),
           email: email.trim().toLowerCase(),
           password,
-        })
-      ).unwrap()
+        }),
+      ).unwrap();
     } catch (err) {
-      const formattedError: ErrorResponse = handleError(err)
-      setError(formattedError.message)
+      const formattedError: ErrorResponse = handleError(err);
+      setError(formattedError.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <View className="flex-1 justify-center items-center bg-white px-4">
@@ -114,5 +121,5 @@ export default function RegisterScreen() {
         )}
       </Pressable>
     </View>
-  )
+  );
 }

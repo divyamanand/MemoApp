@@ -1,10 +1,10 @@
-import axios from 'axios'
-import { ErrorResponse } from '../constants/types'
+import axios from 'axios';
+import { ErrorResponse } from '../constants/types';
 
 export const handleError = (err: unknown): ErrorResponse => {
   if (axios.isAxiosError(err)) {
-    const statusCode = err.response?.status
-    const data = err.response?.data
+    const statusCode = err.response?.status;
+    const data = err.response?.data;
 
     return {
       statusCode,
@@ -13,7 +13,7 @@ export const handleError = (err: unknown): ErrorResponse => {
       data: null,
       success: false,
       stack: err.stack,
-    }
+    };
   }
 
   if (err instanceof Error) {
@@ -23,7 +23,7 @@ export const handleError = (err: unknown): ErrorResponse => {
       data: null,
       success: false,
       stack: err.stack,
-    }
+    };
   }
 
   return {
@@ -31,5 +31,5 @@ export const handleError = (err: unknown): ErrorResponse => {
     errors: [],
     data: null,
     success: false,
-  }
-}
+  };
+};

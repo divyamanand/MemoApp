@@ -1,40 +1,42 @@
-import { useEffect, useState } from 'react'
-import { useAppDispatch } from '@/src/store/hooks'
-import * as SecureStore from 'expo-secure-store'
-import { useGetUserDetailsQuery } from '../service/auth'
-import { resetUser, setCredentials } from '../features/auth/authSlice'
-import { useResponse } from './useResponse'
+import { useEffect, useState } from 'react';
+import { useAppDispatch } from '@/src/store/hooks';
+import * as SecureStore from 'expo-secure-store';
+import { useGetUserDetailsQuery } from '../service/auth';
+import { resetUser, setCredentials } from '../features/auth/authSlice';
+import { handleApiResponse } from '../service/responseService';
 
 export const useVerifyUser = () => {
-  const [status, setStatus] = useState<'booting' | 'loggedOut' | 'loggedIn'>('booting')
-  const dispatch = useAppDispatch()
+  const [status, setStatus] = useState<'booting' | 'loggedOut' | 'loggedIn'>(
+    'booting',
+  );
+  const dispatch = useAppDispatch();
 
-  const { data, isError, isFetching, isSuccess } = useGetUserDetailsQuery()
+  const { data, isError, isFetching, isSuccess } = useGetUserDetailsQuery();
 
   useEffect(() => {
     const manageUser = async () => {
       if (isFetching) {
-        setStatus('booting')
-        return
+        setStatus('booting');
+        return;
       }
 
       if (isError) {
-        dispatch(resetUser())
-        await SecureStore.deleteItemAsync('accessToken')
-        await SecureStore.deleteItemAsync('refreshToken')
-        setStatus('loggedOut')
-        return
+        dispatch(resetUser());
+        await SecureStore.deleteItemAsync('accessToken');
+        await SecureStore.deleteItemAsync('refreshToken');
+        setStatus('loggedOut');
+        return;
       }
 
       if (isSuccess && data) {
-        const { data: user } = useResponse(data)
-        dispatch(setCredentials(user))
-        setStatus('loggedIn')
+        const { data: user } = handleApiResponse(data);
+        dispatch(setCredentials(user));
+        setStatus('loggedIn');
       }
-    }
+    };
 
-    manageUser()
-  }, [data, isError, isFetching, isSuccess])
+    manageUser();
+  }, [data, isError, isFetching, isSuccess]);
 
-  return status
-}
+  return status;
+};

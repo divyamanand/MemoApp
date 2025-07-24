@@ -1,57 +1,69 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, TextInput, Pressable, ActivityIndicator, Alert } from 'react-native'
-import { useAppDispatch, useAppSelector } from '@/src/store/hooks'
-import { loginUser } from '@/src/features/auth/authActions'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useNavigation } from '@react-navigation/native'
-import { ErrorResponse } from '@/src/constants/types'
-import { handleError } from '@/src/service/errorService'
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
+import { loginUser } from '@/src/features/auth/authActions';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { ErrorResponse } from '@/src/constants/types';
+import { handleError } from '@/src/service/errorService';
 
 type RootStackParamList = {
-  Login: undefined
-  Dashboard: undefined
-}
+  Login: undefined;
+  Dashboard: undefined;
+};
 
-type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>
+type LoginScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Login'
+>;
 
 export default function LoginScreen() {
-  const { tokenValid } = useAppSelector(state => state.auth)
-  const dispatch = useAppDispatch()
-  const navigation = useNavigation<LoginScreenNavigationProp>()
+  const { tokenValid } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation<LoginScreenNavigationProp>();
 
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [error, setError] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (tokenValid) {
-      navigation.navigate('Dashboard')
+      navigation.navigate('Dashboard');
     }
-  }, [tokenValid, navigation])
+  }, [tokenValid, navigation]);
 
-  const validateEmail = (val: string): boolean => /^\S+@\S+\.\S+$/.test(val)
+  const validateEmail = (val: string): boolean => /^\S+@\S+\.\S+$/.test(val);
 
   const submitForm = async () => {
     if (!validateEmail(email)) {
-      Alert.alert('Error', 'Please enter a valid email address')
-      return
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
     }
     if (!password || password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters')
-      return
+      Alert.alert('Error', 'Password must be at least 6 characters');
+      return;
     }
 
     try {
-      setLoading(true)
-      await dispatch(loginUser({ email: email.toLowerCase(), password })).unwrap()
+      setLoading(true);
+      await dispatch(
+        loginUser({ email: email.toLowerCase(), password }),
+      ).unwrap();
     } catch (err: any) {
-      const formattedError: ErrorResponse = handleError(err)
-      setError(formattedError.message)
+      const formattedError: ErrorResponse = handleError(err);
+      setError(formattedError.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <View className="flex-1 justify-center items-center bg-white px-4">
@@ -88,5 +100,5 @@ export default function LoginScreen() {
         )}
       </Pressable>
     </View>
-  )
+  );
 }
