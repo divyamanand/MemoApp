@@ -30,11 +30,7 @@ export const questionApi = createApi({
           page: 1,
           pageSize: 10,
         },
-        getNextPageParam: (
-          lastPage,
-          _allPages,
-          lastPageParam
-        ) => {
+        getNextPageParam: (lastPage, _allPages, lastPageParam) => {
           const nextPage = lastPageParam.page + 1;
           const remainingPages = lastPage.data?.metadata.total - nextPage;
 
@@ -45,13 +41,11 @@ export const questionApi = createApi({
             page: nextPage,
           };
         },
-        getPreviousPageParam: (
-          firstPage,
-          _allPages,
-          firstPageParam
-        ) => {
+        getPreviousPageParam: (firstPage, _allPages, firstPageParam) => {
           const prevPage = firstPageParam.page - 1;
-          return prevPage < 0 ? undefined : { ...firstPageParam, page: prevPage };
+          return prevPage < 0
+            ? undefined
+            : { ...firstPageParam, page: prevPage };
         },
       },
       query: ({ queryArg, pageParam: { page, pageSize } }) => ({
@@ -59,7 +53,7 @@ export const questionApi = createApi({
         method: 'GET',
       }),
       transformResponse: (
-        response: AxiosResponse
+        response: AxiosResponse,
       ): PaginatedApiResponse<ResponseQuestion> => handleApiResponse(response),
       keepUnusedDataFor: Infinity,
       providesTags: (result, _, arg) => {
@@ -67,13 +61,15 @@ export const questionApi = createApi({
 
         if (arg === 'revisions') {
           const revisionTags = pages.flatMap((page) =>
-            (page.data?.questions ?? []).flatMap(({ _id, upcomingRevisions }) => [
-              { type: 'Revisions' as const, id: _id },
-              ...(upcomingRevisions ?? []).map(({ _id: revisionId }) => ({
-                type: 'Revision' as const,
-                id: revisionId,
-              })),
-            ])
+            (page.data?.questions ?? []).flatMap(
+              ({ _id, upcomingRevisions }) => [
+                { type: 'Revisions' as const, id: _id },
+                ...(upcomingRevisions ?? []).map(({ _id: revisionId }) => ({
+                  type: 'Revision' as const,
+                  id: revisionId,
+                })),
+              ],
+            ),
           );
           return [{ type: 'Revisions', id: 'LIST' }, ...revisionTags];
         }
@@ -83,7 +79,7 @@ export const questionApi = createApi({
             (page.data?.questions ?? []).map(({ _id }) => ({
               type: 'Questions' as const,
               id: _id,
-            }))
+            })),
           );
           return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
         }
@@ -103,73 +99,110 @@ export const questionApi = createApi({
         const tempId = nanoid();
 
         const patchResult = dispatch(
-          questionApi.util.updateQueryData('getQuestions', "questions", (draft) => {
-            const lastPage = draft.pages[draft.pages.length - 1];
+          questionApi.util.updateQueryData(
+            'getQuestions',
+            'Questions',
+            (draft) => {
+              const lastPage = draft.pages[draft.pages.length - 1];
 
-            const optimisticQuestion: ResponseQuestion = {
-              ...arg,
-              _id: tempId,
-              upcomingRevisions: [],
-              formData: arg.formData ?? {},
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
+              const optimisticQuestion: ResponseQuestion = {
+                ...arg,
+                _id: tempId,
+                upcomingRevisions: [],
+                formData: arg.formData ?? {},
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                isPending: true,
+              };
 
-            if (lastPage?.data?.questions) {
-              lastPage.data.questions.push(optimisticQuestion);
-              lastPage.data.metadata.total += 1;
-            } else {
-              draft.pages.push({
-                data: {
-                  questions: [optimisticQuestion],
-                  metadata: {
-                    page: 1,
-                    pageSize: 10,
-                    total: 1,
+              if (lastPage?.data?.questions) {
+                lastPage.data.questions.push(optimisticQuestion);
+                lastPage.data.metadata.total += 1;
+              } else {
+                draft.pages.push({
+                  data: {
+                    questions: [optimisticQuestion],
+                    metadata: {
+                      page: 1,
+                      pageSize: 10,
+                      total: 1,
+                    },
                   },
-                },
-              });
-            }
-          })
+                });
+              }
+            },
+          ),
         );
 
         try {
           const { data: apiResponse } = await queryFulfilled;
-          const questionData = apiResponse.data
+          const questionData = apiResponse.data;
 
           dispatch(
-            questionApi.util.updateQueryData('getQuestions', "questions", (draft) => {
-              for (const page of draft.pages) {
-                const questionIndex = page.data?.questions?.findIndex(
-                  (q) => q._id === tempId
-                );
-                if (questionIndex !== undefined && questionIndex > -1 && page.data?.questions) {
-                  page.data.questions[questionIndex] = questionData;
-                  break;
+            questionApi.util.updateQueryData(
+              'getQuestions',
+              'Questions',
+              (draft) => {
+                for (const page of draft.pages) {
+                  const questionIndex = page.data?.questions?.findIndex(
+                    (q) => q._id === tempId,
+                  );
+                  if (
+                    questionIndex !== undefined &&
+                    questionIndex > -1 &&
+                    page.data?.questions
+                  ) {
+                    page.data.questions[questionIndex] = questionData;
+                    break;
+                  }
                 }
-              }
-            })
+              },
+            ),
           );
         } catch {
           patchResult.undo();
         }
       },
 
-      invalidatesTags: [{type: "Questions", id: "LIST"}],
+      invalidatesTags: [{ type: 'Questions', id: 'LIST' }],
     }),
 
-    // deleteQuestion: build.mutation({
-    //   query: (id) => ({
-    //     url: `api/v1/question/delete-question/${id}`,
-    //     method: 'DELETE',
-    //   }),
-    //   invalidatesTags: ['Questions'],
-    // }),
+    deleteQuestion: build.mutation<ApiResponse, string>({
+      query: (id) => ({
+        url: `api/v1/question/delete-question/${id}`,
+        method: 'DELETE',
+      }),
+
+      async onQueryStarted(questionId, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          questionApi.util.updateQueryData(
+            'getQuestions',
+            "Questions",
+            (draft) => {
+              draft.pages.forEach((page) => {
+                if (!page?.data?.questions) return;
+                page.data.questions = page.data.questions.filter(
+                  (q) => q._id !== questionId,
+                );
+              });
+            },
+          ),
+        );
+
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+
+      invalidatesTags: (result, error, id) => [{ type: 'Questions', id }],
+    }),
   }),
 });
 
 export const {
   useAddQuestionMutation,
   useGetQuestionsInfiniteQuery,
-  // useDeleteQuestionMutation,
+  useDeleteQuestionMutation,
 } = questionApi;

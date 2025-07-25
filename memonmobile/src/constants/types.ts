@@ -32,10 +32,11 @@ export type ResponseQuestion = {
   questionName: string;
   difficulty: string;
   tags?: string[];
-  formData?: any,
+  formData?: any;
   upcomingRevisions: Revision[];
   createdAt?: Date;
   updatedAt?: Date;
+  isPending: boolean;
 };
 
 export type PostQuestion = {
