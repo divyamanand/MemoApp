@@ -5,7 +5,7 @@ import { useGetQuestionsInfiniteQuery } from '../service/questionService';
 import { ErrorResponse } from '../constants/types';
 import { handleError } from '../service/errorService';
 import { useAppDispatch } from '../store/hooks';
-import { resetUser } from '../features/auth/authSlice';
+import { resetUser } from '../features/app/appSlice';
 
 const DashboardScreen = () => {
   const navigation = useNavigation();

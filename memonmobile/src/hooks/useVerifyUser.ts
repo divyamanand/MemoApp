@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch } from '@/src/store/hooks';
 import * as SecureStore from 'expo-secure-store';
 import { useGetUserDetailsQuery } from '../service/authService';
-import { resetUser, setCredentials } from '../features/auth/authSlice';
+import { resetUser, setCredentials } from '../features/app/appSlice';
 import { handleApiResponse } from '../service/responseService';
 
 export const useVerifyUser = () => {
