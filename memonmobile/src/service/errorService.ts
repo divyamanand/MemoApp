@@ -1,8 +1,21 @@
-import axios from 'axios';
+import { isAxiosError } from 'axios';
 import { ErrorResponse } from '../constants/types';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 export const handleError = (err: unknown): ErrorResponse => {
-  if (axios.isAxiosError(err)) {
+  if (isRtkQueryError(err)) {
+    const errorData = err.data as any;
+
+    return {
+      statusCode: typeof err.status === 'number' ? err.status : null,
+      message: errorData?.message ?? 'Something went wrong',
+      errors: errorData?.errors ?? [],
+      data: null,
+      success: false,
+    };
+  }
+
+  if (isAxiosError(err)) {
     const statusCode = err.response?.status;
     const data = err.response?.data;
 
@@ -18,6 +31,7 @@ export const handleError = (err: unknown): ErrorResponse => {
 
   if (err instanceof Error) {
     return {
+      statusCode: null,
       message: err.message,
       errors: [],
       data: null,
@@ -27,9 +41,16 @@ export const handleError = (err: unknown): ErrorResponse => {
   }
 
   return {
-    message: 'Something unexpected occurs. Retry after some time',
+    statusCode: null,
+    message: 'Something unexpected occurred. Please try again later.',
     errors: [],
     data: null,
     success: false,
   };
+};
+
+const isRtkQueryError = (err: unknown): err is FetchBaseQueryError => {
+  return (
+    typeof err === 'object' && err !== null && 'status' in err && 'data' in err
+  );
 };

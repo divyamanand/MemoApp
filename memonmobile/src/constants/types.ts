@@ -10,7 +10,7 @@ export type RootStackParamList = {
 };
 
 export type ErrorResponse = {
-  statusCode?: number;
+  statusCode?: number | null;
   message: string;
   errors?: any[];
   data?: null;
@@ -22,14 +22,32 @@ export type Revision = {
   _id: string;
   date: string;
   completed: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
-export type Question = {
+export type ResponseQuestion = {
   _id: string;
   userId: string;
+  questionName: string;
+  difficulty: string;
+  tags?: string[];
+  formData?: any,
   upcomingRevisions: Revision[];
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type PostQuestion = {
+  _id: string;
+  userId: string;
+  questionName: string;
+  difficulty: string;
+  tags?: string[];
+  revisions?: Revision[];
+  formData?: Record<string, any>;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 export type ApiResponse<T = any> = {

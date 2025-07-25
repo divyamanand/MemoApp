@@ -6,7 +6,14 @@ const router = Router()
 
 router.post("/add-question", verifyJWT, createQuestion)
 router.delete("/delete-question/:questionId", verifyJWT, deleteQuestion)
-router.get("/get-questions", verifyJWT, getAllQuestionsOfUser)
-router.get("/todays-revisions", verifyJWT, getTodaysRevisions)
+router.get("/questions", verifyJWT, (req, res) => {
+    const type = req.query.type
+
+    if (type === "revisions") {
+        return getTodaysRevisions(req, res)
+    } else if (type === "questions") {
+        return getAllQuestionsOfUser(req, res)
+    }
+})
 
 export default router
