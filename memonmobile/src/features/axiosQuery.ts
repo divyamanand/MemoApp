@@ -1,5 +1,5 @@
+import { api } from '@/src/service/api/api';
 import type { AxiosRequestConfig } from 'axios';
-import { api } from './api';
 
 interface AxiosBaseQueryArgs {
   url: string;
