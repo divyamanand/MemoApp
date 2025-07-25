@@ -4,7 +4,11 @@ import { questionApi } from '../questionApi';
 import { ApiResponse, PostQuestion, ResponseQuestion } from '../types';
 
 export const addQuestionEndpoint = (
-  build: EndpointBuilder<any, 'Questions' | 'Revisions' | 'Revision', 'questionApi'>,
+  build: EndpointBuilder<
+    any,
+    'Questions' | 'Revisions' | 'Revision',
+    'questionApi'
+  >,
 ) =>
   build.mutation<ApiResponse<ResponseQuestion>, PostQuestion>({
     query: (data) => ({

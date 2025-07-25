@@ -4,7 +4,6 @@ import { addQuestionEndpoint } from './endPoints/addQuestion';
 import { deleteQuestionEndpoint } from './endPoints/deleteQuestion';
 import { axiosBaseQuery } from '../../axiosQuery';
 
-
 export const questionApi = createApi({
   reducerPath: 'questionApi',
   baseQuery: axiosBaseQuery(),
@@ -18,6 +17,6 @@ export const questionApi = createApi({
 
 export const {
   useAddQuestionMutation,
-  useGetQuestionsInfiniteQuery, 
+  useGetQuestionsInfiniteQuery,
   useDeleteQuestionMutation,
 } = questionApi;

@@ -8,5 +8,5 @@ export const rootReducer = combineReducers({
   app: appReducer,
   questions: questionReducer,
   [authApi.reducerPath]: authApi.reducer,
-  [questionApi.reducerPath]: questionApi.reducer
-})
+  [questionApi.reducerPath]: questionApi.reducer,
+});

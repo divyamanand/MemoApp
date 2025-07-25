@@ -8,7 +8,11 @@ import {
 import { handleApiResponse } from '@/src/service/responseService';
 
 export const getQuestionsEndpoint = (
-  build: EndpointBuilder<any, 'Questions' | 'Revisions' | 'Revision', 'questionApi'>,
+  build: EndpointBuilder<
+    any,
+    'Questions' | 'Revisions' | 'Revision',
+    'questionApi'
+  >,
 ) =>
   build.infiniteQuery<
     PaginatedApiResponse<ResponseQuestion>,
@@ -33,9 +37,7 @@ export const getQuestionsEndpoint = (
       },
       getPreviousPageParam: (firstPage, _allPages, firstPageParam) => {
         const prevPage = firstPageParam.page - 1;
-        return prevPage < 0
-          ? undefined
-          : { ...firstPageParam, page: prevPage };
+        return prevPage < 0 ? undefined : { ...firstPageParam, page: prevPage };
       },
     },
     query: ({ queryArg, pageParam: { page, pageSize } }) => ({
@@ -51,15 +53,13 @@ export const getQuestionsEndpoint = (
 
       if (arg === 'revisions') {
         const revisionTags = pages.flatMap((page) =>
-          (page.data?.questions ?? []).flatMap(
-            ({ _id, upcomingRevisions }) => [
-              { type: 'Revisions' as const, id: _id },
-              ...(upcomingRevisions ?? []).map(({ _id: revisionId }) => ({
-                type: 'Revision' as const,
-                id: revisionId,
-              })),
-            ],
-          ),
+          (page.data?.questions ?? []).flatMap(({ _id, upcomingRevisions }) => [
+            { type: 'Revisions' as const, id: _id },
+            ...(upcomingRevisions ?? []).map(({ _id: revisionId }) => ({
+              type: 'Revision' as const,
+              id: revisionId,
+            })),
+          ]),
         );
         return [{ type: 'Revisions', id: 'LIST' }, ...revisionTags];
       }

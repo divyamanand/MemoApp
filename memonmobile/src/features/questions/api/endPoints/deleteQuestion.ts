@@ -3,7 +3,11 @@ import { questionApi } from '../questionApi'; // Import for dispatch in onQueryS
 import { ApiResponse } from '../types';
 
 export const deleteQuestionEndpoint = (
-  build: EndpointBuilder<any, 'Questions' | 'Revisions' | 'Revision', 'questionApi'>,
+  build: EndpointBuilder<
+    any,
+    'Questions' | 'Revisions' | 'Revision',
+    'questionApi'
+  >,
 ) =>
   build.mutation<ApiResponse, string>({
     query: (id) => ({
