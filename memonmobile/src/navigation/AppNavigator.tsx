@@ -7,17 +7,17 @@ import { RootStackParamList } from '@/src/constants/types';
 import { useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RevisionScreen from '../screens/questions/RevisionScreen';
-import QuestionScreen from '../screens/questions/QuestionScreen';
+import QuestionScreen from '../screens/questions/QuestionInfoScreen';
 import AboutScreen from '../screens/AboutScreen';
 import HelpScreen from '../screens/HelpScreen';
 import { useVerifyUser } from '../hooks/useVerifyUser';
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const { tokenValid } = useAppSelector((state) => state.auth);
+  const { tokenValid } = useAppSelector((state) => state.app);
   const userStatus = useVerifyUser();
 
-  if (!tokenValid || userStatus == 'loggedOut')
+  if (!tokenValid || userStatus === 'loggedOut')
     return (
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />

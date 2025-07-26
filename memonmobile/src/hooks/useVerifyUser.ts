@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch } from '@/src/store/hooks';
 import * as SecureStore from 'expo-secure-store';
-import { useGetUserDetailsQuery } from '../service/authService';
 import { resetUser, setCredentials } from '../features/app/appSlice';
 import { handleApiResponse } from '../service/responseService';
+import { useGetUserDetailsQuery } from '../features/auth/api/authService';
 
 export const useVerifyUser = () => {
   const [status, setStatus] = useState<'booting' | 'loggedOut' | 'loggedIn'>(
