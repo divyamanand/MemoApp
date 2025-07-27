@@ -1,30 +1,29 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/query';
-import { questionApi } from '../questionApi'; // Import for dispatch in onQueryStarted
+import { questionApi } from '../questionApi';
 import { ApiResponse } from '../types';
 
 export const deleteQuestionEndpoint = (
-  build: EndpointBuilder<
-    any,
-    'Questions' | 'Revisions' | 'Revision',
-    'questionApi'
-  >,
+  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse, string>({
     query: (id) => ({
-      url: `api/v1/question/delete-question/${id}`,
+      url: `/api/v1/delete-question/${id}`,
       method: 'DELETE',
     }),
-    async onQueryStarted(questionId, { dispatch, queryFulfilled }) {
-      const patchResult = dispatch(
+
+    async onQueryStarted(id, { dispatch, queryFulfilled }) {
+      // Optimistic update for both Questions and Revisions cache
+      const patchQuestions = dispatch(
         questionApi.util.updateQueryData(
           'getQuestions',
-          'Questions',
+          undefined,
           (draft) => {
             draft.pages.forEach((page) => {
-              if (!page?.data?.questions) return;
-              page.data.questions = page.data.questions.filter(
-                (q) => q._id !== questionId,
-              );
+              if (page?.data?.questions) {
+                page.data.questions = page.data.questions.filter(
+                  (q) => q._id !== id,
+                );
+              }
             });
           },
         ),
@@ -33,8 +32,12 @@ export const deleteQuestionEndpoint = (
       try {
         await queryFulfilled;
       } catch {
-        patchResult.undo();
+        patchQuestions.undo();
       }
     },
-    invalidatesTags: (result, error, id) => [{ type: 'Questions', id }],
+
+    invalidatesTags: (result, error, id) => [
+      { type: 'Questions', id: 'LIST' },
+      { type: 'Questions', id },
+    ],
   });

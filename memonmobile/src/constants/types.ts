@@ -20,7 +20,7 @@ export type ErrorResponse = {
 
 export type Revision = {
   _id: string;
-  date: string;
+  date: Date;
   completed: boolean;
   createdAt: Date;
   updatedAt: Date;

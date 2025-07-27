@@ -10,13 +10,13 @@ import { handleApiResponse } from '@/src/service/responseService';
 export const getQuestionsEndpoint = (
   build: EndpointBuilder<
     any,
-    'Questions' | 'Revisions' | 'Revision',
+    'Questions',
     'questionApi'
   >,
 ) =>
   build.infiniteQuery<
     PaginatedApiResponse<ResponseQuestion>,
-    string,
+    void,
     InitialPageParam
   >({
     infiniteQueryOptions: {
@@ -41,7 +41,7 @@ export const getQuestionsEndpoint = (
       },
     },
     query: ({ queryArg, pageParam: { page, pageSize } }) => ({
-      url: `/api/v1/questions?page=${page}&pageSize=${pageSize}&type=${queryArg}`,
+      url: `/api/v1/questions?page=${page}&pageSize=${pageSize}`,
       method: 'GET',
     }),
     transformResponse: (
@@ -50,30 +50,21 @@ export const getQuestionsEndpoint = (
     keepUnusedDataFor: Infinity,
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];
+      // const today = new Date().toDateString()
 
-      if (arg === 'Revisions') {
-        const revisionTags = pages.flatMap((page) =>
-          (page.data?.questions ?? []).flatMap(({ _id, upcomingRevisions }) => [
-            { type: 'Revisions' as const, id: _id },
-            ...(upcomingRevisions ?? []).map(({ _id: revisionId }) => ({
-              type: 'Revision' as const,
-              id: revisionId,
-            })),
-          ]),
-        );
-        return [{ type: 'Revisions', id: 'LIST' }, ...revisionTags];
-      }
+      const questionTags = pages.flatMap((page) =>
+        (page.data?.questions ?? []).map(({ _id }) => ({
+          type: 'Questions' as const,
+          id: _id,
+        }))
+      );
 
-      if (arg === 'Questions') {
-        const questionTags = pages.flatMap((page) =>
-          (page.data?.questions ?? []).map(({ _id }) => ({
-            type: 'Questions' as const,
-            id: _id,
-          })),
-        );
-        return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
-      }
+    //   const revisionQuestions = pages.flatMap((page) => 
+    //   (page.data?.questions ?? []).filter(({upcomingRevisions}) => 
+    //     upcomingRevisions && new Date(upcomingRevisions[0].date).toDateString() === today)
+    // )
 
-      return [];
+    //   const revisionTags  = revisionQuestions.length > 0? [{type: "Questions" as const, id: "TODAY"}] : [] 
+      return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
     },
   });

@@ -5,7 +5,7 @@ import { questionApi } from '../questionApi';
 export const updateRevisionEndPoint = (
   build: EndpointBuilder<
     any,
-    'Questions' | 'Revisions' | 'Revision',
+    'Questions',
     'questionApi'
   >,
 ) =>
@@ -21,7 +21,7 @@ export const updateRevisionEndPoint = (
       const patchResult = dispatch(
         questionApi.util.updateQueryData(
           'getQuestions',
-          'Revisions',
+          undefined,
           (draft) => {
             draft.pages.forEach((page) => {
               page.data.questions.forEach((question) => {
@@ -45,6 +45,6 @@ export const updateRevisionEndPoint = (
       }
     },
     invalidatesTags: (result, error, { questionId, revisionId }) => [
-      { type: 'Revision', id: revisionId },
+      { type: 'Questions', id: questionId },
     ],
   });

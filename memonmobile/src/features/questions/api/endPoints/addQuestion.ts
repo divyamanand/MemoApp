@@ -6,7 +6,7 @@ import { ApiResponse, PostQuestion, ResponseQuestion } from '../types';
 export const addQuestionEndpoint = (
   build: EndpointBuilder<
     any,
-    'Questions' | 'Revisions' | 'Revision',
+    'Questions',
     'questionApi'
   >,
 ) =>
@@ -22,7 +22,7 @@ export const addQuestionEndpoint = (
       const patchResult = dispatch(
         questionApi.util.updateQueryData(
           'getQuestions',
-          'Questions',
+          undefined,
           (draft) => {
             const lastPage = draft.pages[draft.pages.length - 1];
 
@@ -64,7 +64,7 @@ export const addQuestionEndpoint = (
         dispatch(
           questionApi.util.updateQueryData(
             'getQuestions',
-            'Questions',
+            undefined,
             (draft) => {
               for (const page of draft.pages) {
                 const questionIndex = page.data?.questions?.findIndex(
