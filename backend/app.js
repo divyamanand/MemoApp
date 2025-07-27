@@ -23,9 +23,11 @@ app.use(cookieParser())
 
 import userRouter from "./src/routes/user.routes.js"
 import questionRouter from "./src/routes/question.routes.js"
+import aiRouter from "./src/routes/ai.routes.js"
 
 //routes decalaration
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/question", questionRouter)
+app.use("/api/v1/ai", aiRouter)
 
 export {app}

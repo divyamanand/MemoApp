@@ -45,7 +45,6 @@ export const updateRevisionEndPoint = (
       }
     },
     invalidatesTags: (result, error, { questionId, revisionId }) => [
-      { type: 'Questions', id: questionId },
       { type: 'Revision', id: revisionId },
     ],
   });
