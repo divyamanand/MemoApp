@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ScrollView, Image, StyleSheet } from 'react-native';
 import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import AppHeader from '../components/AppHeader'; // From previous
-import ProgressCard from '../components/ProgressCard'; // New
-import StreakBanner from '../components/StreakBanner'; // New
-import Heatmap from '../components/HeatMap'; // New
-import LineChart from '../components/LineChart'; // From previous (placeholder)
-import PrimaryButton from '../components/PrimaryButton'; // From previous
-import SecondaryButton from '../components/SecondaryButton'; // From previous (adapted for tonal)
-import Quote from '../components/Quote'; // New
-import BottomNav from '../components/BottomNav'; // From previous
+import AppHeader from '../components/AppHeader';
+import ProgressCard from '../components/ProgressCard';
+import StreakBanner from '../components/StreakBanner';
+import Heatmap from '../components/HeatMap';
+import LineChart from '../components/LineChart';
+import PrimaryButton from '../components/PrimaryButton';
+import SecondaryButton from '../components/SecondaryButton';
+import Quote from '../components/Quote';
+import BottomNav from '../components/BottomNav';
 import IconButton from '../components/IconButton';
+import { useVerifyUser } from '../hooks/useVerifyUser';
+import { resetUser } from '../features/app/appSlice';
+import { useNavigation } from '@react-navigation/native';
+import { useAppSelector } from '../store/hooks';
 
 const DashboardScreen = () => {
   const { colors } = useTheme();
+  const navigator = useNavigation();
+  const { userInfo } = useAppSelector((state) => state.app);
 
-  // Sample data from HTML
   const heatmapData = [
     null,
     0.2,
@@ -49,10 +54,18 @@ const DashboardScreen = () => {
     0.2,
   ];
 
+  const userStatus = useVerifyUser();
+
+  useEffect(() => {
+    if (userStatus === 'loggedOut') {
+      resetUser();
+      navigator.navigate('Login');
+    }
+  }, [userStatus]);
+
   return (
     <PaperProvider>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {/* Header */}
         <AppHeader
           title=""
           actions={
@@ -89,7 +102,6 @@ const DashboardScreen = () => {
           </View>
         </View>
 
-        {/* Main Content */}
         <ScrollView contentContainerStyle={styles.mainContent}>
           <Text style={styles.sectionTitle}>Progress Overview</Text>
           <View style={styles.progressGrid}>
@@ -97,7 +109,10 @@ const DashboardScreen = () => {
             <ProgressCard label="Total Completed" value="1500" />
           </View>
 
-          <StreakBanner days={5} message="Keep the fire burning!" />
+          <StreakBanner
+            days={userInfo.streak}
+            message="Keep the fire burning!"
+          />
 
           <Heatmap month="October 2024" data={heatmapData} />
 
@@ -109,7 +124,6 @@ const DashboardScreen = () => {
               <Text style={styles.accuracyChange}>+8% vs last week</Text>
             </View>
             <LineChart data={[42, 72, 10, 92, 150, 1, 32, 82]} />{' '}
-            {/* Placeholder data from SVG path */}
           </View>
 
           <Text style={styles.sectionTitle}>Quick Access</Text>

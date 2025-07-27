@@ -1,23 +1,21 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import DashboardScreen from '../screens/DashboardScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import SettingsScreen from '../screens/settings/SettingsScreen';
 import { RootStackParamList } from '@/src/constants/types';
 import { useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
-import RevisionScreen from '../screens/questions/RevisionScreen';
 import QuestionScreen from '../screens/questions/QuestionInfoScreen';
 import AboutScreen from '../screens/AboutScreen';
 import HelpScreen from '../screens/HelpScreen';
-import { useVerifyUser } from '../hooks/useVerifyUser';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import PracticeScreen from '../screens/questions/PracticeScreen';
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
+  const Tab = createBottomTabNavigator();
   const { tokenValid } = useAppSelector((state) => state.app);
-  const userStatus = useVerifyUser();
 
-  if (!tokenValid || userStatus === 'loggedOut')
+  if (!tokenValid)
     return (
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} />
@@ -27,15 +25,11 @@ const AppNavigator = () => {
     );
 
   return (
-    <Stack.Navigator initialRouteName="Dashboard">
-      <Stack.Screen name="Dashboard" component={DashboardScreen} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
-      <Stack.Screen name="Revision" component={RevisionScreen} />
-      <Stack.Screen name="Question" component={QuestionScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
-      <Stack.Screen name="Help" component={HelpScreen} />
-    </Stack.Navigator>
+    <Tab.Navigator initialRouteName="Dashboard">
+      <Tab.Screen name="Dashboard" component={DashboardScreen} />
+      <Tab.Screen name="Practice" component={PracticeScreen} />
+      <Tab.Screen name="Question" component={QuestionScreen} />
+    </Tab.Navigator>
   );
 };
 

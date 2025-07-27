@@ -4,10 +4,29 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
 import PrimaryButton from '../../components/PrimaryButton';
 import Divider from '../../components/Divider';
+import { useAppDispatch } from '@/src/store/hooks';
+import { loginUser } from '@/src/features/auth/authActions';
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      await dispatch(loginUser({ email, password }));
+      navigation.navigate('Dashboard');
+    } catch (error) {
+      console.log('login Failed', error);
+      // raise toast
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <PaperProvider>
@@ -28,9 +47,9 @@ const LoginScreen = () => {
           secureTextEntry
           leftIcon="lock"
           rightIcon="eye"
-          onRightIconPress={() => {} /* Toggle visibility */}
+          onRightIconPress={() => {}}
         />
-        <PrimaryButton label="Login" onPress={() => {}} />
+        <PrimaryButton label="Login" onPress={handleLogin} />
         <Divider />
         <Text
           style={{ textAlign: 'center' }}

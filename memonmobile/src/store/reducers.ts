@@ -4,9 +4,18 @@ import questionReducer from '@/src/features/questions/questionSlice';
 import { authApi } from '../features/auth/api/authService';
 import { questionApi } from '../features/questions/api/questionApi';
 
-export const rootReducer = combineReducers({
+const appReducerCombined = combineReducers({
   app: appReducer,
   questions: questionReducer,
   [authApi.reducerPath]: authApi.reducer,
   [questionApi.reducerPath]: questionApi.reducer,
 });
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'RESET') {
+    state = undefined;
+  }
+  return appReducerCombined(state, action);
+};
+
+export default rootReducer;

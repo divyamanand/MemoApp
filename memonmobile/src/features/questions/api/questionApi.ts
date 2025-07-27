@@ -3,6 +3,8 @@ import { getQuestionsEndpoint } from './endPoints/getQuestions';
 import { addQuestionEndpoint } from './endPoints/addQuestion';
 import { deleteQuestionEndpoint } from './endPoints/deleteQuestion';
 import { axiosBaseQuery } from '../../axiosQuery';
+import { updateRevisionEndPoint } from './endPoints/updateRevision';
+import { updateQuestionEndPoint } from './endPoints/updateQuestion';
 
 export const questionApi = createApi({
   reducerPath: 'questionApi',
@@ -12,6 +14,8 @@ export const questionApi = createApi({
     getQuestions: getQuestionsEndpoint(build),
     addQuestion: addQuestionEndpoint(build),
     deleteQuestion: deleteQuestionEndpoint(build),
+    updateRevision: updateRevisionEndPoint(build),
+    updateQuestion: updateQuestionEndPoint(build),
   }),
 });
 

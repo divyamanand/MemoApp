@@ -9,12 +9,13 @@ interface UserInfo {
   [key: string]: any;
 }
 
-interface AuthState {
+interface AppState {
   userInfo: UserInfo;
   tokenValid: boolean;
+  streak: number;
 }
 
-const initialState: AuthState = {
+const initialState: AppState = {
   userInfo: {},
   tokenValid: false,
 };
@@ -35,7 +36,7 @@ const appSlice = createSlice({
       .addMatcher(
         isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
         (state, action: PayloadAction<any>) => {
-          state.userInfo = action.payload.user;
+          state.userInfo = action.payload;
           state.tokenValid = true;
         },
       );

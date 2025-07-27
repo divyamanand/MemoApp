@@ -3,7 +3,7 @@ import { authApi } from '../features/auth/api/authService';
 import { questionApi } from '../features/questions/api/questionApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer } from 'redux-persist';
-import { rootReducer } from './reducers';
+import rootReducer from './reducers';
 import persistStore from 'redux-persist/es/persistStore';
 
 const persistConfig = {
@@ -24,6 +24,12 @@ const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+
+export const resetApp = () => {
+  store.dispatch({ type: 'RESET' });
+  persistor.purge();
+};
+
 export default store;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

@@ -30,7 +30,7 @@ export type ResponseQuestion = {
   _id: string;
   userId: string;
   questionName: string;
-  difficulty: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   tags?: string[];
   formData?: any;
   upcomingRevisions: Revision[];
@@ -43,7 +43,7 @@ export type PostQuestion = {
   _id: string;
   userId: string;
   questionName: string;
-  difficulty: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   tags?: string[];
   revisions?: Revision[];
   formData?: Record<string, any>;

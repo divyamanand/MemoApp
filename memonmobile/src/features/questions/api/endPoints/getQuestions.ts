@@ -51,7 +51,7 @@ export const getQuestionsEndpoint = (
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];
 
-      if (arg === 'revisions') {
+      if (arg === 'Revisions') {
         const revisionTags = pages.flatMap((page) =>
           (page.data?.questions ?? []).flatMap(({ _id, upcomingRevisions }) => [
             { type: 'Revisions' as const, id: _id },
@@ -64,7 +64,7 @@ export const getQuestionsEndpoint = (
         return [{ type: 'Revisions', id: 'LIST' }, ...revisionTags];
       }
 
-      if (arg === 'questions') {
+      if (arg === 'Questions') {
         const questionTags = pages.flatMap((page) =>
           (page.data?.questions ?? []).map(({ _id }) => ({
             type: 'Questions' as const,

@@ -36,7 +36,7 @@ export const useVerifyUser = () => {
     };
 
     manageUser();
-  }, [data, isError, isFetching, isSuccess]);
+  }, [data, isError, isFetching, isSuccess, dispatch]);
 
   return status;
 };
