@@ -8,11 +8,7 @@ import {
 import { handleApiResponse } from '@/src/service/responseService';
 
 export const getQuestionsEndpoint = (
-  build: EndpointBuilder<
-    any,
-    'Questions',
-    'questionApi'
-  >,
+  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
 ) =>
   build.infiniteQuery<
     PaginatedApiResponse<ResponseQuestion>,
@@ -56,15 +52,15 @@ export const getQuestionsEndpoint = (
         (page.data?.questions ?? []).map(({ _id }) => ({
           type: 'Questions' as const,
           id: _id,
-        }))
+        })),
       );
 
-    //   const revisionQuestions = pages.flatMap((page) => 
-    //   (page.data?.questions ?? []).filter(({upcomingRevisions}) => 
-    //     upcomingRevisions && new Date(upcomingRevisions[0].date).toDateString() === today)
-    // )
+      //   const revisionQuestions = pages.flatMap((page) =>
+      //   (page.data?.questions ?? []).filter(({upcomingRevisions}) =>
+      //     upcomingRevisions && new Date(upcomingRevisions[0].date).toDateString() === today)
+      // )
 
-    //   const revisionTags  = revisionQuestions.length > 0? [{type: "Questions" as const, id: "TODAY"}] : [] 
+      //   const revisionTags  = revisionQuestions.length > 0? [{type: "Questions" as const, id: "TODAY"}] : []
       return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
     },
   });

@@ -3,11 +3,7 @@ import { ApiResponse } from '../types';
 import { questionApi } from '../questionApi';
 
 export const updateRevisionEndPoint = (
-  build: EndpointBuilder<
-    any,
-    'Questions',
-    'questionApi'
-  >,
+  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse, { questionId: string; revisionId: string }>({
     query: ({ questionId, revisionId }) => ({
@@ -19,23 +15,19 @@ export const updateRevisionEndPoint = (
       { dispatch, queryFulfilled },
     ) {
       const patchResult = dispatch(
-        questionApi.util.updateQueryData(
-          'getQuestions',
-          undefined,
-          (draft) => {
-            draft.pages.forEach((page) => {
-              page.data.questions.forEach((question) => {
-                if (question._id === questionId) {
-                  question.upcomingRevisions.forEach((rev) => {
-                    if (rev._id === revisionId) {
-                      rev.completed = !rev.completed;
-                    }
-                  });
-                }
-              });
+        questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
+          draft.pages.forEach((page) => {
+            page.data.questions.forEach((question) => {
+              if (question._id === questionId) {
+                question.upcomingRevisions.forEach((rev) => {
+                  if (rev._id === revisionId) {
+                    rev.completed = !rev.completed;
+                  }
+                });
+              }
             });
-          },
-        ),
+          });
+        }),
       );
 
       try {

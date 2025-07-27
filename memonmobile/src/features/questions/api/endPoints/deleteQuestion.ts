@@ -14,19 +14,15 @@ export const deleteQuestionEndpoint = (
     async onQueryStarted(id, { dispatch, queryFulfilled }) {
       // Optimistic update for both Questions and Revisions cache
       const patchQuestions = dispatch(
-        questionApi.util.updateQueryData(
-          'getQuestions',
-          undefined,
-          (draft) => {
-            draft.pages.forEach((page) => {
-              if (page?.data?.questions) {
-                page.data.questions = page.data.questions.filter(
-                  (q) => q._id !== id,
-                );
-              }
-            });
-          },
-        ),
+        questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
+          draft.pages.forEach((page) => {
+            if (page?.data?.questions) {
+              page.data.questions = page.data.questions.filter(
+                (q) => q._id !== id,
+              );
+            }
+          });
+        }),
       );
 
       try {

@@ -4,11 +4,7 @@ import { questionApi } from '../questionApi';
 import { ApiResponse, PostQuestion, ResponseQuestion } from '../types';
 
 export const addQuestionEndpoint = (
-  build: EndpointBuilder<
-    any,
-    'Questions',
-    'questionApi'
-  >,
+  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse<ResponseQuestion>, PostQuestion>({
     query: (data) => ({
@@ -20,41 +16,37 @@ export const addQuestionEndpoint = (
       const tempId = nanoid();
 
       const patchResult = dispatch(
-        questionApi.util.updateQueryData(
-          'getQuestions',
-          undefined,
-          (draft) => {
-            const lastPage = draft.pages[draft.pages.length - 1];
+        questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
+          const lastPage = draft.pages[draft.pages.length - 1];
 
-            const optimisticQuestion: ResponseQuestion = {
-              ...arg,
-              _id: tempId,
-              upcomingRevisions: [],
-              formData: arg.formData ?? {},
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              isPending: true,
-            };
+          const optimisticQuestion: ResponseQuestion = {
+            ...arg,
+            _id: tempId,
+            upcomingRevisions: [],
+            formData: arg.formData ?? {},
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            isPending: true,
+          };
 
-            if (lastPage?.data?.questions) {
-              lastPage.data.questions.push(optimisticQuestion);
-              if (lastPage.data.metadata) {
-                lastPage.data.metadata.total += 1;
-              }
-            } else {
-              draft.pages.push({
-                data: {
-                  questions: [optimisticQuestion],
-                  metadata: {
-                    page: 1,
-                    pageSize: 10,
-                    total: 1,
-                  },
-                },
-              });
+          if (lastPage?.data?.questions) {
+            lastPage.data.questions.push(optimisticQuestion);
+            if (lastPage.data.metadata) {
+              lastPage.data.metadata.total += 1;
             }
-          },
-        ),
+          } else {
+            draft.pages.push({
+              data: {
+                questions: [optimisticQuestion],
+                metadata: {
+                  page: 1,
+                  pageSize: 10,
+                  total: 1,
+                },
+              },
+            });
+          }
+        }),
       );
 
       try {

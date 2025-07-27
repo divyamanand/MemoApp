@@ -24,5 +24,5 @@ export const {
   useGetQuestionsInfiniteQuery,
   useDeleteQuestionMutation,
   useUpdateQuestionMutation,
-  useUpdateRevisionMutation
+  useUpdateRevisionMutation,
 } = questionApi;
