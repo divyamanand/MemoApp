@@ -9,7 +9,7 @@ import { updateQuestionEndPoint } from './endPoints/updateQuestion';
 export const questionApi = createApi({
   reducerPath: 'questionApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Questions'],
+  tagTypes: ['Questions', 'Revisions'],
   endpoints: (build) => ({
     getQuestions: getQuestionsEndpoint(build),
     addQuestion: addQuestionEndpoint(build),

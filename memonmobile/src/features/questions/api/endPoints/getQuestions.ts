@@ -8,11 +8,11 @@ import {
 import { handleApiResponse } from '@/src/service/responseService';
 
 export const getQuestionsEndpoint = (
-  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
+  build: EndpointBuilder<any, 'Questions' | "Revisions", 'questionApi'>,
 ) =>
   build.infiniteQuery<
     PaginatedApiResponse<ResponseQuestion>,
-    void,
+    {type: "Questions" | "Revisions"},
     InitialPageParam
   >({
     infiniteQueryOptions: {
@@ -37,7 +37,7 @@ export const getQuestionsEndpoint = (
       },
     },
     query: ({ queryArg, pageParam: { page, pageSize } }) => ({
-      url: `/api/v1/questions?page=${page}&pageSize=${pageSize}`,
+      url: `/api/v1/questions?page=${page}&pageSize=${pageSize}&type=${queryArg.type}`,
       method: 'GET',
     }),
     transformResponse: (
@@ -46,21 +46,30 @@ export const getQuestionsEndpoint = (
     keepUnusedDataFor: Infinity,
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];
-      // const today = new Date().toDateString()
 
-      const questionTags = pages.flatMap((page) =>
-        (page.data?.questions ?? []).map(({ _id }) => ({
-          type: 'Questions' as const,
-          id: _id,
-        })),
-      );
+      if (arg.type === "Questions") {
+          const questionTags = pages.flatMap((page) =>
+          (page.data?.questions ?? []).map(({ _id }) => ({
+            type: 'Questions' as const,
+            id: _id,
+          })),
+        );
+        return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
+      }
+      
 
-      //   const revisionQuestions = pages.flatMap((page) =>
-      //   (page.data?.questions ?? []).filter(({upcomingRevisions}) =>
-      //     upcomingRevisions && new Date(upcomingRevisions[0].date).toDateString() === today)
-      // )
+      if (arg.type === "Revisions") {
+          const questionTags = pages.flatMap((page) =>
+          (page.data?.questions ?? []).map(({ _id }) => ({
+            type: 'Revisions' as const,
+            id: _id,
+          })),
+        );
+        return [{ type: 'Revisions', id: 'LIST' }, ...questionTags];
+      }
+      
 
-      //   const revisionTags  = revisionQuestions.length > 0? [{type: "Questions" as const, id: "TODAY"}] : []
-      return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
+      return []
+
     },
   });

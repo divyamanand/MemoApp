@@ -120,53 +120,53 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
 });
 
 
-// export const getTodaysRevisions = asyncHandler(async (req, res) => {
-//   let page = parseInt(req.query.page, 10) || 1;
-//   let pageSize = parseInt(req.query.pageSize, 10) || 50;
+export const getTodaysRevisions = asyncHandler(async (req, res) => {
+  let page = parseInt(req.query.page, 10) || 1;
+  let pageSize = parseInt(req.query.pageSize, 10) || 50;
 
-//   const today = new Date();
-//   today.setUTCHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
 
-//   const result = await Question.aggregate([
-//     { $match: { userId: req.user._id } },
-//     {
-//       $addFields: {
-//         upcomingRevisions: {
-//           $slice: [
-//             {
-//               $filter: {
-//                 input: "$revisions",
-//                 as: "rev",
-//                 cond: { $gte: ["$$rev.date", today] }
-//               }
-//             },
-//             3
-//           ]
-//         }
-//       }
-//     },
-//     { $match: { "upcomingRevisions.0": { $exists: true } } },
-//     { $project: { revisions: 0 } },
-//     {
-//       $facet: {
-//         metadata: [{ $count: "total" }],
-//         data: [
-//           { $skip: (page - 1) * pageSize },
-//           { $limit: pageSize }
-//         ]
-//       }
-//     }
-//   ]);
+  const result = await Question.aggregate([
+    { $match: { userId: req.user._id } },
+    {
+      $addFields: {
+        upcomingRevisions: {
+          $slice: [
+            {
+              $filter: {
+                input: "$revisions",
+                as: "rev",
+                cond: { $gte: ["$$rev.date", today] }
+              }
+            },
+            3
+          ]
+        }
+      }
+    },
+    { $match: { "upcomingRevisions.0": { $exists: true } } },
+    { $project: { revisions: 0 } },
+    {
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [
+          { $skip: (page - 1) * pageSize },
+          { $limit: pageSize }
+        ]
+      }
+    }
+  ]);
 
-//   const total = result[0].metadata[0]?.total || 0;
+  const total = result[0].metadata[0]?.total || 0;
 
-//   return res
-//     .status(200)
-//     .json(
-//       new ApiResponse(
-//         200,
-//         { metadata: { total, page, pageSize }, questions: result[0].data },
-//         "Upcoming revisions fetched"
-//       )
-//     );
-// });
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { metadata: { total, page, pageSize }, questions: result[0].data },
+        "Upcoming revisions fetched"
+      )
+    );
+});

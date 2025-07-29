@@ -2,37 +2,53 @@ import { EndpointBuilder } from '@reduxjs/toolkit/query';
 import { ApiResponse } from '../types';
 import { questionApi } from '../questionApi';
 
+const wasQuestionUpdated = (draft: any, _id: string, data: object): boolean => {
+  let updated = false;
+  draft.pages?.forEach((page: any) => {
+    page.data?.questions?.forEach((q: any) => {
+      if (q._id === _id) {
+        Object.assign(q, data);
+        updated = true;
+      }
+    });
+  });
+  return updated;
+};
+
 export const updateQuestionEndPoint = (
-  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
+  build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse, { _id: string; data: object }>({
-    query: (body) => ({
-      url: `api/v1/question/update-question/${body._id}`,
+    query: ({ _id, data }) => ({
+      url: `api/v1/question/update-question/${_id}`,
       method: 'PATCH',
-      body: body.data,
+      body: data,
     }),
 
     async onQueryStarted({ _id, data }, { dispatch, queryFulfilled }) {
-      const patchResult = dispatch(
-        questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
-          draft.pages?.forEach((page) => {
-            page.data?.questions.forEach((q) => {
-              if (q._id === _id) {
-                Object.assign(q, data);
-              }
-            });
-          });
-        }),
-      );
+      const updatedTypes: {type: "Questions" | "Revisions", id: string}[] = [];
+
+      const patch = (type: 'Questions' | 'Revisions') =>
+        dispatch(
+          questionApi.util.updateQueryData('getQuestions', { type }, (draft: any) => {
+            if (wasQuestionUpdated(draft, _id, data)) {
+              updatedTypes.push({type, id:_id});
+            }
+          })
+        );
+
+      const patches = [patch('Questions'), patch('Revisions')];
 
       try {
         await queryFulfilled;
+
+        updatedTypes.forEach(({type, id}) => {
+          dispatch(
+            questionApi.util.invalidateTags([{ type, id}])
+          );
+        });
       } catch {
-        patchResult.undo();
+        patches.forEach((p) => p.undo());
       }
     },
-
-    invalidatesTags: (result, error, { _id }) => [
-      { type: 'Questions', id: _id },
-    ],
   });

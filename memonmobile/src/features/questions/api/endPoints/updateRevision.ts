@@ -3,7 +3,7 @@ import { ApiResponse } from '../types';
 import { questionApi } from '../questionApi';
 
 export const updateRevisionEndPoint = (
-  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
+  build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse, { questionId: string; revisionId: string }>({
     query: ({ questionId, revisionId }) => ({
@@ -15,7 +15,7 @@ export const updateRevisionEndPoint = (
       { dispatch, queryFulfilled },
     ) {
       const patchResult = dispatch(
-        questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
+        questionApi.util.updateQueryData('getQuestions', {type: "Revisions"}, (draft) => {
           draft.pages.forEach((page) => {
             page.data.questions.forEach((question) => {
               if (question._id === questionId) {
@@ -37,6 +37,6 @@ export const updateRevisionEndPoint = (
       }
     },
     invalidatesTags: (result, error, { questionId, revisionId }) => [
-      { type: 'Questions', id: questionId },
+      { type: 'Revisions', id: questionId },
     ],
   });

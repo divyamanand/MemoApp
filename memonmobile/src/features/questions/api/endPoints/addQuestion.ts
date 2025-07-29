@@ -4,7 +4,7 @@ import { questionApi } from '../questionApi';
 import { ApiResponse, PostQuestion, ResponseQuestion } from '../types';
 
 export const addQuestionEndpoint = (
-  build: EndpointBuilder<any, 'Questions', 'questionApi'>,
+  build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse<ResponseQuestion>, PostQuestion>({
     query: (data) => ({
@@ -16,7 +16,7 @@ export const addQuestionEndpoint = (
       const tempId = nanoid();
 
       const patchResult = dispatch(
-        questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
+        questionApi.util.updateQueryData('getQuestions', {type: "Questions"}, (draft) => {
           const lastPage = draft.pages[draft.pages.length - 1];
 
           const optimisticQuestion: ResponseQuestion = {
@@ -56,7 +56,7 @@ export const addQuestionEndpoint = (
         dispatch(
           questionApi.util.updateQueryData(
             'getQuestions',
-            undefined,
+            {type: "Questions"},
             (draft) => {
               for (const page of draft.pages) {
                 const questionIndex = page.data?.questions?.findIndex(
