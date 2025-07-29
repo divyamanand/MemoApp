@@ -63,10 +63,9 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
 })
 
 export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
-  let { page, pageSize } = req.query;
-
-  page = parseInt(page, 10) || 1;
-  pageSize = parseInt(pageSize, 10) || 10;
+  let { page = '1', pageSize = '10' } = req.query;
+  const pageNum = Math.max(parseInt(page, 10), 1);
+  const sizeNum = Math.max(parseInt(pageSize, 10), 1);
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
@@ -79,9 +78,9 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
           $slice: [
             {
               $filter: {
-                input: "$revisions",
-                as: "rev",
-                cond: { $gte: ["$$rev.date", today] }
+                input: '$revisions',
+                as: 'rev',
+                cond: { $gte: ['$$rev.date', today] }
               }
             },
             3
@@ -90,16 +89,22 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
       }
     },
     {
-      $project: {
-        revisions: 0 // exclude full revisions array
+      $match: {
+        $expr: {
+          $ne: [
+            { $dateToString: { format: '%Y-%m-%d', date: { $arrayElemAt: ['$upcomingRevisions.date', 0] } } },
+            { $dateToString: { format: '%Y-%m-%d', date: today } }
+          ]
+        }
       }
     },
+    { $project: { revisions: 0 } },
     {
       $facet: {
-        metadata: [{ $count: "totalQuestions" }],
+        metadata: [{ $count: 'totalQuestions' }],
         data: [
-          { $skip: (page - 1) * pageSize },
-          { $limit: pageSize }
+          { $skip: (pageNum - 1) * sizeNum },
+          { $limit: sizeNum }
         ]
       }
     }
@@ -111,14 +116,13 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
-        metadata: { totalQuestions, page, pageSize },
+        metadata: { totalQuestions, page: pageNum, pageSize: sizeNum },
         questions: questions[0].data
       },
-      "Questions Fetched for Current User With Upcoming Revisions"
+      "Questions fetched for current user, excluding those with today's next revision"
     )
   );
 });
-
 
 export const getTodaysRevisions = asyncHandler(async (req, res) => {
   let page = parseInt(req.query.page, 10) || 1;
@@ -135,9 +139,9 @@ export const getTodaysRevisions = asyncHandler(async (req, res) => {
           $slice: [
             {
               $filter: {
-                input: "$revisions",
-                as: "rev",
-                cond: { $gte: ["$$rev.date", today] }
+                input: '$revisions',
+                as: 'rev',
+                cond: { $gte: ['$$rev.date', today] }
               }
             },
             3
@@ -145,11 +149,11 @@ export const getTodaysRevisions = asyncHandler(async (req, res) => {
         }
       }
     },
-    { $match: { "upcomingRevisions.0": { $exists: true } } },
+    { $match: { 'upcomingRevisions.0': { $exists: true } } },
     { $project: { revisions: 0 } },
     {
       $facet: {
-        metadata: [{ $count: "total" }],
+        metadata: [{ $count: 'total' }],
         data: [
           { $skip: (page - 1) * pageSize },
           { $limit: pageSize }
