@@ -12,8 +12,8 @@ import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
 // import BottomNav from '../components/BottomNav';
 // import IconButton from '../components/IconButton';
 import { useVerifyUser } from '../hooks/useVerifyUser';
-import { resetUser } from '../features/app/appSlice';
 import { useAppSelector } from '../store/hooks';
+import { handleReset } from '../service/resetService';
 
 const DashboardScreen = () => {
   const { colors } = useTheme();
@@ -23,7 +23,7 @@ const DashboardScreen = () => {
 
   useEffect(() => {
     if (userStatus === 'loggedOut') {
-      resetUser();
+      handleReset();
     }
   }, [userStatus]);
 

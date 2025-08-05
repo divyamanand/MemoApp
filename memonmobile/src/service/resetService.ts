@@ -1,7 +1,7 @@
-import { ErrorResponse } from '../constants/types';
+
 import { resetApp } from '../store/store';
 
-export const handleReset = async (err: ErrorResponse) => {
+export const handleReset = async () => {
   try {
     await resetApp();
   } catch (err) {

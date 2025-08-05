@@ -4,7 +4,6 @@ import DashboardScreen from '../screens/DashboardScreen';
 import { RootStackParamList } from '@/src/constants/types';
 import { useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
-import QuestionScreen from '../screens/questions/QuestionInfoScreen';
 import AboutScreen from '../screens/AboutScreen';
 import HelpScreen from '../screens/HelpScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';

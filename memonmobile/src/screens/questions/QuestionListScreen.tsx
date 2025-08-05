@@ -16,7 +16,7 @@ const QuestionsListScreen = () => {
       const formattedError = handleError(error);
 
       if (formattedError.statusCode === 403) {
-        handleReset(formattedError);
+        handleReset();
       }
     }
   }, [error, isError]);
