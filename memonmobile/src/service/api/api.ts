@@ -29,7 +29,7 @@ api.interceptors.response.use(
       _retry?: boolean;
     };
     const statusCode = error.response?.status || 500;
-
+    console.error(error)
     if (statusCode === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {

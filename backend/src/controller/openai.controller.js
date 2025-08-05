@@ -1,6 +1,6 @@
 import { OpenAI } from "openai/client.js";
-import { ApiResponse } from "../utils/ApiResponse";
-import { asyncHandler } from "../utils/AsyncHandler";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/AsyncHandler.js";
 
 export const generateQuestions = asyncHandler(async (req, res) => {
     const client = new OpenAI({

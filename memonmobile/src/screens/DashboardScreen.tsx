@@ -8,7 +8,6 @@ import StreakBanner from '../components/StreakBanner';
 import Heatmap from '../components/HeatMap';
 import LineChart from '../components/LineChart';
 import PrimaryButton from '../components/PrimaryButton';
-import SecondaryButton from '../components/SecondaryButton';
 import Quote from '../components/Quote';
 import BottomNav from '../components/BottomNav';
 import IconButton from '../components/IconButton';
@@ -22,51 +21,19 @@ const DashboardScreen = () => {
   const navigator = useNavigation();
   const { userInfo } = useAppSelector((state) => state.app);
 
-  const heatmapData = [
-    null,
-    0.2,
-    0.4,
-    0.6,
-    0.8,
-    1,
-    null,
-    0.2,
-    0.2,
-    0.4,
-    0.6,
-    0.4,
-    1,
-    null,
-    0.6,
-    null,
-    0.2,
-    null,
-    0.4,
-    0.8,
-    null,
-    0.2,
-    0.6,
-    null,
-    0.2,
-    null,
-    0.4,
-    null,
-    0.2,
-  ];
+  // const userStatus = useVerifyUser();
 
-  const userStatus = useVerifyUser();
-
-  useEffect(() => {
-    if (userStatus === 'loggedOut') {
-      resetUser();
-      navigator.navigate('Login');
-    }
-  }, [userStatus]);
+  // useEffect(() => {
+  //   if (userStatus === 'loggedOut') {
+  //     resetUser();
+  //     navigator.navigate('Login');
+  //   }
+  // }, [userStatus]);
 
   return (
     <PaperProvider>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <AppHeader
+        {/* <AppHeader
           title=""
           actions={
             <>
@@ -88,7 +55,7 @@ const DashboardScreen = () => {
               />
             </>
           }
-        />
+        /> */}
         <View style={styles.welcome}>
           <Image
             source={{
@@ -97,16 +64,16 @@ const DashboardScreen = () => {
             style={styles.avatar}
           />
           <View>
-            <Text style={styles.welcomeTitle}>Welcome, Sophia!</Text>
+            <Text style={styles.welcomeTitle}>{userInfo.name}</Text>
             <Text style={styles.welcomeSubtitle}>{`Let's get learning.`}</Text>
           </View>
         </View>
 
         <ScrollView contentContainerStyle={styles.mainContent}>
-          <Text style={styles.sectionTitle}>Progress Overview</Text>
+          {/* <Text style={styles.sectionTitle}>Progress Overview</Text>
           <View style={styles.progressGrid}>
-            <ProgressCard label="Completed Today" value="25" />
-            <ProgressCard label="Total Completed" value="1500" />
+            <ProgressCard label="Completed Today" value={userInfo.completedToday} />
+            <ProgressCard label="Total Completed" value={userInfo.totalCompleted} />
           </View>
 
           <StreakBanner
@@ -114,7 +81,7 @@ const DashboardScreen = () => {
             message="Keep the fire burning!"
           />
 
-          <Heatmap month="October 2024" data={heatmapData} />
+          <Heatmap month="October 2024" data={userInfo.heatmapData} />
 
           <Text style={styles.sectionTitle}>Performance Insights</Text>
           <View style={styles.accuracyCard}>
@@ -127,17 +94,15 @@ const DashboardScreen = () => {
           </View>
 
           <Text style={styles.sectionTitle}>Quick Access</Text>
-          <PrimaryButton label="Continue Revision" onPress={() => {}} />
-          <SecondaryButton label="Personalized Questions" onPress={() => {}} />
-          <SecondaryButton label="Upcoming Revision" onPress={() => {}} />
+          <PrimaryButton label="Continue Revision" onPress={() => {}} /> */}
+          {/* <SecondaryButton label="Personalized Questions" onPress={() => {}} /> */}
+          {/* <SecondaryButton label="Upcoming Revision" onPress={() => {}} /> */}
 
-          <Quote
+          {/* <Quote
             text="The beautiful thing about learning is that no one can take it away from you."
             author="B.B. King"
-          />
+          /> */}
         </ScrollView>
-
-        <BottomNav activeRoute="dashboard" onNavigate={() => {}} />
       </View>
     </PaperProvider>
   );

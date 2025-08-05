@@ -5,14 +5,14 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 interface ContentCardProps {
   title: string;
-  content: React.ReactNode;
+  content?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   completed: boolean;
 }
 
 const ContentCard: React.FC<ContentCardProps> = ({
   title,
-  content,
+  // content,
   style,
   completed,
 }) => (
@@ -25,7 +25,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
         ) : null
       }
     />
-    <Card.Content>{content}</Card.Content>
+    {/* <Card.Content>{content}</Card.Content> */}
   </Card>
 );
 

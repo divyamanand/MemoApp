@@ -9,6 +9,7 @@ import AboutScreen from '../screens/AboutScreen';
 import HelpScreen from '../screens/HelpScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import PracticeScreen from '../screens/questions/PracticeScreen';
+import QuestionsListScreen from '../screens/questions/QuestionListScreen';
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,7 +29,7 @@ const AppNavigator = () => {
     <Tab.Navigator initialRouteName="Dashboard">
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Practice" component={PracticeScreen} />
-      <Tab.Screen name="Question" component={QuestionScreen} />
+      <Tab.Screen name="Question" component={QuestionsListScreen} />
     </Tab.Navigator>
   );
 };

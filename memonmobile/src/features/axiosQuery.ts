@@ -10,18 +10,20 @@ interface AxiosBaseQueryArgs {
 }
 
 export const axiosBaseQuery =
-  ({ baseURL = process.env.EXPO_PUBLIC_SERVER } = {}) =>
+  () =>
   async ({ url, method, data, params, headers }: AxiosBaseQueryArgs) => {
     try {
       const result = await api({
-        url: baseURL + url,
+        url,
         method,
         data,
         params,
         headers,
       });
+      // console.log(url, method, data, params, headers)r
       return { data: result.data };
     } catch (error: any) {
+      console.log(error)
       return {
         error: {
           status: error.response?.status,

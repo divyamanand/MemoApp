@@ -12,7 +12,6 @@ interface UserInfo {
 interface AppState {
   userInfo: UserInfo;
   tokenValid: boolean;
-  streak: number;
 }
 
 const initialState: AppState = {

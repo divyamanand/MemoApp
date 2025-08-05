@@ -119,19 +119,19 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
         metadata: { totalQuestions, page: pageNum, pageSize: sizeNum },
         questions: questions[0].data
       },
-      "Questions fetched for current user, excluding those with today's next revision"
+      "Questions fetched (excluding today's revisions)"
     )
   );
 });
 
 export const getTodaysRevisions = asyncHandler(async (req, res) => {
   let page = parseInt(req.query.page, 10) || 1;
-  let pageSize = parseInt(req.query.pageSize, 10) || 50;
+  let pageSize = parseInt(req.query.pageSize, 10) || 10;
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const result = await Question.aggregate([
+  const questions = await Question.aggregate([
     { $match: { userId: req.user._id } },
     {
       $addFields: {
@@ -149,11 +149,20 @@ export const getTodaysRevisions = asyncHandler(async (req, res) => {
         }
       }
     },
-    { $match: { 'upcomingRevisions.0': { $exists: true } } },
+    {
+      $match: {
+        $expr: {
+          $eq: [
+            { $dateToString: { format: '%Y-%m-%d', date: { $arrayElemAt: ['$upcomingRevisions.date', 0] } } },
+            { $dateToString: { format: '%Y-%m-%d', date: today } }
+          ]
+        }
+      }
+    },
     { $project: { revisions: 0 } },
     {
       $facet: {
-        metadata: [{ $count: 'total' }],
+        metadata: [{ $count: 'totalQuestions' }],
         data: [
           { $skip: (page - 1) * pageSize },
           { $limit: pageSize }
@@ -162,15 +171,16 @@ export const getTodaysRevisions = asyncHandler(async (req, res) => {
     }
   ]);
 
-  const total = result[0].metadata[0]?.total || 0;
+  const totalQuestions = questions[0].metadata[0]?.totalQuestions || 0;
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { metadata: { total, page, pageSize }, questions: result[0].data },
-        "Upcoming revisions fetched"
-      )
-    );
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        metadata: { totalQuestions, page, pageSize },
+        questions: questions[0].data
+      },
+      "Today's revision questions fetched"
+    )
+  );
 });

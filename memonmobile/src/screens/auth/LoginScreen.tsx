@@ -19,7 +19,6 @@ const LoginScreen = () => {
     try {
       setLoading(true);
       await dispatch(loginUser({ email, password }));
-      navigation.navigate('Dashboard');
     } catch (error) {
       console.log('login Failed', error);
       // raise toast

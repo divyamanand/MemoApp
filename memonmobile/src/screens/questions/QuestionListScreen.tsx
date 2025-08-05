@@ -4,7 +4,6 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import AppHeader from '../../components/AppHeader';
 import TextInputField from '../../components/TextInputField';
 import QuestionListItem from '../../components/QuestionListItem';
-import BottomNav from '../../components/BottomNav';
 import IconButton from '@/src/components/IconButton';
 import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
 import { handleError } from '@/src/service/errorService';
@@ -12,29 +11,34 @@ import { useNavigation } from '@react-navigation/native';
 import { resetApp } from '@/src/store/store';
 
 const QuestionsListScreen = () => {
-  const { data, error, isError } = useGetQuestionsInfiniteQuery('revisions');
-  const navigation = useNavigation();
+  const { data, isLoading, isError } = useGetQuestionsInfiniteQuery({type: "Questions"});
 
-  useEffect(() => {
-    if (isError) {
-      const formattedError = handleError(error);
 
-      if (formattedError.statusCode === 401) {
-        resetApp();
-        //raise totast
-        navigation.navigate('Login');
-      }
-    }
-  }, [error, isError]);
+  // const navigation = useNavigation();
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     const formattedError = handleError(error);
+
+  //     if (formattedError.statusCode === 401) {
+  //       resetApp();
+  //       navigation.navigate('Login');
+  //     }
+  //   }
+  // }, [error, isError]);
+
+  if (isLoading) console.log("loading")
 
   const allQuestions = data?.pages.flat() ?? [];
 
+  console.log(allQuestions)
+
   return (
     <PaperProvider>
-      <AppHeader
+      {/* <AppHeader
         title="Questions"
         actions={<IconButton icon="plus" onPress={() => {}} />}
-      />
+      /> */}
       <TextInputField
         label="Search questions"
         value=""
@@ -52,9 +56,9 @@ const QuestionsListScreen = () => {
           )),
         )}
       </ScrollView>
-      <BottomNav activeRoute="review" onNavigate={() => {}} />
     </PaperProvider>
   );
 };
 
 export default QuestionsListScreen;
+

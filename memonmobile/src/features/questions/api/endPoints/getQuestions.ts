@@ -36,13 +36,16 @@ export const getQuestionsEndpoint = (
         return prevPage < 0 ? undefined : { ...firstPageParam, page: prevPage };
       },
     },
-    query: ({ queryArg, pageParam: { page, pageSize } }) => ({
-      url: `/api/v1/questions?page=${page}&pageSize=${pageSize}&type=${queryArg.type}`,
-      method: 'GET',
-    }),
-    transformResponse: (
-      response: AxiosResponse,
-    ): PaginatedApiResponse<ResponseQuestion> => handleApiResponse(response),
+    query: ({ pageParam, queryArg }) => {
+      const { page, pageSize } = pageParam;
+      return {
+        url: `/api/v1/question/questions?page=${page}&pageSize=${pageSize}&type=${queryArg.type}`,
+        method: 'GET',
+      };
+    },
+    // transformResponse: (
+    //   response: AxiosResponse,
+    // ): PaginatedApiResponse<ResponseQuestion> => handleApiResponse(response),
     keepUnusedDataFor: Infinity,
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];
@@ -67,7 +70,6 @@ export const getQuestionsEndpoint = (
         );
         return [{ type: 'Revisions', id: 'LIST' }, ...questionTags];
       }
-      
 
       return []
 
