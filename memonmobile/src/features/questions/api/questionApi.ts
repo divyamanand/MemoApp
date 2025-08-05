@@ -12,17 +12,17 @@ export const questionApi = createApi({
   tagTypes: ['Questions', 'Revisions'],
   endpoints: (build) => ({
     getQuestions: getQuestionsEndpoint(build),
-    // addQuestion: addQuestionEndpoint(build),
-    // deleteQuestion: deleteQuestionEndpoint(build),
-    // updateRevision: updateRevisionEndPoint(build),
-    // updateQuestion: updateQuestionEndPoint(build),
+    addQuestion: addQuestionEndpoint(build),
+    deleteQuestion: deleteQuestionEndpoint(build),
+    updateRevision: updateRevisionEndPoint(build),
+    updateQuestion: updateQuestionEndPoint(build),
   }),
 });
 
 export const {
-  // useAddQuestionMutation,
+  useAddQuestionMutation,
   useGetQuestionsInfiniteQuery,
-  // useDeleteQuestionMutation,
-  // useUpdateQuestionMutation,
-  // useUpdateRevisionMutation,
+  useDeleteQuestionMutation,
+  useUpdateQuestionMutation,
+  useUpdateRevisionMutation,
 } = questionApi;

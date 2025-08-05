@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { persistReducer } from 'redux-persist';
 import rootReducer from './reducers';
 import persistStore from 'redux-persist/es/persistStore';
+import * as SecureStore from 'expo-secure-store';
 
 const persistConfig = {
   key: 'root',
@@ -25,7 +26,9 @@ const store = configureStore({
 
 export const persistor = persistStore(store);
 
-export const resetApp = () => {
+export const resetApp = async () => {
+  await SecureStore.deleteItemAsync('accessToken');
+  await SecureStore.deleteItemAsync('refreshToken');
   store.dispatch({ type: 'RESET' });
   persistor.purge();
 };

@@ -1,34 +1,31 @@
 import React, { useEffect } from 'react';
 import { View, ScrollView, Image, StyleSheet } from 'react-native';
 import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
-import AppHeader from '../components/AppHeader';
-import ProgressCard from '../components/ProgressCard';
-import StreakBanner from '../components/StreakBanner';
-import Heatmap from '../components/HeatMap';
-import LineChart from '../components/LineChart';
-import PrimaryButton from '../components/PrimaryButton';
-import Quote from '../components/Quote';
-import BottomNav from '../components/BottomNav';
-import IconButton from '../components/IconButton';
+// import { Ionicons } from '@expo/vector-icons';
+// import AppHeader from '../components/AppHeader';
+// import ProgressCard from '../components/ProgressCard';
+// import StreakBanner from '../components/StreakBanner';
+// import Heatmap from '../components/HeatMap';
+// import LineChart from '../components/LineChart';
+// import PrimaryButton from '../components/PrimaryButton';
+// import Quote from '../components/Quote';
+// import BottomNav from '../components/BottomNav';
+// import IconButton from '../components/IconButton';
 import { useVerifyUser } from '../hooks/useVerifyUser';
 import { resetUser } from '../features/app/appSlice';
-import { useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../store/hooks';
 
 const DashboardScreen = () => {
   const { colors } = useTheme();
-  const navigator = useNavigation();
   const { userInfo } = useAppSelector((state) => state.app);
 
-  // const userStatus = useVerifyUser();
+  const userStatus = useVerifyUser();
 
-  // useEffect(() => {
-  //   if (userStatus === 'loggedOut') {
-  //     resetUser();
-  //     navigator.navigate('Login');
-  //   }
-  // }, [userStatus]);
+  useEffect(() => {
+    if (userStatus === 'loggedOut') {
+      resetUser();
+    }
+  }, [userStatus]);
 
   return (
     <PaperProvider>

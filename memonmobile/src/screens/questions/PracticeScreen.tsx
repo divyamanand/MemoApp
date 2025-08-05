@@ -1,32 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import { Provider as PaperProvider } from 'react-native-paper';
-import AppHeader from '../../components/AppHeader';
 import CircularProgress from '../../components/CircularProgress';
 import ContentCard from '../../components/ContentCard';
 import PrimaryButton from '../../components/PrimaryButton';
-import IconButton from '@/src/components/IconButton';
 import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import { handleError } from '@/src/service/errorService';
+import { handleReset } from '@/src/service/resetService';
 
 const PracticeScreen = () => {
-  const { data } = useGetQuestionsInfiniteQuery(
-    { type: 'Revisions' },
-    {
-      refetchOnMountOrArgChange: true,
-    },
-  );
+  const { data, error, isError } = useGetQuestionsInfiniteQuery({
+    type: 'Revisions',
+  });
+
+  useEffect(() => {
+    if (isError) {
+      const formattedError = handleError(error);
+
+      if (formattedError.statusCode === 403) {
+        handleReset(formattedError);
+      }
+    }
+  }, [error, isError]);
 
   const allRevisions = data?.pages.flat() ?? [];
 
-  console.log(allRevisions);
-
   return (
-    <PaperProvider>
-      {/* <AppHeader
-        title="Practice"
-        onBack={() => {}}
-        actions={<IconButton icon="cog" onPress={() => {}} />}
-      /> */}
+    <>
       <View>
         <CircularProgress progress={0.2} label="2/10" />
         {allRevisions?.map((page) =>
@@ -41,7 +40,7 @@ const PracticeScreen = () => {
         )}
         <PrimaryButton label="Start Timer" onPress={() => {}} icon="timer" />
       </View>
-    </PaperProvider>
+    </>
   );
 };
 
