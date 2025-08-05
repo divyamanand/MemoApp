@@ -16,37 +16,41 @@ export const addQuestionEndpoint = (
       const tempId = nanoid();
 
       const patchResult = dispatch(
-        questionApi.util.updateQueryData('getQuestions', {type: "Questions"}, (draft) => {
-          const lastPage = draft.pages[draft.pages.length - 1];
+        questionApi.util.updateQueryData(
+          'getQuestions',
+          { type: 'Questions' },
+          (draft) => {
+            const lastPage = draft.pages[draft.pages.length - 1];
 
-          const optimisticQuestion: ResponseQuestion = {
-            ...arg,
-            _id: tempId,
-            upcomingRevisions: [],
-            formData: arg.formData ?? {},
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            isPending: true,
-          };
+            const optimisticQuestion: ResponseQuestion = {
+              ...arg,
+              _id: tempId,
+              upcomingRevisions: [],
+              formData: arg.formData ?? {},
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              isPending: true,
+            };
 
-          if (lastPage?.data?.questions) {
-            lastPage.data.questions.push(optimisticQuestion);
-            if (lastPage.data.metadata) {
-              lastPage.data.metadata.total += 1;
-            }
-          } else {
-            draft.pages.push({
-              data: {
-                questions: [optimisticQuestion],
-                metadata: {
-                  page: 1,
-                  pageSize: 10,
-                  total: 1,
+            if (lastPage?.data?.questions) {
+              lastPage.data.questions.push(optimisticQuestion);
+              if (lastPage.data.metadata) {
+                lastPage.data.metadata.total += 1;
+              }
+            } else {
+              draft.pages.push({
+                data: {
+                  questions: [optimisticQuestion],
+                  metadata: {
+                    page: 1,
+                    pageSize: 10,
+                    total: 1,
+                  },
                 },
-              },
-            });
-          }
-        }),
+              });
+            }
+          },
+        ),
       );
 
       try {
@@ -56,7 +60,7 @@ export const addQuestionEndpoint = (
         dispatch(
           questionApi.util.updateQueryData(
             'getQuestions',
-            {type: "Questions"},
+            { type: 'Questions' },
             (draft) => {
               for (const page of draft.pages) {
                 const questionIndex = page.data?.questions?.findIndex(

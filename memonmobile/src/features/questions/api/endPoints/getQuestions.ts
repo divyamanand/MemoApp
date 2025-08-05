@@ -8,11 +8,11 @@ import {
 import { handleApiResponse } from '@/src/service/responseService';
 
 export const getQuestionsEndpoint = (
-  build: EndpointBuilder<any, 'Questions' | "Revisions", 'questionApi'>,
+  build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
   build.infiniteQuery<
     PaginatedApiResponse<ResponseQuestion>,
-    {type: "Questions" | "Revisions"},
+    { type: 'Questions' | 'Revisions' },
     InitialPageParam
   >({
     infiniteQueryOptions: {
@@ -50,8 +50,8 @@ export const getQuestionsEndpoint = (
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];
 
-      if (arg.type === "Questions") {
-          const questionTags = pages.flatMap((page) =>
+      if (arg.type === 'Questions') {
+        const questionTags = pages.flatMap((page) =>
           (page.data?.questions ?? []).map(({ _id }) => ({
             type: 'Questions' as const,
             id: _id,
@@ -59,10 +59,9 @@ export const getQuestionsEndpoint = (
         );
         return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
       }
-      
 
-      if (arg.type === "Revisions") {
-          const questionTags = pages.flatMap((page) =>
+      if (arg.type === 'Revisions') {
+        const questionTags = pages.flatMap((page) =>
           (page.data?.questions ?? []).map(({ _id }) => ({
             type: 'Revisions' as const,
             id: _id,
@@ -71,7 +70,6 @@ export const getQuestionsEndpoint = (
         return [{ type: 'Revisions', id: 'LIST' }, ...questionTags];
       }
 
-      return []
-
+      return [];
     },
   });

@@ -11,8 +11,9 @@ import { useNavigation } from '@react-navigation/native';
 import { resetApp } from '@/src/store/store';
 
 const QuestionsListScreen = () => {
-  const { data, isLoading, isError } = useGetQuestionsInfiniteQuery({type: "Questions"});
-
+  const { data, isLoading, isError } = useGetQuestionsInfiniteQuery({
+    type: 'Questions',
+  });
 
   // const navigation = useNavigation();
 
@@ -27,11 +28,11 @@ const QuestionsListScreen = () => {
   //   }
   // }, [error, isError]);
 
-  if (isLoading) console.log("loading")
+  if (isLoading) console.log('loading');
 
   const allQuestions = data?.pages.flat() ?? [];
 
-  console.log(allQuestions)
+  console.log(allQuestions);
 
   return (
     <PaperProvider>
@@ -61,4 +62,3 @@ const QuestionsListScreen = () => {
 };
 
 export default QuestionsListScreen;
-

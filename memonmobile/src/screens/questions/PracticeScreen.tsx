@@ -9,15 +9,16 @@ import IconButton from '@/src/components/IconButton';
 import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
 
 const PracticeScreen = () => {
-  const { data } = useGetQuestionsInfiniteQuery({type: "Revisions"},
+  const { data } = useGetQuestionsInfiniteQuery(
+    { type: 'Revisions' },
     {
-      refetchOnMountOrArgChange: true
-    }
+      refetchOnMountOrArgChange: true,
+    },
   );
 
   const allRevisions = data?.pages.flat() ?? [];
 
-  console.log(allRevisions)
+  console.log(allRevisions);
 
   return (
     <PaperProvider>

@@ -7,7 +7,9 @@ const wasQuestionRemoved = (draft: any, id: string): boolean => {
   draft.pages.forEach((page: any) => {
     if (page?.data?.questions) {
       const originalLength = page.data.questions.length;
-      page.data.questions = page.data.questions.filter((q: any) => q._id !== id);
+      page.data.questions = page.data.questions.filter(
+        (q: any) => q._id !== id,
+      );
       if (page.data.questions.length !== originalLength) {
         removed = true;
       }
@@ -17,7 +19,7 @@ const wasQuestionRemoved = (draft: any, id: string): boolean => {
 };
 
 export const deleteQuestionEndpoint = (
-  build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>
+  build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
   build.mutation<ApiResponse, string>({
     query: (id) => ({
@@ -26,15 +28,20 @@ export const deleteQuestionEndpoint = (
     }),
 
     async onQueryStarted(id, { dispatch, queryFulfilled }) {
-      const updatedTypes: {type: "Questions" | "Revisions", id: string}[] = [];
+      const updatedTypes: { type: 'Questions' | 'Revisions'; id: string }[] =
+        [];
 
       const patch = (type: 'Questions' | 'Revisions') =>
         dispatch(
-          questionApi.util.updateQueryData('getQuestions', { type }, (draft: any) => {
-            if (wasQuestionRemoved(draft, id)) {
-              updatedTypes.push({type, id});
-            }
-          })
+          questionApi.util.updateQueryData(
+            'getQuestions',
+            { type },
+            (draft: any) => {
+              if (wasQuestionRemoved(draft, id)) {
+                updatedTypes.push({ type, id });
+              }
+            },
+          ),
         );
 
       const patches = [patch('Questions'), patch('Revisions')];
@@ -42,12 +49,12 @@ export const deleteQuestionEndpoint = (
       try {
         await queryFulfilled;
 
-        updatedTypes.forEach(({type, id}) => {
+        updatedTypes.forEach(({ type, id }) => {
           dispatch(
             questionApi.util.invalidateTags([
               { type, id },
               { type, id: 'LIST' },
-            ])
+            ]),
           );
         });
       } catch {

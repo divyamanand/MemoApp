@@ -23,7 +23,7 @@ export const axiosBaseQuery =
       // console.log(url, method, data, params, headers)r
       return { data: result.data };
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       return {
         error: {
           status: error.response?.status,

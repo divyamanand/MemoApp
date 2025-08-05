@@ -26,15 +26,20 @@ export const updateQuestionEndPoint = (
     }),
 
     async onQueryStarted({ _id, data }, { dispatch, queryFulfilled }) {
-      const updatedTypes: {type: "Questions" | "Revisions", id: string}[] = [];
+      const updatedTypes: { type: 'Questions' | 'Revisions'; id: string }[] =
+        [];
 
       const patch = (type: 'Questions' | 'Revisions') =>
         dispatch(
-          questionApi.util.updateQueryData('getQuestions', { type }, (draft: any) => {
-            if (wasQuestionUpdated(draft, _id, data)) {
-              updatedTypes.push({type, id:_id});
-            }
-          })
+          questionApi.util.updateQueryData(
+            'getQuestions',
+            { type },
+            (draft: any) => {
+              if (wasQuestionUpdated(draft, _id, data)) {
+                updatedTypes.push({ type, id: _id });
+              }
+            },
+          ),
         );
 
       const patches = [patch('Questions'), patch('Revisions')];
@@ -42,10 +47,8 @@ export const updateQuestionEndPoint = (
       try {
         await queryFulfilled;
 
-        updatedTypes.forEach(({type, id}) => {
-          dispatch(
-            questionApi.util.invalidateTags([{ type, id}])
-          );
+        updatedTypes.forEach(({ type, id }) => {
+          dispatch(questionApi.util.invalidateTags([{ type, id }]));
         });
       } catch {
         patches.forEach((p) => p.undo());

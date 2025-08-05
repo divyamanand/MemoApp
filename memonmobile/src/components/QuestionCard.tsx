@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleProp, ViewStyle, View } from 'react-native';
-import { Card, IconButton, Button} from 'react-native-paper';
+import { Card, IconButton, Button } from 'react-native-paper';
 import { Revision } from '../constants/types';
 
 interface QuestionCardProps {
@@ -52,7 +52,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       )}
     </Card.Content>
 
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 8 }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 8,
+      }}
+    >
       <Button icon="pencil" mode="outlined" onPress={onEdit}>
         Edit
       </Button>
