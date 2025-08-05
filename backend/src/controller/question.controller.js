@@ -62,15 +62,22 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
     
 })
 
-export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
-  let { page = '1', pageSize = '10' } = req.query;
-  const pageNum = Math.max(parseInt(page, 10), 1);
-  const sizeNum = Math.max(parseInt(pageSize, 10), 1);
 
+export const getQuestionsByType = asyncHandler(async (req, res) => {
+  const type = req.query.type;
+  let pageNum = Math.max(parseInt(req.query.page, 10) || 1, 1);
+  let sizeNum = Math.max(parseInt(req.query.pageSize, 10) || 10, 1);
+
+  if (type !== 'Questions' && type !== 'Revisions') {
+    return res.status(400).json({ message: 'Invalid type, must be Questions or Revisions' });
+  }
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
 
-  const questions = await Question.aggregate([
+  const isRevisionType = type === 'Revisions';
+  const dateExprOp = isRevisionType ? '$eq' : '$ne';
+
+  const result = await Question.aggregate([
     { $match: { userId: req.user._id } },
     {
       $addFields: {
@@ -91,7 +98,7 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
     {
       $match: {
         $expr: {
-          $ne: [
+          [dateExprOp]: [
             { $dateToString: { format: '%Y-%m-%d', date: { $arrayElemAt: ['$upcomingRevisions.date', 0] } } },
             { $dateToString: { format: '%Y-%m-%d', date: today } }
           ]
@@ -110,77 +117,19 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
     }
   ]);
 
-  const totalQuestions = questions[0].metadata[0]?.totalQuestions || 0;
+  const totalQuestions = (result[0].metadata[0] && result[0].metadata[0].totalQuestions) || 0;
+  const questions = result[0].data || [];
 
   return res.status(200).json(
     new ApiResponse(
       200,
       {
         metadata: { totalQuestions, page: pageNum, pageSize: sizeNum },
-        questions: questions[0].data
+        questions
       },
-      "Questions fetched (excluding today's revisions)"
-    )
-  );
-});
-
-export const getTodaysRevisions = asyncHandler(async (req, res) => {
-  let page = parseInt(req.query.page, 10) || 1;
-  let pageSize = parseInt(req.query.pageSize, 10) || 10;
-
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
-  const questions = await Question.aggregate([
-    { $match: { userId: req.user._id } },
-    {
-      $addFields: {
-        upcomingRevisions: {
-          $slice: [
-            {
-              $filter: {
-                input: '$revisions',
-                as: 'rev',
-                cond: { $gte: ['$$rev.date', today] }
-              }
-            },
-            3
-          ]
-        }
-      }
-    },
-    {
-      $match: {
-        $expr: {
-          $eq: [
-            { $dateToString: { format: '%Y-%m-%d', date: { $arrayElemAt: ['$upcomingRevisions.date', 0] } } },
-            { $dateToString: { format: '%Y-%m-%d', date: today } }
-          ]
-        }
-      }
-    },
-    { $project: { revisions: 0 } },
-    {
-      $facet: {
-        metadata: [{ $count: 'totalQuestions' }],
-        data: [
-          { $skip: (page - 1) * pageSize },
-          { $limit: pageSize }
-        ]
-      }
-    }
-  ]);
-
-  const totalQuestions = questions[0].metadata[0]?.totalQuestions || 0;
-
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        metadata: { totalQuestions, page, pageSize },
-        questions: questions[0].data
-      },
-      "Today's revision questions fetched"
+      isRevisionType
+        ? "Today's revision questions fetched"
+        : "Questions fetched (excluding today's revisions)"
     )
   );
 });
