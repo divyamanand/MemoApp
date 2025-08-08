@@ -19,7 +19,6 @@ export type {
   ResponseQuestion,
 };
 
-
 export type MyBaseQuery = ReturnType<typeof axiosBaseQuery>;
 export type TagUnion = 'Questions' | 'Revisions';
 export type MyBuilder = EndpointBuilder<any, TagUnion, 'questionApi'>;

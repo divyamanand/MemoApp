@@ -1,29 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import CircularProgress from '../../components/CircularProgress';
 import ContentCard from '../../components/ContentCard';
 import PrimaryButton from '../../components/PrimaryButton';
 import { useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
-import { handleError } from '@/src/service/errorService';
-import { handleReset } from '@/src/service/resetService';
 
 const PracticeScreen = () => {
-  const { data, error, isError } = useGetRevisionsInfiniteQuery(undefined);
+  const { data } = useGetRevisionsInfiniteQuery(undefined);
 
-  useEffect(() => {
-    if (isError) {
-      const formattedError = handleError(error);
-
-      if (formattedError.statusCode === 403) {
-        handleReset();
-      }
-    }
-  }, [error, isError]);
-
-
-  console.log(data)
   const allRevisions = data?.pages.flat() ?? [];
-  console.log(allRevisions)
+  console.log(allRevisions);
 
   return (
     <>

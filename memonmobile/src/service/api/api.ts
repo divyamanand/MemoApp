@@ -31,17 +31,17 @@ api.interceptors.response.use(
     };
     const statusCode = error.response?.status || 500;
     if (statusCode === 401 && !originalRequest._retry) {
-      console.log("Token Expiration Detected")
+      console.log('Token Expiration Detected');
       originalRequest._retry = true;
       try {
         const refreshToken = await SecureStorage.getItemAsync('refreshToken');
         if (refreshToken) {
-          console.log("Trying to refresh token. RefreshToken found")
+          console.log('Trying to refresh token. RefreshToken found');
           const res = await axios.post(
             `${api.defaults.baseURL}/api/v1/user/refresh-token`,
             { refreshToken },
           );
-          console.log("res form refresh api", res)
+          console.log('res form refresh api', res);
           const newAccessToken = res.data.accessToken;
           const newRefreshToken = res.data.refreshToken;
 
@@ -56,8 +56,8 @@ api.interceptors.response.use(
           return api(originalRequest);
         }
       } catch (refreshError: any) {
-        console.log("error refreshing token", refreshError)
-        await handleReset()
+        console.log('error refreshing token', refreshError);
+        await handleReset();
         const formattedError: ErrorResponse = handleError(refreshError);
         return Promise.reject(formattedError);
       }

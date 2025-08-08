@@ -7,9 +7,7 @@ import {
 } from '../types';
 import { handleApiResponse } from '@/src/service/responseService';
 
-export const getRevisionsEndpoint = (
- build: MyBuilder
-) =>
+export const getRevisionsEndpoint = (build: MyBuilder) =>
   build.infiniteQuery<
     PaginatedApiResponse<ResponseQuestion>,
     void,
@@ -22,21 +20,34 @@ export const getRevisionsEndpoint = (
       },
       getNextPageParam: (lastPage, _allPages, lastPageParam) => {
         const metadata = lastPage?.data?.metadata;
-        const totalPages = metadata?.totalPages ?? lastPageParam?.pageSize ? Math.ceil((metadata?.totalQuestions ?? 0) / (lastPageParam.pageSize ?? 10)) : 1;
+        const totalPages =
+          (metadata?.totalPages ?? lastPageParam?.pageSize)
+            ? Math.ceil(
+                (metadata?.totalQuestions ?? 0) /
+                  (lastPageParam.pageSize ?? 10),
+              )
+            : 1;
         const page = metadata?.page ?? lastPageParam?.page ?? 1;
 
         if (page < totalPages) {
-          return { ...(lastPageParam ?? { page, pageSize: 10 }), page: page + 1 };
+          return {
+            ...(lastPageParam ?? { page, pageSize: 10 }),
+            page: page + 1,
+          };
         }
-        return undefined
+        return undefined;
       },
       getPreviousPageParam: (firstPage, _allPages, firstPageParam) => {
-        const currentPage = firstPage?.data?.metadata?.page ?? firstPageParam?.page ?? 1;
+        const currentPage =
+          firstPage?.data?.metadata?.page ?? firstPageParam?.page ?? 1;
         const prevPage = currentPage - 1;
         if (prevPage >= 1) {
-          return { ...(firstPageParam ?? { page: currentPage, pageSize: 10 }), page: prevPage };
+          return {
+            ...(firstPageParam ?? { page: currentPage, pageSize: 10 }),
+            page: prevPage,
+          };
         }
-        return undefined
+        return undefined;
       },
     },
     query: ({ pageParam, queryArg }) => {
@@ -53,13 +64,12 @@ export const getRevisionsEndpoint = (
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];
 
-        const questionTags = pages.flatMap((page) =>
-          (page.data?.questions ?? []).map(({ _id }) => ({
-            type: 'Revisions' as const,
-            id: _id,
-          })),
-        );
-        return [{ type: 'Revisions', id: 'LIST' }, ...questionTags];
-
+      const questionTags = pages.flatMap((page) =>
+        (page.data?.questions ?? []).map(({ _id }) => ({
+          type: 'Revisions' as const,
+          id: _id,
+        })),
+      );
+      return [{ type: 'Revisions', id: 'LIST' }, ...questionTags];
     },
   });

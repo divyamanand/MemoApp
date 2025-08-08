@@ -29,11 +29,16 @@ export const updateQuestionEndPoint = (
       const updatedTypes: { type: 'Questions' | 'Revisions'; id: string }[] =
         [];
 
-      const patch = (type: 'Questions' | 'Revisions') =>
+      type PatchArgs = {
+        type: 'Questions' | 'Revisions';
+        endPoint: 'getQuestions' | 'getRevisions';
+      };
+
+      const patch = ({ type, endPoint }: PatchArgs) =>
         dispatch(
           questionApi.util.updateQueryData(
-            'getQuestions',
-            { type },
+            endPoint,
+            undefined,
             (draft: any) => {
               if (wasQuestionUpdated(draft, _id, data)) {
                 updatedTypes.push({ type, id: _id });
@@ -42,7 +47,10 @@ export const updateQuestionEndPoint = (
           ),
         );
 
-      const patches = [patch('Questions'), patch('Revisions')];
+      const patches = [
+        patch({ type: 'Questions', endPoint: 'getQuestions' }),
+        patch({ type: 'Revisions', endPoint: 'getRevisions' }),
+      ];
 
       try {
         await queryFulfilled;

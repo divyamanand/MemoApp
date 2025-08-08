@@ -1,29 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ScrollView } from 'react-native';
 import TextInputField from '../../components/TextInputField';
 import QuestionListItem from '../../components/QuestionListItem';
 import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
-import { handleError } from '@/src/service/errorService';
-import { handleReset } from '@/src/service/resetService';
 
 const QuestionsListScreen = () => {
-  const {data, error, isError} = useGetQuestionsInfiniteQuery(undefined)
-
-  useEffect(() => {
-    if (isError) {
-      const formattedError = handleError(error);
-
-      if (formattedError.statusCode === 403) {
-        handleReset();
-      }
-    }
-  }, [error, isError]);
-
-  console.log(data)
+  const { data } = useGetQuestionsInfiniteQuery(undefined);
 
   const allQuestions = data?.pages.flat() ?? [];
 
-  console.log("Questions",allQuestions)
+  console.log('Questions', allQuestions);
 
   return (
     <>

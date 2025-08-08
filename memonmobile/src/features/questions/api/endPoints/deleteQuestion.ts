@@ -30,12 +30,16 @@ export const deleteQuestionEndpoint = (
     async onQueryStarted(id, { dispatch, queryFulfilled }) {
       const updatedTypes: { type: 'Questions' | 'Revisions'; id: string }[] =
         [];
+      type PatchArgs = {
+        type: 'Questions' | 'Revisions';
+        endPoint: 'getQuestions' | 'getRevisions';
+      };
 
-      const patch = (type: 'Questions' | 'Revisions') =>
+      const patch = ({ type, endPoint }: PatchArgs) =>
         dispatch(
           questionApi.util.updateQueryData(
-            'getQuestions',
-            { type },
+            endPoint,
+            undefined,
             (draft: any) => {
               if (wasQuestionRemoved(draft, id)) {
                 updatedTypes.push({ type, id });
@@ -44,7 +48,10 @@ export const deleteQuestionEndpoint = (
           ),
         );
 
-      const patches = [patch('Questions'), patch('Revisions')];
+      const patches = [
+        patch({ type: 'Questions', endPoint: 'getQuestions' }),
+        patch({ type: 'Revisions', endPoint: 'getRevisions' }),
+      ];
 
       try {
         await queryFulfilled;

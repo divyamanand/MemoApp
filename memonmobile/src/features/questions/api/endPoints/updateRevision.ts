@@ -15,23 +15,19 @@ export const updateRevisionEndPoint = (
       { dispatch, queryFulfilled },
     ) {
       const patchResult = dispatch(
-        questionApi.util.updateQueryData(
-          'getQuestions',
-          { type: 'Revisions' },
-          (draft) => {
-            draft.pages.forEach((page) => {
-              page.data.questions.forEach((question) => {
-                if (question._id === questionId) {
-                  question.upcomingRevisions.forEach((rev) => {
-                    if (rev._id === revisionId) {
-                      rev.completed = !rev.completed;
-                    }
-                  });
-                }
-              });
+        questionApi.util.updateQueryData('getRevisions', undefined, (draft) => {
+          draft.pages.forEach((page) => {
+            page.data.questions.forEach((question) => {
+              if (question._id === questionId) {
+                question.upcomingRevisions.forEach((rev) => {
+                  if (rev._id === revisionId) {
+                    rev.completed = !rev.completed;
+                  }
+                });
+              }
             });
-          },
-        ),
+          });
+        }),
       );
 
       try {

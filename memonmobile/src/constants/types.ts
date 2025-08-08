@@ -34,7 +34,7 @@ export type ResponseQuestion = {
   tags?: string[];
   formData?: any;
   upcomingRevisions: Revision[];
-  revisionHistory: Revision[];
+  revisionHistory?: Revision[];
   createdAt?: Date;
   updatedAt?: Date;
   isPending: boolean;
