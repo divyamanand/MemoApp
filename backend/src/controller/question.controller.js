@@ -1,4 +1,3 @@
-import { use } from "react";
 import { Question } from "../schema/questionSchema.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -232,12 +231,12 @@ export const markPOTDCompleted = asyncHandler(async (req, res) => {
   );
 });
 
-export const countTotalCompleted = asyncHandler(async (req, res) => {
+export const countNCompleted = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { numberOfTimes } = req.params;
 
   const n = parseInt(numberOfTimes, 10);
-  if (isNaN(n) || n < 1) {
+  if (isNaN(n) || n < 0) {
     throw new ApiError(400, null, "Invalid number of times");
   }
 
@@ -272,6 +271,48 @@ export const countTotalCompleted = asyncHandler(async (req, res) => {
     new ApiResponse(200, { count }, `Number of questions revised at least ${n} times`)
   );
 });
+
+export const countTotalCompleted = asyncHandler(async (req, res) => {
+  const userId = req.user._id
+
+  const today = new Date()
+  today.setUTCHours(0,0,0,0)
+
+  const result = await Question.aggregate([
+  { $match: { userId } },
+  {
+    $project: {
+      completedRevisionsCount: {
+        $size: {
+          $filter: {
+            input: "$revisions",
+            as: "rev",
+            cond: {
+              $and: [
+                { $eq: ["$$rev.completed", true] },
+                { $lt: ["$$rev.date", today] }  // before today
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      totalCompletedRevisions: { $sum: "$completedRevisionsCount" }
+    }
+  }
+]);
+
+const totalCompleted = result.length > 0 ? result[0].totalCompletedRevisions : 0;
+
+return res.status(200).json(
+  new ApiResponse(200, { totalCompleted }, "Total completed revisions count (excluding today)")
+);
+
+})
 
 export const markRevisionCompleted = asyncHandler(async (req, res) => {
   const userId = req.user._id;
