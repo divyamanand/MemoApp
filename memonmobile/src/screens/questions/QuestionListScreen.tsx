@@ -20,9 +20,10 @@ const QuestionsListScreen = () => {
   }, [error, isError]);
 
   console.log(data)
-  console.log(error)
 
   const allQuestions = data?.pages.flat() ?? [];
+
+  console.log("Questions",allQuestions)
 
   return (
     <>

@@ -30,7 +30,7 @@ export const resetApp = async () => {
   await SecureStore.deleteItemAsync('accessToken');
   await SecureStore.deleteItemAsync('refreshToken');
   store.dispatch({ type: 'RESET' });
-  persistor.purge();
+  await persistor.purge();
 };
 
 export default store;

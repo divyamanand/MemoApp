@@ -19,13 +19,13 @@ const DashboardScreen = () => {
   const { colors } = useTheme();
   const { userInfo } = useAppSelector((state) => state.app);
 
-  const userStatus = useVerifyUser();
+  // const userStatus = useVerifyUser();
 
-  useEffect(() => {
-    if (userStatus === 'loggedOut') {
-      handleReset();
-    }
-  }, [userStatus]);
+  // useEffect(() => {
+  //   if (userStatus === 'loggedOut') {
+  //     handleReset();
+  //   }
+  // }, [userStatus]);
 
   return (
     <PaperProvider>

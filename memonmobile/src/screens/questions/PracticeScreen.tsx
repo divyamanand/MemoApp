@@ -20,8 +20,10 @@ const PracticeScreen = () => {
     }
   }, [error, isError]);
 
-  console.log(error)
+
+  console.log(data)
   const allRevisions = data?.pages.flat() ?? [];
+  console.log(allRevisions)
 
   return (
     <>
