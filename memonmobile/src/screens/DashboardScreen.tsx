@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, Image, StyleSheet } from 'react-native';
+import { View, ScrollView, Image, StyleSheet, Button } from 'react-native';
 import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
 // import { Ionicons } from '@expo/vector-icons';
 // import AppHeader from '../components/AppHeader';
@@ -12,12 +12,14 @@ import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
 // import BottomNav from '../components/BottomNav';
 // import IconButton from '../components/IconButton';
 import { useVerifyUser } from '../hooks/useVerifyUser';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { handleReset } from '../service/resetService';
+import { logoutUser } from '../features/auth/authActions';
 
 const DashboardScreen = () => {
   const { colors } = useTheme();
   const { userInfo } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
 
   // const userStatus = useVerifyUser();
 
@@ -65,6 +67,8 @@ const DashboardScreen = () => {
             <Text style={styles.welcomeSubtitle}>{`Let's get learning.`}</Text>
           </View>
         </View>
+
+        <Button title="Logout" onPress={() => dispatch(logoutUser())} />
 
         <ScrollView contentContainerStyle={styles.mainContent}>
           {/* <Text style={styles.sectionTitle}>Progress Overview</Text>

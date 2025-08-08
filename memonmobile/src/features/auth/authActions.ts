@@ -4,6 +4,7 @@ import * as SecureStorage from 'expo-secure-store';
 import { ErrorResponse } from '@/src/constants/types';
 import { handleError } from '@/src/service/errorService';
 import { handleApiResponse } from '@/src/service/responseService';
+import { handleReset } from '@/src/service/resetService';
 
 const authHandler = async (
   endpoint: string,
@@ -45,8 +46,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.post('/api/v1/user/logout', {});
-      await SecureStorage.deleteItemAsync('accessToken');
-      await SecureStorage.deleteItemAsync('refreshToken');
+      await handleReset();
       return handleApiResponse(response);
     } catch (error) {
       const formattedError: ErrorResponse = handleError(error);

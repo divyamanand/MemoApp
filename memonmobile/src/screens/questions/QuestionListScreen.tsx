@@ -7,9 +7,8 @@ import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/quest
 const QuestionsListScreen = () => {
   const { data } = useGetQuestionsInfiniteQuery(undefined);
 
-  const allQuestions = data?.pages.flat() ?? [];
-
-  console.log('Questions', allQuestions);
+  const allQuestions =
+    data?.pages.flatMap((page) => page.data?.questions ?? []) ?? [];
 
   return (
     <>
@@ -20,15 +19,13 @@ const QuestionsListScreen = () => {
         leftIcon="magnify"
       />
       <ScrollView>
-        {allQuestions.map((page) =>
-          page.data.questions.map((question) => (
-            <QuestionListItem
-              key={question._id}
-              title={question.questionName}
-              difficulty={question.difficulty}
-            />
-          )),
-        )}
+        {allQuestions.map((question) => (
+          <QuestionListItem
+            key={question._id}
+            title={question.questionName}
+            difficulty={question.difficulty}
+          />
+        ))}
       </ScrollView>
     </>
   );

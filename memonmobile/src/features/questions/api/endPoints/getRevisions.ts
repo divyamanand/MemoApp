@@ -57,9 +57,9 @@ export const getRevisionsEndpoint = (build: MyBuilder) =>
         method: 'GET',
       };
     },
-    transformResponse: (
-      response: AxiosResponse,
-    ): PaginatedApiResponse<ResponseQuestion> => handleApiResponse(response),
+    // transformResponse: (
+    //   response: AxiosResponse,
+    // ): PaginatedApiResponse<ResponseQuestion> => handleApiResponse(response),
     keepUnusedDataFor: Infinity,
     providesTags: (result, _, arg) => {
       const pages = result?.pages ?? [];

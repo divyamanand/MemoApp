@@ -8,26 +8,21 @@ import { useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/quest
 const PracticeScreen = () => {
   const { data } = useGetRevisionsInfiniteQuery(undefined);
 
-  const allRevisions = data?.pages.flat() ?? [];
-  console.log(allRevisions);
+  const allRevisions =
+    data?.pages.flatMap((page) => page.data?.questions ?? []) ?? [];
 
   return (
-    <>
-      <View>
-        <CircularProgress progress={0.2} label="2/10" />
-        {allRevisions?.map((page) =>
-          page.data?.questions?.map((question) => (
-            <ContentCard
-              title={question.questionName}
-              key={question._id + question.questionName}
-              // content={question.formData || null}
-              completed={question.upcomingRevisions[0].completed}
-            />
-          )),
-        )}
-        <PrimaryButton label="Start Timer" onPress={() => {}} icon="timer" />
-      </View>
-    </>
+    <View>
+      <CircularProgress progress={0.2} label="2/10" />
+      {allRevisions.map((question) => (
+        <ContentCard
+          title={question.questionName}
+          key={question._id + question.questionName}
+          completed={question.upcomingRevisions?.[0]?.completed ?? false}
+        />
+      ))}
+      <PrimaryButton label="Start Timer" onPress={() => {}} icon="timer" />
+    </View>
   );
 };
 

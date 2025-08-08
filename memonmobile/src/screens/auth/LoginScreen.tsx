@@ -13,7 +13,6 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
 
   const handleLogin = async () => {
     try {
