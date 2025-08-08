@@ -61,11 +61,11 @@ export type ApiResponse<T = any> = {
 
 export type PaginatedQuestionsData<T> = {
   metadata: {
-    total: number;
+    totalQuestions: number;
     page: number;
     pageSize: number;
+    totalPages: number;
   };
-
   questions: T[];
 };
 

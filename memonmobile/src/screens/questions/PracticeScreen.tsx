@@ -3,14 +3,12 @@ import { View } from 'react-native';
 import CircularProgress from '../../components/CircularProgress';
 import ContentCard from '../../components/ContentCard';
 import PrimaryButton from '../../components/PrimaryButton';
-import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import { useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
 import { handleError } from '@/src/service/errorService';
 import { handleReset } from '@/src/service/resetService';
 
 const PracticeScreen = () => {
-  const { data, error, isError } = useGetQuestionsInfiniteQuery({
-    type: 'Revisions',
-  });
+  const { data, error, isError } = useGetRevisionsInfiniteQuery(undefined);
 
   useEffect(() => {
     if (isError) {
@@ -22,7 +20,11 @@ const PracticeScreen = () => {
     }
   }, [error, isError]);
 
+  console.log(data)
+
   const allRevisions = data?.pages.flat() ?? [];
+
+  console.log(allRevisions)
 
   return (
     <>

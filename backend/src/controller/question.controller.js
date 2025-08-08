@@ -62,32 +62,107 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
     
 })
 
+export const getTodaysRevisions = asyncHandler(async (req, res) => {
+  let page = parseInt(req.query.page, 10) || 1;
+  let pageSize = parseInt(req.query.pageSize, 10) || 50;
 
-export const getQuestionsByType = asyncHandler(async (req, res) => {
-  const type = req.query.type;
-  let pageNum = Math.max(parseInt(req.query.page, 10) || 1, 1);
-  let sizeNum = Math.max(parseInt(req.query.pageSize, 10) || 10, 1);
-
-  if (type !== 'Questions' && type !== 'Revisions') {
-    return res.status(400).json({ message: 'Invalid type, must be Questions or Revisions' });
-  }
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
-
-  const isRevisionType = type === 'Revisions';
-  const dateExprOp = isRevisionType ? '$eq' : '$ne';
+  const tomorrow = new Date(today);
+  tomorrow.setUTCDate(today.getUTCDate() + 1);
 
   const result = await Question.aggregate([
     { $match: { userId: req.user._id } },
+    {
+      $addFields: {
+        todaysRevisions: {
+          $filter: {
+            input: "$revisions",
+            as: "rev",
+            cond: {
+              $and: [
+                { $gte: ["$$rev.date", today] },
+                { $lt: ["$$rev.date", tomorrow] }
+              ]
+            }
+          }
+        }
+      }
+    },
+    // Only keep questions that have at least 1 revision today
+    { $match: { "todaysRevisions.0": { $exists: true } } },
+    { $project: { revisions: 0 } },
+    {
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [
+          { $skip: (page - 1) * pageSize },
+          { $limit: pageSize }
+        ]
+      }
+    }
+  ]);
+
+  const total = result[0].metadata[0]?.total || 0;
+  const totalPages = Math.ceil(total / pageSize) || 1;
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { metadata: { total, totalPages, page, pageSize }, questions: result[0].data || [] },
+      "Today's revisions fetched"
+    )
+  );
+});
+
+
+export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
+  let { page, pageSize } = req.query;
+
+  page = parseInt(page, 10) || 1;
+  pageSize = parseInt(pageSize, 10) || 10;
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setUTCDate(today.getUTCDate() + 1);
+
+  const questions = await Question.aggregate([
+    { $match: { userId: req.user._id } },
+    {
+      $addFields: {
+        hasTodaysRevision: {
+          $gt: [
+            {
+              $size: {
+                $filter: {
+                  input: "$revisions",
+                  as: "rev",
+                  cond: {
+                    $and: [
+                      { $gte: ["$$rev.date", today] },
+                      { $lt: ["$$rev.date", tomorrow] }
+                    ]
+                  }
+                }
+              }
+            },
+            0
+          ]
+        }
+      }
+    },
+    // Exclude questions that have any revision today
+    { $match: { hasTodaysRevision: false } },
     {
       $addFields: {
         upcomingRevisions: {
           $slice: [
             {
               $filter: {
-                input: '$revisions',
-                as: 'rev',
-                cond: { $gte: ['$$rev.date', today] }
+                input: "$revisions",
+                as: "rev",
+                cond: { $gte: ["$$rev.date", today] }
               }
             },
             3
@@ -95,41 +170,26 @@ export const getQuestionsByType = asyncHandler(async (req, res) => {
         }
       }
     },
-    {
-      $match: {
-        $expr: {
-          [dateExprOp]: [
-            { $dateToString: { format: '%Y-%m-%d', date: { $arrayElemAt: ['$upcomingRevisions.date', 0] } } },
-            { $dateToString: { format: '%Y-%m-%d', date: today } }
-          ]
-        }
-      }
-    },
-    { $project: { revisions: 0 } },
+    { $project: { revisions: 0, hasTodaysRevision: 0 } },
     {
       $facet: {
-        metadata: [{ $count: 'totalQuestions' }],
+        metadata: [{ $count: "totalQuestions" }],
         data: [
-          { $skip: (pageNum - 1) * sizeNum },
-          { $limit: sizeNum }
+          { $skip: (page - 1) * pageSize },
+          { $limit: pageSize }
         ]
       }
     }
   ]);
 
-  const totalQuestions = (result[0].metadata[0] && result[0].metadata[0].totalQuestions) || 0;
-  const questions = result[0].data || [];
+  const totalQuestions = questions[0].metadata[0]?.totalQuestions || 0;
+  const totalPages = Math.ceil(totalQuestions / pageSize) || 1;
 
   return res.status(200).json(
     new ApiResponse(
       200,
-      {
-        metadata: { totalQuestions, page: pageNum, pageSize: sizeNum },
-        questions
-      },
-      isRevisionType
-        ? "Today's revision questions fetched"
-        : "Questions fetched (excluding today's revisions)"
+      { metadata: { totalQuestions, totalPages, page, pageSize }, questions: questions[0].data || [] },
+      "Questions fetched excluding today's revisions"
     )
   );
 });

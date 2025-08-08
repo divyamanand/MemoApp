@@ -20,10 +20,8 @@ export const axiosBaseQuery =
         params,
         headers,
       });
-      // console.log(url, method, data, params, headers)r
       return { data: result.data };
     } catch (error: any) {
-      console.log(error);
       return {
         error: {
           status: error.response?.status,

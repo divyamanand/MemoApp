@@ -7,7 +7,7 @@ import {
 } from '../types';
 import { handleApiResponse } from '@/src/service/responseService';
 
-export const getQuestionsEndpoint = (
+export const getRevisionsEndpoint = (
  build: MyBuilder
 ) =>
   build.infiniteQuery<
@@ -42,7 +42,7 @@ export const getQuestionsEndpoint = (
     query: ({ pageParam, queryArg }) => {
       const { page, pageSize } = pageParam;
       return {
-        url: `/api/v1/question/questions?page=${page}&pageSize=${pageSize}`,
+        url: `/api/v1/question/revisions?page=${page}&pageSize=${pageSize}`,
         method: 'GET',
       };
     },
@@ -55,11 +55,11 @@ export const getQuestionsEndpoint = (
 
         const questionTags = pages.flatMap((page) =>
           (page.data?.questions ?? []).map(({ _id }) => ({
-            type: 'Questions' as const,
+            type: 'Revisions' as const,
             id: _id,
           })),
         );
-        return [{ type: 'Questions', id: 'LIST' }, ...questionTags];
+        return [{ type: 'Revisions', id: 'LIST' }, ...questionTags];
 
     },
   });

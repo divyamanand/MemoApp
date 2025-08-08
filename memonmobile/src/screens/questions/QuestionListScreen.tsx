@@ -7,10 +7,7 @@ import { handleError } from '@/src/service/errorService';
 import { handleReset } from '@/src/service/resetService';
 
 const QuestionsListScreen = () => {
-  const { data, error, isError } = useGetQuestionsInfiniteQuery({
-    type: 'Questions',
-  });
-
+  const {data, error, isError} = useGetQuestionsInfiniteQuery(undefined)
   useEffect(() => {
     if (isError) {
       const formattedError = handleError(error);
@@ -20,6 +17,8 @@ const QuestionsListScreen = () => {
       }
     }
   }, [error, isError]);
+
+  console.log("question list res", data, error)
 
   const allQuestions = data?.pages.flat() ?? [];
 
