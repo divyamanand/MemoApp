@@ -40,6 +40,22 @@ const userSchema = new mongoose.Schema(
       of: Number,
       default: () => ({ hard: 25, medium: 13, easy: 10 }),
     },
+
+    streakCount : {
+      type: Number,
+      default: 0
+    },
+
+    lastPOTDDate: {
+      type: Date,
+    },
+
+    currentPOTD: {
+      questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
+      assignedAt: { type: Date, default: Date.now },
+      completed: { type: Boolean, default: false },
+    },
+
     refreshToken: {
       type: String
     },

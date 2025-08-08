@@ -45,6 +45,10 @@ const questionSchema = new mongoose.Schema(
       default: [],
     },
 
+    lastSolved: {
+      type: Date
+    },
+
     formData: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
@@ -80,10 +84,10 @@ questionSchema.methods.generateRevision = function () {
 }
 
 questionSchema.methods.deleteRevision = async function (revisionId) {
-  this.revisions = this.revisions.filter(rev => rev._id !== revisionId)
-  await this.save()
-  return this
-}
+  this.revisions = this.revisions.filter(rev => rev._id.toString() !== revisionId.toString());
+  await this.save();
+  return this;
+};
 
 questionSchema.virtual('completedCount').get(function () {
   return this.revisions.filter(r => r.completed).length;

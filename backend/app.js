@@ -19,11 +19,14 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
+potdAndStreakJob()
+
 //routes
 
 import userRouter from "./src/routes/user.routes.js"
 import questionRouter from "./src/routes/question.routes.js"
 import aiRouter from "./src/routes/ai.routes.js"
+import { potdAndStreakJob } from "./src/jobs/potdJob.js"
 
 //routes decalaration
 app.use("/api/v1/user", userRouter)

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, ScrollView, Image, StyleSheet, Button } from 'react-native';
 import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
 // import { Ionicons } from '@expo/vector-icons';
@@ -11,9 +11,7 @@ import { Provider as PaperProvider, Text, useTheme } from 'react-native-paper';
 // import Quote from '../components/Quote';
 // import BottomNav from '../components/BottomNav';
 // import IconButton from '../components/IconButton';
-import { useVerifyUser } from '../hooks/useVerifyUser';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { handleReset } from '../service/resetService';
 import { logoutUser } from '../features/auth/authActions';
 
 const DashboardScreen = () => {
@@ -21,13 +19,6 @@ const DashboardScreen = () => {
   const { userInfo } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
 
-  // const userStatus = useVerifyUser();
-
-  // useEffect(() => {
-  //   if (userStatus === 'loggedOut') {
-  //     handleReset();
-  //   }
-  // }, [userStatus]);
 
   return (
     <PaperProvider>

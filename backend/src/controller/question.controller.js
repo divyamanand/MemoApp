@@ -1,3 +1,4 @@
+import { use } from "react";
 import { Question } from "../schema/questionSchema.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -193,3 +194,130 @@ export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
     )
   );
 });
+
+export const markPOTDCompleted = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  // Use MongoDB's $cond and $inc to atomically update streakCount depending on lastPOTDDate
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: userId },
+    [
+      {
+        $set: {
+          lastPOTDDate: today,
+          streakCount: {
+            $cond: [
+              {
+                $eq: [
+                  { $subtract: [today, "$lastPOTDDate"] },
+                  86400000, // 1 day in ms
+                ],
+              },
+              { $add: ["$streakCount", 1] },
+              1,
+            ],
+          },
+          "currentPOTD.completed": true,
+        },
+      },
+    ],
+    { new: true }
+  );
+
+  return res.status(200).json(
+    new ApiResponse(200, { new_streak: updatedUser.streakCount }, "Question marked completed")
+  );
+});
+
+export const countTotalCompleted = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { numberOfTimes } = req.params;
+
+  const n = parseInt(numberOfTimes, 10);
+  if (isNaN(n) || n < 1) {
+    throw new ApiError(400, null, "Invalid number of times");
+  }
+
+  const result = await Question.aggregate([
+    { $match: { userId } },
+    {
+      $project: {
+        completedRevisionsCount: {
+          $size: {
+            $filter: {
+              input: "$revisions",
+              as: "rev",
+              cond: { $eq: ["$$rev.completed", true] }
+            }
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        completedRevisionsCount: { $gte: n }
+      }
+    },
+    {
+      $count: "questionsCount"
+    }
+  ]);
+
+  const count = result.length > 0 ? result[0].questionsCount : 0;
+
+  return res.status(200).json(
+    new ApiResponse(200, { count }, `Number of questions revised at least ${n} times`)
+  );
+});
+
+export const markRevisionCompleted = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { questionID, revisionID } = req.params;
+
+  // Find the question with the user and revision
+  const question = await Question.findOne({ _id: questionID, userId });
+
+  if (!question) {
+    throw new ApiError(404, null, "Question not found");
+  }
+
+  // Find the revision inside revisions array
+  const revision = question.revisions.id(revisionID);
+  if (!revision) {
+    throw new ApiError(404, null, "Revision not found");
+  }
+
+  // Toggle completed
+  revision.completed = !revision.completed;
+
+  // Optionally update lastSolved date if completed now
+  if (revision.completed) {
+    question.lastSolved = new Date();
+  }
+
+  await question.save();
+
+  return res.status(200).json(
+    new ApiResponse(200, revision, "Revision completion toggled successfully")
+  );
+});
+
+export const countIndividualQuestionRevisionsCompleted = asyncHandler(async (req, res) => {
+    const user = req.user
+    const {questionID} = req.params
+
+    const question = Question.findOne({_id: questionID, userId: user._id})
+    
+    if (!question) {
+      throw new ApiError(404, null, "Question Not Found")
+    }
+
+    const completedCount  = question.completedCount
+
+    return res.status(200).json(
+      new ApiResponse(200, {completedCount}, "Completed count fetched successffully")
+    )
+})

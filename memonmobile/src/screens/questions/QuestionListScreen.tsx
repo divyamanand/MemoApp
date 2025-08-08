@@ -2,13 +2,16 @@ import React from 'react';
 import { ScrollView } from 'react-native';
 import TextInputField from '../../components/TextInputField';
 import QuestionListItem from '../../components/QuestionListItem';
-import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import { useGetQuestionsInfiniteQuery, useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
 
 const QuestionsListScreen = () => {
-  const { data } = useGetQuestionsInfiniteQuery(undefined);
+  const { data: questions } = useGetQuestionsInfiniteQuery(undefined);
+  const { data: revisions } = useGetRevisionsInfiniteQuery(undefined);
 
   const allQuestions =
-    data?.pages.flatMap((page) => page.data?.questions ?? []) ?? [];
+    questions?.pages.flatMap((page) => page.data?.questions ?? []) ?? [];
+
+  const allRevisions = revisions?.pages.flatMap((page) => page.data?.questions ?? []) ?? []
 
   return (
     <>
@@ -18,6 +21,15 @@ const QuestionsListScreen = () => {
         onChangeText={() => {}}
         leftIcon="magnify"
       />
+      <ScrollView>
+        {allRevisions.map((question) => (
+          <QuestionListItem
+            key={question._id}
+            title={question.questionName}
+            difficulty={question.difficulty}
+          />
+        ))}
+      </ScrollView>
       <ScrollView>
         {allQuestions.map((question) => (
           <QuestionListItem
