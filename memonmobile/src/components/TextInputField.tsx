@@ -1,47 +1,47 @@
-import React, { useState } from 'react';
-import { TextInput, useTheme } from 'react-native-paper';
-import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
+// In your TextInputField component file
+import React from 'react';
+import { KeyboardTypeOptions } from 'react-native';
+import { TextInput } from 'react-native-paper';
 
 interface TextInputFieldProps {
   label: string;
   value: string;
   onChangeText: (text: string) => void;
-  secureTextEntry?: boolean;
-  leftIcon?: IconSource;
-  rightIcon?: IconSource;
+  leftIcon?: string;
+  rightIcon?: string;
   onRightIconPress?: () => void;
+  secureTextEntry?: boolean;
+  // Add these missing props:
+  keyboardType?: KeyboardTypeOptions;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoComplete?: string;
 }
 
 const TextInputField: React.FC<TextInputFieldProps> = ({
   label,
   value,
   onChangeText,
-  secureTextEntry,
   leftIcon,
   rightIcon,
   onRightIconPress,
+  secureTextEntry,
+  keyboardType,
+  autoCapitalize,
+  autoComplete,
+  ...otherProps
 }) => {
-  const { colors } = useTheme();
-  const [secure, setSecure] = useState(secureTextEntry);
-
-  const toggleSecure = () => {
-    setSecure(!secure);
-    onRightIconPress?.();
-  };
-
   return (
     <TextInput
       label={label}
       value={value}
       onChangeText={onChangeText}
-      secureTextEntry={secure}
-      left={leftIcon ? <TextInput.Icon icon={leftIcon} /> : null}
-      right={
-        rightIcon ? (
-          <TextInput.Icon icon={rightIcon} onPress={toggleSecure} />
-        ) : null
-      }
-      theme={{ colors: { primary: colors.primary } }}
+      secureTextEntry={secureTextEntry}
+      keyboardType={keyboardType}
+      autoCapitalize={autoCapitalize}
+      autoComplete={autoComplete}
+      left={leftIcon ? <TextInput.Icon icon={leftIcon} /> : undefined}
+      right={rightIcon ? <TextInput.Icon icon={rightIcon} onPress={onRightIconPress} /> : undefined}
+      {...otherProps}
     />
   );
 };

@@ -2,11 +2,12 @@ export type RootStackParamList = {
   Dashboard: undefined;
   Profile: undefined;
   Settings: undefined;
-  Login: undefined;
+  Login: { email?: string; password?: string } | undefined;
   Revision: undefined;
   Question: undefined;
   About: undefined;
   Help: undefined;
+  Register: undefined
 };
 
 export type ErrorResponse = {

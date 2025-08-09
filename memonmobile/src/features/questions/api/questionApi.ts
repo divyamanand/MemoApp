@@ -7,6 +7,7 @@ import { deleteQuestionEndpoint } from './endPoints/deleteQuestion';
 import { updateRevisionEndPoint } from './endPoints/updateRevision';
 import { updateQuestionEndPoint } from './endPoints/updateQuestion';
 import { getRevisionsEndpoint } from './endPoints/getRevisions';
+import { getCompletedCountUptoDate } from './endPoints/countCompletedUptoDate';
 
 export const questionApi = createApi({
   reducerPath: 'questionApi',
@@ -19,6 +20,7 @@ export const questionApi = createApi({
     deleteQuestion: deleteQuestionEndpoint(build),
     updateRevision: updateRevisionEndPoint(build),
     updateQuestion: updateQuestionEndPoint(build),
+    getCountTillDate: getCompletedCountUptoDate(build),
   }),
 });
 
@@ -29,4 +31,5 @@ export const {
   useDeleteQuestionMutation,
   useUpdateQuestionMutation,
   useUpdateRevisionMutation,
+  useGetCountTillDateQuery,
 } = questionApi;

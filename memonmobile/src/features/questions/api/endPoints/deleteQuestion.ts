@@ -23,7 +23,7 @@ export const deleteQuestionEndpoint = (
 ) =>
   build.mutation<ApiResponse, string>({
     query: (id) => ({
-      url: `/api/v1/delete-question/${id}`,
+      url: `/api/v1/question/delete-question/${id}`,
       method: 'DELETE',
     }),
 

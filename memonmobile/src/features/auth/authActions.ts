@@ -29,7 +29,7 @@ const authHandler = async (
 
 export const loginUser = createAsyncThunk(
   'auth/login',
-  async (payload, { rejectWithValue }) => {
+  async (payload : { email: string; password: string }, { rejectWithValue }) => {
     return authHandler('/api/v1/user/login', payload, rejectWithValue);
   },
 );

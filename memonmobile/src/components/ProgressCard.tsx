@@ -3,7 +3,7 @@ import { Card, Text } from 'react-native-paper';
 
 interface ProgressCardProps {
   label: string;
-  value: string;
+  value: number;
 }
 
 const ProgressCard: React.FC<ProgressCardProps> = ({ label, value }) => (

@@ -3,19 +3,55 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { loginUser, logoutUser, registerUser } from '../auth/authActions';
 
 interface UserInfo {
-  name?: string;
-  email?: string;
-  token?: string;
-  [key: string]: any;
+  _id: string;                 
+  name: string;
+  email: string;
+  password?: string;           
+
+  k_vals: {
+    hard: number;
+    medium: number;
+    easy: number;
+    [key: string]: number;  
+  };
+
+  c_vals: {
+    hard: number;
+    medium: number;
+    easy: number;
+    [key: string]: number;
+  };
+
+  iterations: {
+    hard: number;
+    medium: number;
+    easy: number;
+    [key: string]: number;
+  };
+
+  streakCount: number;
+
+  lastPOTDDate?: string;     
+
+  currentPOTD: {
+    questionId: string;       
+    assignedAt: string;
+    completed: boolean;
+  };
+
+  refreshToken?: string;   
+
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface AppState {
-  userInfo: UserInfo;
+  userInfo?: UserInfo;
   tokenValid: boolean;
 }
 
 const initialState: AppState = {
-  userInfo: {},
+  userInfo: undefined,
   tokenValid: false,
 };
 
@@ -23,7 +59,7 @@ const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    setCredentials: (state, action) => {
+    setCredentials: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload;
       state.tokenValid = true;
     },
@@ -32,12 +68,12 @@ const appSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(logoutUser.fulfilled, () => initialState)
-      .addMatcher(
+     .addMatcher(
         isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
-        (state, action: PayloadAction<any>) => {
+        (state, action: PayloadAction<UserInfo>) => {
           state.userInfo = action.payload;
           state.tokenValid = true;
-        },
+        }
       );
   },
 });
