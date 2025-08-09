@@ -12,6 +12,6 @@ router.post("/complete-potd", verifyJWT, markPOTDCompleted)
 router.get("/complete-n-count/:numberOfTimes", verifyJWT, countNCompleted)
 router.get("/total-count", verifyJWT, countTotalCompleted)
 router.post("/mark-revision/:questionID/:revisionID", verifyJWT, markRevisionCompleted)
-router.get("/get-individual-count/:questionID", verifyJWT, countIndividualQuestionRevisionsCompleted)
+// router.get("/get-individual-count/:questionID", verifyJWT, countIndividualQuestionRevisionsCompleted)
 
 export default router

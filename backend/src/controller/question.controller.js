@@ -346,19 +346,19 @@ export const markRevisionCompleted = asyncHandler(async (req, res) => {
   );
 });
 
-export const countIndividualQuestionRevisionsCompleted = asyncHandler(async (req, res) => {
-    const user = req.user
-    const {questionID} = req.params
+// export const countIndividualQuestionRevisionsCompleted = asyncHandler(async (req, res) => {
+//     const user = req.user
+//     const {questionID} = req.params
 
-    const question = Question.findOne({_id: questionID, userId: user._id})
+//     const question = Question.findOne({_id: questionID, userId: user._id})
     
-    if (!question) {
-      throw new ApiError(404, null, "Question Not Found")
-    }
+//     if (!question) {
+//       throw new ApiError(404, null, "Question Not Found")
+//     }
 
-    const completedCount  = question.completedCount
+//     const completedCount  = question.completedCount
 
-    return res.status(200).json(
-      new ApiResponse(200, {completedCount}, "Completed count fetched successffully")
-    )
-})
+//     return res.status(200).json(
+//       new ApiResponse(200, {completedCount}, "Completed count fetched successffully")
+//     )
+// })
