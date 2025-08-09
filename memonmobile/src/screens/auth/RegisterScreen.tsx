@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -38,10 +45,10 @@ export default function RegisterScreen() {
 
   const validateEmail = (val: string) => /^\S+@\S+\.\S+$/.test(val);
 
-  const isFormValid = 
-    name.trim().length > 0 && 
-    email.trim().length > 0 && 
-    password.length >= 6 && 
+  const isFormValid =
+    name.trim().length > 0 &&
+    email.trim().length > 0 &&
+    password.length >= 6 &&
     confirmPassword.length > 0 &&
     password === confirmPassword &&
     validateEmail(email);
@@ -96,32 +103,56 @@ export default function RegisterScreen() {
   const passwordErrors = getPasswordErrors();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
             {/* Header */}
             <View style={styles.header}>
-              <Text style={[styles.appTitle, { color: colors.primary }]}>StudySmart</Text>
-              <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
+              <Text style={[styles.appTitle, { color: colors.primary }]}>
+                StudySmart
+              </Text>
+              <Text
+                style={[styles.subtitle, { color: colors.onSurfaceVariant }]}
+              >
                 Create your account to start learning
               </Text>
             </View>
 
             {/* Registration Form */}
-            <Surface style={[styles.formCard, { backgroundColor: colors.surface }]} elevation={1}>
-              <Text style={[styles.formTitle, { color: colors.onSurface }]}>Create Account</Text>
+            <Surface
+              style={[styles.formCard, { backgroundColor: colors.surface }]}
+              elevation={1}
+            >
+              <Text style={[styles.formTitle, { color: colors.onSurface }]}>
+                Create Account
+              </Text>
 
               {/* Error Message */}
               {error ? (
-                <Surface style={[styles.errorCard, { backgroundColor: colors.errorContainer }]} elevation={0}>
-                  <Text style={[styles.errorText, { color: colors.onErrorContainer }]}>{error}</Text>
+                <Surface
+                  style={[
+                    styles.errorCard,
+                    { backgroundColor: colors.errorContainer },
+                  ]}
+                  elevation={0}
+                >
+                  <Text
+                    style={[
+                      styles.errorText,
+                      { color: colors.onErrorContainer },
+                    ]}
+                  >
+                    {error}
+                  </Text>
                 </Surface>
               ) : null}
 
@@ -148,7 +179,10 @@ export default function RegisterScreen() {
                   autoCapitalize="none"
                   autoComplete="email"
                 />
-                <HelperText type="error" visible={email.length > 0 && !validateEmail(email)}>
+                <HelperText
+                  type="error"
+                  visible={email.length > 0 && !validateEmail(email)}
+                >
                   Please enter a valid email address
                 </HelperText>
               </View>
@@ -161,7 +195,7 @@ export default function RegisterScreen() {
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
                   leftIcon="lock"
-                  rightIcon={showPassword ? "eye-off" : "eye"}
+                  rightIcon={showPassword ? 'eye-off' : 'eye'}
                   onRightIconPress={() => setShowPassword(!showPassword)}
                   autoComplete="new-password"
                 />
@@ -178,8 +212,10 @@ export default function RegisterScreen() {
                   onChangeText={setConfirmPassword}
                   secureTextEntry={!showConfirmPassword}
                   leftIcon="lock-check"
-                  rightIcon={showConfirmPassword ? "eye-off" : "eye"}
-                  onRightIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  rightIcon={showConfirmPassword ? 'eye-off' : 'eye'}
+                  onRightIconPress={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
                   autoComplete="new-password"
                 />
                 {passwordErrors.map((errorMsg, index) => (
@@ -195,7 +231,10 @@ export default function RegisterScreen() {
                 onPress={submitForm}
                 disabled={!isFormValid || loading}
                 loading={loading}
-                style={[styles.registerButton, { backgroundColor: colors.primary }]}
+                style={[
+                  styles.registerButton,
+                  { backgroundColor: colors.primary },
+                ]}
                 contentStyle={styles.buttonContent}
                 labelStyle={styles.buttonLabel}
               >
@@ -204,8 +243,13 @@ export default function RegisterScreen() {
             </Surface>
 
             {/* Sign In Section */}
-            <Surface style={[styles.signinCard, { backgroundColor: colors.surface }]} elevation={0}>
-              <Text style={[styles.signinText, { color: colors.onSurfaceVariant }]}>
+            <Surface
+              style={[styles.signinCard, { backgroundColor: colors.surface }]}
+              elevation={0}
+            >
+              <Text
+                style={[styles.signinText, { color: colors.onSurfaceVariant }]}
+              >
                 Already have an account?
               </Text>
               <PaperButton

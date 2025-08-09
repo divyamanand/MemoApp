@@ -1,9 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
-import { Text, useTheme, IconButton, Card, ActivityIndicator, Badge, Surface } from 'react-native-paper';
+import {
+  Text,
+  useTheme,
+  IconButton,
+  Card,
+  ActivityIndicator,
+  Badge,
+  Surface,
+} from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logoutUser } from '../features/auth/authActions';
-import { useGetCountTillDateQuery, useGetRevisionsInfiniteQuery } from '../features/questions/api/questionApi';
+import {
+  useGetCountTillDateQuery,
+  useGetRevisionsInfiniteQuery,
+} from '../features/questions/api/questionApi';
 
 const DashboardScreen = () => {
   const theme = useTheme();
@@ -13,21 +24,26 @@ const DashboardScreen = () => {
 
   const [completedToday, setCompletedToday] = useState(0);
 
-  const { data: revisionsData, isLoading: loadingRevisions } = useGetRevisionsInfiniteQuery(undefined);
-  const { data: completedUptodate, isLoading: loadingCounts } = useGetCountTillDateQuery(undefined);
+  const { data: revisionsData, isLoading: loadingRevisions } =
+    useGetRevisionsInfiniteQuery(undefined);
+  const { data: completedUptodate, isLoading: loadingCounts } =
+    useGetCountTillDateQuery(undefined);
 
   const allRevisions = useMemo(
     () => revisionsData?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
-    [revisionsData]
+    [revisionsData],
   );
 
   useEffect(() => {
     const count =
-      allRevisions.filter((q: any) => q?.upcomingRevisions?.[0]?.completed === true).length ?? 0;
+      allRevisions.filter(
+        (q: any) => q?.upcomingRevisions?.[0]?.completed === true,
+      ).length ?? 0;
     setCompletedToday(count);
   }, [allRevisions]);
 
-  const totalCompleted = (completedUptodate?.totalCompleted ?? 0) + completedToday;
+  const totalCompleted =
+    (completedUptodate?.totalCompleted ?? 0) + completedToday;
   const loading = loadingRevisions || loadingCounts;
 
   return (
@@ -39,7 +55,12 @@ const DashboardScreen = () => {
             <Text style={[styles.welcomeTitle, { color: colors.onSurface }]}>
               Welcome, {userInfo?.name || 'Learner'}!
             </Text>
-            <Text style={[styles.welcomeSubtitle, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[
+                styles.welcomeSubtitle,
+                { color: colors.onSurfaceVariant },
+              ]}
+            >
               Let’s get learning.
             </Text>
           </View>
@@ -70,7 +91,9 @@ const DashboardScreen = () => {
         </View>
 
         {/* Progress Overview */}
-        <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Progress Overview</Text>
+        <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+          Progress Overview
+        </Text>
 
         <View style={styles.grid}>
           <StatCard
@@ -93,33 +116,62 @@ const DashboardScreen = () => {
         />
 
         {/* Activity heatmap placeholder block (to match screenshot spacing) */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
           <View style={styles.rowBetween}>
-            <Text style={[styles.cardTitle, { color: colors.onSurface }]}>Activity Heatmap</Text>
+            <Text style={[styles.cardTitle, { color: colors.onSurface }]}>
+              Activity Heatmap
+            </Text>
             <Text style={{ color: colors.onSurfaceVariant }}>October 2024</Text>
           </View>
           <View style={styles.heatmapBox}>
-            <View style={[styles.heatDot, { backgroundColor: colors.primary }]} />
-            <View style={[styles.heatDot, { backgroundColor: colors.primary }]} />
+            <View
+              style={[styles.heatDot, { backgroundColor: colors.primary }]}
+            />
+            <View
+              style={[styles.heatDot, { backgroundColor: colors.primary }]}
+            />
           </View>
         </Surface>
 
         {/* Performance Insights */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.cardTitle, { color: colors.onSurface }]}>Performance Insights</Text>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.cardTitle, { color: colors.onSurface }]}>
+            Performance Insights
+          </Text>
           <View style={styles.accuracyHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
-              <Text style={[styles.accuracyValue, { color: colors.onSurface }]}>88%</Text>
+              <Text style={[styles.accuracyValue, { color: colors.onSurface }]}>
+                88%
+              </Text>
             </View>
-            <View style={{ backgroundColor: '#E7F7EE', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 }}>
-              <Text style={{ color: '#1E7F4B', fontSize: 12, fontWeight: '600' }}>
+            <View
+              style={{
+                backgroundColor: '#E7F7EE',
+                paddingHorizontal: 8,
+                paddingVertical: 4,
+                borderRadius: 12,
+              }}
+            >
+              <Text
+                style={{ color: '#1E7F4B', fontSize: 12, fontWeight: '600' }}
+              >
                 +8% vs last week
               </Text>
             </View>
-
           </View>
           {/* Replace this block with your actual LineChart component */}
-          <View style={[styles.chartStub, { backgroundColor: colors.surfaceVariant }]} />
+          <View
+            style={[
+              styles.chartStub,
+              { backgroundColor: colors.surfaceVariant },
+            ]}
+          />
         </Surface>
 
         {/* Quote */}
@@ -131,9 +183,14 @@ const DashboardScreen = () => {
           elevation={0}
         >
           <Text style={[styles.quoteText, { color: colors.onSurface }]}>
-            “The beautiful thing about learning is that no one can take it away from you.”
+            “The beautiful thing about learning is that no one can take it away
+            from you.”
           </Text>
-          <Text style={[styles.quoteAuthor, { color: colors.onSurfaceVariant }]}>– B.B. King</Text>
+          <Text
+            style={[styles.quoteAuthor, { color: colors.onSurfaceVariant }]}
+          >
+            – B.B. King
+          </Text>
         </Surface>
 
         {loading && (
@@ -146,7 +203,6 @@ const DashboardScreen = () => {
   );
 };
 
-
 const StatCard = ({
   title,
   value,
@@ -157,12 +213,25 @@ const StatCard = ({
   colors: any;
 }) => {
   return (
-    <Card mode="contained" style={{ flex: 1, backgroundColor: colors.surface, borderRadius: 14 }}>
+    <Card
+      mode="contained"
+      style={{ flex: 1, backgroundColor: colors.surface, borderRadius: 14 }}
+    >
       <Card.Content style={{ paddingVertical: 16 }}>
-        <Text style={{ color: colors.onSurfaceVariant, fontSize: 12, marginBottom: 6 }}>
+        <Text
+          style={{
+            color: colors.onSurfaceVariant,
+            fontSize: 12,
+            marginBottom: 6,
+          }}
+        >
           {title}
         </Text>
-        <Text style={{ color: colors.onSurface, fontWeight: '700', fontSize: 24 }}>{value}</Text>
+        <Text
+          style={{ color: colors.onSurface, fontWeight: '700', fontSize: 24 }}
+        >
+          {value}
+        </Text>
       </Card.Content>
     </Card>
   );
@@ -291,7 +360,11 @@ const styles = StyleSheet.create({
   },
   quoteText: { fontSize: 13, lineHeight: 18 },
   quoteAuthor: { marginTop: 4, fontSize: 12 },
-  rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 
   loadingOverlay: {
     position: 'absolute',

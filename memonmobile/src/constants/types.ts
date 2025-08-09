@@ -7,7 +7,7 @@ export type RootStackParamList = {
   Question: undefined;
   About: undefined;
   Help: undefined;
-  Register: undefined
+  Register: undefined;
 };
 
 export type ErrorResponse = {

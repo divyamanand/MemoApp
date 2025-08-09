@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -38,7 +44,9 @@ const LoginScreen = () => {
   const isFormValid = email.length > 0 && password.length > 0;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -46,15 +54,22 @@ const LoginScreen = () => {
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={[styles.appTitle, { color: colors.primary }]}>StudySmart</Text>
+            <Text style={[styles.appTitle, { color: colors.primary }]}>
+              StudySmart
+            </Text>
             <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
               Sign in to continue learning
             </Text>
           </View>
 
           {/* Login Form */}
-          <Surface style={[styles.formCard, { backgroundColor: colors.surface }]} elevation={1}>
-            <Text style={[styles.formTitle, { color: colors.onSurface }]}>Welcome Back</Text>
+          <Surface
+            style={[styles.formCard, { backgroundColor: colors.surface }]}
+            elevation={1}
+          >
+            <Text style={[styles.formTitle, { color: colors.onSurface }]}>
+              Welcome Back
+            </Text>
 
             <View style={styles.inputContainer}>
               <TextInputField
@@ -75,7 +90,7 @@ const LoginScreen = () => {
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 leftIcon="lock"
-                rightIcon={showPassword ? "eye-off" : "eye"}
+                rightIcon={showPassword ? 'eye-off' : 'eye'}
                 onRightIconPress={() => setShowPassword(!showPassword)}
                 autoComplete="password"
               />
@@ -108,14 +123,27 @@ const LoginScreen = () => {
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
-            <Divider style={[styles.divider, { backgroundColor: colors.outline }]} />
-            <Text style={[styles.dividerText, { color: colors.onSurfaceVariant }]}>OR</Text>
-            <Divider style={[styles.divider, { backgroundColor: colors.outline }]} />
+            <Divider
+              style={[styles.divider, { backgroundColor: colors.outline }]}
+            />
+            <Text
+              style={[styles.dividerText, { color: colors.onSurfaceVariant }]}
+            >
+              OR
+            </Text>
+            <Divider
+              style={[styles.divider, { backgroundColor: colors.outline }]}
+            />
           </View>
 
           {/* Sign Up Section */}
-          <Surface style={[styles.signupCard, { backgroundColor: colors.surface }]} elevation={0}>
-            <Text style={[styles.signupText, { color: colors.onSurfaceVariant }]}>
+          <Surface
+            style={[styles.signupCard, { backgroundColor: colors.surface }]}
+            elevation={0}
+          >
+            <Text
+              style={[styles.signupText, { color: colors.onSurfaceVariant }]}
+            >
               {`Don't have an account?`}
             </Text>
             <PaperButton

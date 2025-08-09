@@ -28,7 +28,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="About" component={AboutScreen} />
         <Stack.Screen name="Help" component={HelpScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen}/>
+        <Stack.Screen name="Register" component={RegisterScreen} />
       </Stack.Navigator>
     );
 
@@ -50,8 +50,8 @@ const AppNavigator = () => {
         },
       }}
     >
-      <Tab.Screen 
-        name="Dashboard" 
+      <Tab.Screen
+        name="Dashboard"
         component={SafeDashboard}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
@@ -63,8 +63,8 @@ const AppNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen 
-        name="Practice" 
+      <Tab.Screen
+        name="Practice"
         component={SafePractice}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
@@ -76,8 +76,8 @@ const AppNavigator = () => {
           ),
         }}
       />
-      <Tab.Screen 
-        name="Question" 
+      <Tab.Screen
+        name="Question"
         component={SafeQuestionsList}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
@@ -92,7 +92,6 @@ const AppNavigator = () => {
     </Tab.Navigator>
   );
 };
-
 
 const SafeDashboard = () => (
   <SafeAreaView style={styles.safe}>

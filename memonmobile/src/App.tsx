@@ -1,13 +1,18 @@
 import { Provider } from 'react-redux';
 import store, { persistor } from '@/src/store/store';
 
-import { NavigationContainer, DefaultTheme as NavTheme } from '@react-navigation/native';
-import { PaperProvider, MD3LightTheme as PaperDefault } from 'react-native-paper';
+import {
+  NavigationContainer,
+  DefaultTheme as NavTheme,
+} from '@react-navigation/native';
+import {
+  PaperProvider,
+  MD3LightTheme as PaperDefault,
+} from 'react-native-paper';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import AppNavigator from './navigation/AppNavigator';
 import '../global.css';
-
 
 export const StudyLightTheme = {
   ...PaperDefault,

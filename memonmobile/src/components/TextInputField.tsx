@@ -40,7 +40,11 @@ const TextInputField: React.FC<TextInputFieldProps> = ({
       autoCapitalize={autoCapitalize}
       autoComplete={autoComplete}
       left={leftIcon ? <TextInput.Icon icon={leftIcon} /> : undefined}
-      right={rightIcon ? <TextInput.Icon icon={rightIcon} onPress={onRightIconPress} /> : undefined}
+      right={
+        rightIcon ? (
+          <TextInput.Icon icon={rightIcon} onPress={onRightIconPress} />
+        ) : undefined
+      }
       {...otherProps}
     />
   );

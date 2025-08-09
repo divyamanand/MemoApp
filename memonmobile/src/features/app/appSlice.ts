@@ -3,16 +3,16 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { loginUser, logoutUser, registerUser } from '../auth/authActions';
 
 interface UserInfo {
-  _id: string;                 
+  _id: string;
   name: string;
   email: string;
-  password?: string;           
+  password?: string;
 
   k_vals: {
     hard: number;
     medium: number;
     easy: number;
-    [key: string]: number;  
+    [key: string]: number;
   };
 
   c_vals: {
@@ -31,15 +31,15 @@ interface UserInfo {
 
   streakCount: number;
 
-  lastPOTDDate?: string;     
+  lastPOTDDate?: string;
 
   currentPOTD: {
-    questionId: string;       
+    questionId: string;
     assignedAt: string;
     completed: boolean;
   };
 
-  refreshToken?: string;   
+  refreshToken?: string;
 
   createdAt: string;
   updatedAt: string;
@@ -68,12 +68,12 @@ const appSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(logoutUser.fulfilled, () => initialState)
-     .addMatcher(
+      .addMatcher(
         isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
         (state, action: PayloadAction<UserInfo>) => {
           state.userInfo = action.payload;
           state.tokenValid = true;
-        }
+        },
       );
   },
 });

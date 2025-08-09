@@ -13,42 +13,40 @@ import CircularProgress from '../../components/CircularProgress';
 import PracticeCard from '../../components/PracticeCard';
 import { useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
 
-
 const PracticeScreen = () => {
   const { colors } = useTheme();
 
-
-  const {
-    data,
-    isLoading,
-    isFetching,
-    refetch,
-  } = useGetRevisionsInfiniteQuery(undefined);
-
+  const { data, isLoading, isFetching, refetch } =
+    useGetRevisionsInfiniteQuery(undefined);
 
   const allQuestions = useMemo(
     () => data?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
-    [data]
+    [data],
   );
-
 
   const completedCount = useMemo(
     () =>
-      allQuestions.filter((q: any) => q?.upcomingRevisions?.[0]?.completed === true).length,
-    [allQuestions]
+      allQuestions.filter(
+        (q: any) => q?.upcomingRevisions?.[0]?.completed === true,
+      ).length,
+    [allQuestions],
   );
 
-
-  const totalTarget = allQuestions.length
-  const progress = completedCount/totalTarget;
-  const displayLabel = totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0'
-
+  const totalTarget = allQuestions.length;
+  const progress = completedCount / totalTarget;
+  const displayLabel =
+    totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0';
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Sticky top bar (title + actions) */}
-      <Surface style={[styles.topBar, { backgroundColor: colors.surface }]} elevation={0}>
-        <Text style={[styles.title, { color: colors.onSurface }]}>Practice</Text>
+      <Surface
+        style={[styles.topBar, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
+        <Text style={[styles.title, { color: colors.onSurface }]}>
+          Practice
+        </Text>
         <View style={styles.actions}>
           <IconButton
             icon="filter-variant"
@@ -65,19 +63,31 @@ const PracticeScreen = () => {
         </View>
       </Surface>
 
-
       {/* Progress summary */}
-      <Surface style={[styles.progressWrap, { backgroundColor: colors.surface }]} elevation={1}>
-        <CircularProgress progress={totalTarget > 0 ? progress : 0} label={`${displayLabel}`} />
+      <Surface
+        style={[styles.progressWrap, { backgroundColor: colors.surface }]}
+        elevation={1}
+      >
+        <CircularProgress
+          progress={totalTarget > 0 ? progress : 0}
+          label={`${displayLabel}`}
+        />
         <View style={styles.progressMeta}>
           <Text style={[styles.progressTitle, { color: colors.onSurface }]}>
             Today’s Goal
           </Text>
-          <Text style={[styles.progressSub, { color: colors.onSurfaceVariant }]}>
+          <Text
+            style={[styles.progressSub, { color: colors.onSurfaceVariant }]}
+          >
             Complete {totalTarget} revisions
           </Text>
           <View style={styles.progressChips}>
-            <Chip compact mode="flat" style={styles.chip} textStyle={{ fontSize: 12 }}>
+            <Chip
+              compact
+              mode="flat"
+              style={styles.chip}
+              textStyle={{ fontSize: 12 }}
+            >
               {completedCount} done
             </Chip>
             <Chip
@@ -92,20 +102,26 @@ const PracticeScreen = () => {
         </View>
       </Surface>
 
-
       <Divider style={{ opacity: 0.4 }} />
-
 
       {/* Content list */}
       {isLoading ? (
         <View style={styles.loader}>
           <ActivityIndicator size="large" />
-          <Text style={{ marginTop: 8, color: colors.onSurfaceVariant }}>Loading practice…</Text>
+          <Text style={{ marginTop: 8, color: colors.onSurfaceVariant }}>
+            Loading practice…
+          </Text>
         </View>
       ) : allQuestions.length === 0 ? (
         <View style={styles.empty}>
-          <IconButton icon="inbox" size={28} iconColor={colors.onSurfaceVariant} />
-          <Text style={{ color: colors.onSurface, fontWeight: '600' }}>No items</Text>
+          <IconButton
+            icon="inbox"
+            size={28}
+            iconColor={colors.onSurfaceVariant}
+          />
+          <Text style={{ color: colors.onSurface, fontWeight: '600' }}>
+            No items
+          </Text>
           <Text style={{ color: colors.onSurfaceVariant, marginTop: 4 }}>
             New recommendations will appear here.
           </Text>
@@ -114,7 +130,11 @@ const PracticeScreen = () => {
         <ScrollView
           contentContainerStyle={styles.listContent}
           refreshControl={
-            <RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor={colors.primary} />
+            <RefreshControl
+              refreshing={isFetching}
+              onRefresh={refetch}
+              tintColor={colors.primary}
+            />
           }
         >
           {allQuestions.map((q: any) => (
@@ -149,7 +169,6 @@ const PracticeScreen = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   topBar: {
@@ -161,7 +180,6 @@ const styles = StyleSheet.create({
   },
   title: { flex: 1, fontSize: 22, fontWeight: '800' },
   actions: { flexDirection: 'row', alignItems: 'center' },
-
 
   progressWrap: {
     marginHorizontal: 16,
@@ -179,9 +197,7 @@ const styles = StyleSheet.create({
   progressChips: { flexDirection: 'row', gap: 8, marginTop: 10 },
   chip: { height: 28, borderRadius: 16 },
 
-
   listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
-
 
   loader: {
     flex: 1,
@@ -196,6 +212,5 @@ const styles = StyleSheet.create({
     gap: 2,
   },
 });
-
 
 export default PracticeScreen;

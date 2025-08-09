@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   StyleSheet,
@@ -22,9 +22,7 @@ import {
 } from '@/src/features/questions/api/questionApi';
 
 const QuestionsListScreen = () => {
-  const {colors} = useTheme();
-
-  /* ── Data ────────────────────────────────────────────── */
+  const { colors } = useTheme();
   const {
     data: questions,
     isLoading: loadingQuestions,
@@ -40,36 +38,41 @@ const QuestionsListScreen = () => {
   } = useGetRevisionsInfiniteQuery(undefined);
 
   const allQuestions = useMemo(
-    () => questions?.pages.flatMap(p => p.data?.questions ?? []) ?? [],
+    () => questions?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
     [questions],
   );
 
   const allRevisions = useMemo(
-    () => revisions?.pages.flatMap(p => p.data?.questions ?? []) ?? [],
+    () => revisions?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
     [revisions],
   );
 
   const completedQuestions = useMemo(
-    () => allRevisions.filter(q => q.upcomingRevisions?.[0]?.completed === true) ?? [],
+    () =>
+      allRevisions.filter(
+        (q) => q.upcomingRevisions?.[0]?.completed === true,
+      ) ?? [],
     [allRevisions],
   );
 
   /* ── UI state ────────────────────────────────────────── */
-  const [activeTab, setActiveTab] = useState<'questions' | 'revisions' | 'completed'>(
-    'questions',
-  );
-  const [sortBy, setSortBy] = useState<'difficulty' | 'topic' | 'recency' | 'priority'>('difficulty');
+  const [activeTab, setActiveTab] = useState<
+    'questions' | 'revisions' | 'completed'
+  >('questions');
+  const [sortBy, setSortBy] = useState<
+    'difficulty' | 'topic' | 'recency' | 'priority'
+  >('difficulty');
 
   const isLoading = loadingQuestions || loadingRevisions;
   const isFetching =
     activeTab === 'questions' ? fetchingQuestions : fetchingRevisions;
 
   const currentData =
-    activeTab === 'questions' 
-      ? allQuestions 
-      : activeTab === 'revisions' 
-      ? allRevisions 
-      : completedQuestions;
+    activeTab === 'questions'
+      ? allQuestions
+      : activeTab === 'revisions'
+        ? allRevisions
+        : completedQuestions;
 
   const handleRefresh = () =>
     activeTab === 'questions' ? refetchQuestions() : refetchRevisions();
@@ -79,10 +82,15 @@ const QuestionsListScreen = () => {
 
   /* ── Render ──────────────────────────────────────────── */
   return (
-    <View style={[styles.container, {backgroundColor: colors.background}]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <Surface style={[styles.header, {backgroundColor: colors.surface}]} elevation={0}>
-        <Text style={[styles.headerTitle, {color: colors.onSurface}]}>Questions</Text>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Questions
+        </Text>
         <IconButton
           icon="plus"
           size={24}
@@ -94,7 +102,8 @@ const QuestionsListScreen = () => {
       {/* Tabs */}
       <Surface
         elevation={1}
-        style={[styles.tabRow, {backgroundColor: colors.surface}]}>
+        style={[styles.tabRow, { backgroundColor: colors.surface }]}
+      >
         <TabButton
           label="All Questions"
           isActive={activeTab === 'questions'}
@@ -127,7 +136,9 @@ const QuestionsListScreen = () => {
 
       {/* Sort Options */}
       <View style={styles.sortContainer}>
-        <Text style={[styles.sortLabel, {color: colors.onSurfaceVariant}]}>SORT BY</Text>
+        <Text style={[styles.sortLabel, { color: colors.onSurfaceVariant }]}>
+          SORT BY
+        </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.sortChips}>
             {['Difficulty', 'Topic', 'Recency', 'Priority'].map((option) => (
@@ -138,12 +149,17 @@ const QuestionsListScreen = () => {
                 onPress={() => setSortBy(option.toLowerCase() as any)}
                 style={[
                   styles.sortChip,
-                  sortBy === option.toLowerCase() && {backgroundColor: colors.primaryContainer}
+                  sortBy === option.toLowerCase() && {
+                    backgroundColor: colors.primaryContainer,
+                  },
                 ]}
                 textStyle={{
-                  color: sortBy === option.toLowerCase() ? colors.primary : colors.onSurfaceVariant,
+                  color:
+                    sortBy === option.toLowerCase()
+                      ? colors.primary
+                      : colors.onSurfaceVariant,
                   fontSize: 12,
-                  fontWeight: '600'
+                  fontWeight: '600',
                 }}
               >
                 {option}
@@ -155,8 +171,14 @@ const QuestionsListScreen = () => {
 
       {/* Questions Header with Count */}
       <View style={styles.questionsHeader}>
-        <Text style={[styles.questionsLabel, {color: colors.onSurfaceVariant}]}>QUESTIONS</Text>
-        <Text style={[styles.revisionsCount, {color: colors.onSurfaceVariant}]}>
+        <Text
+          style={[styles.questionsLabel, { color: colors.onSurfaceVariant }]}
+        >
+          QUESTIONS
+        </Text>
+        <Text
+          style={[styles.revisionsCount, { color: colors.onSurfaceVariant }]}
+        >
           Revisions Today: {revisionsToday} / {totalRevisions}
         </Text>
       </View>
@@ -178,11 +200,12 @@ const QuestionsListScreen = () => {
               onRefresh={handleRefresh}
               tintColor={colors.primary}
             />
-          }>
+          }
+        >
           {currentData.length === 0 ? (
             <EmptyState colors={colors} />
           ) : (
-            currentData.map(q => (
+            currentData.map((q) => (
               <EnhancedQuestionItem
                 key={q._id}
                 question={q}
@@ -197,16 +220,20 @@ const QuestionsListScreen = () => {
   );
 };
 
-const EnhancedQuestionItem = ({question, colors, isCompleted}) => {
+const EnhancedQuestionItem = ({ question, colors, isCompleted }) => {
   // Map difficulty to colors (based on the image)
   const getSubjectColor = (difficulty) => {
     if (!difficulty) return colors.outline;
     const level = difficulty.toLowerCase();
-    switch(level) {
-      case 'easy': return '#7BCEDB'; // Teal/Green for easy
-      case 'medium': return '#FFC15A'; // Yellow for medium
-      case 'hard': return '#FF6B6B'; // Red for hard
-      default: return colors.primary;
+    switch (level) {
+      case 'easy':
+        return '#7BCEDB'; // Teal/Green for easy
+      case 'medium':
+        return '#FFC15A'; // Yellow for medium
+      case 'hard':
+        return '#FF6B6B'; // Red for hard
+      default:
+        return colors.primary;
     }
   };
 
@@ -216,27 +243,34 @@ const EnhancedQuestionItem = ({question, colors, isCompleted}) => {
   return (
     <TouchableOpacity style={styles.questionItem}>
       {/* Difficulty Color Indicator */}
-      <View style={[styles.subjectIndicator, {backgroundColor: subjectColor}]} />
-      
+      <View
+        style={[styles.subjectIndicator, { backgroundColor: subjectColor }]}
+      />
+
       {/* Content */}
       <View style={styles.questionContent}>
         <View style={styles.questionHeader}>
-          <Text style={[styles.subjectText, {color: colors.onSurfaceVariant}]}>
+          <Text
+            style={[styles.subjectText, { color: colors.onSurfaceVariant }]}
+          >
             {question.tags?.[0] || 'General'}
           </Text>
-          <Text style={[styles.timeText, {color: colors.onSurfaceVariant}]}>
+          <Text style={[styles.timeText, { color: colors.onSurfaceVariant }]}>
             {timeEstimate}
           </Text>
         </View>
-        
-        <Text style={[styles.questionTitle, {color: colors.onSurface}]} numberOfLines={2}>
+
+        <Text
+          style={[styles.questionTitle, { color: colors.onSurface }]}
+          numberOfLines={2}
+        >
           {question.questionName}
         </Text>
       </View>
 
       {/* Status Icon */}
       <IconButton
-        icon={isCompleted ? "check-circle" : "check-circle-outline"}
+        icon={isCompleted ? 'check-circle' : 'check-circle-outline'}
         size={20}
         iconColor={isCompleted ? colors.primary : colors.onSurfaceVariant}
         style={styles.statusIcon}
@@ -244,7 +278,6 @@ const EnhancedQuestionItem = ({question, colors, isCompleted}) => {
     </TouchableOpacity>
   );
 };
-
 
 /* ── Sub-components ───────────────────────────────────── */
 const TabButton = ({
@@ -262,31 +295,28 @@ const TabButton = ({
     <View
       style={[
         styles.indicator,
-        {backgroundColor: isActive ? colors.primary : 'transparent'},
+        { backgroundColor: isActive ? colors.primary : 'transparent' },
       ]}
     />
     <Text
       style={[
         styles.tabText,
-        {color: isActive ? colors.primary : colors.onSurfaceVariant},
+        { color: isActive ? colors.primary : colors.onSurfaceVariant },
         isActive && styles.tabTextActive,
-      ]}>
+      ]}
+    >
       {label}
     </Text>
   </TouchableOpacity>
 );
 
-const EmptyState = ({colors}: {colors: any}) => (
+const EmptyState = ({ colors }: { colors: any }) => (
   <View style={styles.emptyWrap}>
-    <IconButton
-      icon="inbox"
-      size={30}
-      iconColor={colors.onSurfaceVariant}
-    />
-    <Text style={[styles.emptyTitle, {color: colors.onSurface}]}>
+    <IconButton icon="inbox" size={30} iconColor={colors.onSurfaceVariant} />
+    <Text style={[styles.emptyTitle, { color: colors.onSurface }]}>
       Nothing here yet
     </Text>
-    <Text style={[styles.emptySub, {color: colors.onSurfaceVariant}]}>
+    <Text style={[styles.emptySub, { color: colors.onSurfaceVariant }]}>
       New questions will appear once available.
     </Text>
   </View>
@@ -294,7 +324,7 @@ const EmptyState = ({colors}: {colors: any}) => (
 
 /* ── Styles ───────────────────────────────────────────── */
 const styles = StyleSheet.create({
-  container: {flex: 1},
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -312,10 +342,10 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     paddingHorizontal: 16,
   },
-  tabButton: {flex: 1, alignItems: 'center', paddingVertical: 12},
-  indicator: {height: 3, width: '100%', borderRadius: 2, marginBottom: 4},
-  tabText: {fontSize: 14},
-  tabTextActive: {fontWeight: '700'},
+  tabButton: { flex: 1, alignItems: 'center', paddingVertical: 12 },
+  indicator: { height: 3, width: '100%', borderRadius: 2, marginBottom: 4 },
+  tabText: { fontSize: 14 },
+  tabTextActive: { fontWeight: '700' },
   searchContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -362,7 +392,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
-  listContent: {paddingBottom: 24},
+  listContent: { paddingBottom: 24 },
   questionItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -410,8 +440,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     gap: 4,
   },
-  emptyTitle: {fontWeight: '700', fontSize: 15},
-  emptySub: {fontSize: 13},
+  emptyTitle: { fontWeight: '700', fontSize: 15 },
+  emptySub: { fontSize: 13 },
 });
 
 export default QuestionsListScreen;
