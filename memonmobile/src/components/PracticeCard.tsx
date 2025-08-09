@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { useTheme, Text, Chip } from 'react-native-paper';
+import { useTheme, Text, Chip, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 
 interface PracticeCardProps {
@@ -11,7 +11,7 @@ interface PracticeCardProps {
   estimateTime?: string;
   onMarkDone?: () => void;
   onStartTimer?: () => void;
-  // Add the missing props:
+  onInfoPress?: () => void; // New prop for info button
   style?: ViewStyle;
   titleColor?: string;
   subtitleColor?: string;
@@ -27,7 +27,8 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   estimateTime,
   onMarkDone,
   onStartTimer,
-  style, // Now this is accepted
+  onInfoPress, // New prop
+  style,
   titleColor,
   subtitleColor,
   accentColor,
@@ -46,10 +47,12 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
       {/* Header: Title and info icon */}
       <View style={styles.header}>
         <Text style={[styles.title, { color: finalTitleColor }]}>{title}</Text>
-        <MaterialIcons
-          name="info-outline"
+        <IconButton
+          icon="information-outline"
           size={20}
-          color={finalSubtitleColor}
+          iconColor={finalSubtitleColor}
+          onPress={onInfoPress}
+          style={styles.infoButton}
         />
       </View>
 
@@ -164,7 +167,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  title: { fontWeight: '800', fontSize: 17 },
+  title: { fontWeight: '800', fontSize: 17, flex: 1 },
+  infoButton: {
+    margin: 0,
+    width: 32,
+    height: 32,
+  },
   tagsContainer: {
     flexDirection: 'row',
     marginTop: 12,
