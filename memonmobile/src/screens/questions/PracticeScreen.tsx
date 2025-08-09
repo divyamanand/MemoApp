@@ -18,7 +18,6 @@ import { ResponseQuestion } from '@/src/constants/types';
 const PracticeScreen = () => {
   const { colors } = useTheme();
 
-  // Modal state
   const [selectedQuestion, setSelectedQuestion] = useState<ResponseQuestion | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
@@ -43,7 +42,6 @@ const PracticeScreen = () => {
   const displayLabel =
     totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0';
 
-  // Modal handlers
   const openQuestionModal = (question: ResponseQuestion): void => {
     setSelectedQuestion(question);
     setIsModalVisible(true);
@@ -56,7 +54,6 @@ const PracticeScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Sticky top bar (title + actions) */}
       <Surface
         style={[styles.topBar, { backgroundColor: colors.surface }]}
         elevation={0}
@@ -80,7 +77,6 @@ const PracticeScreen = () => {
         </View>
       </Surface>
 
-      {/* Progress summary */}
       <Surface
         style={[styles.progressWrap, { backgroundColor: colors.surface }]}
         elevation={1}
@@ -121,7 +117,6 @@ const PracticeScreen = () => {
 
       <Divider style={{ opacity: 0.4 }} />
 
-      {/* Content list */}
       {isLoading ? (
         <View style={styles.loader}>
           <ActivityIndicator size="large" />
@@ -183,7 +178,6 @@ const PracticeScreen = () => {
         </ScrollView>
       )}
 
-      {/* Question Info Modal */}
       <Modal
         visible={isModalVisible}
         animationType="slide"

@@ -2,7 +2,6 @@ import { EndpointBuilder } from '@reduxjs/toolkit/query';
 import {
   ApiResponse,
   PaginatedApiResponse,
-  PostQuestion,
   ResponseQuestion,
 } from '../../../constants/types';
 import { axiosBaseQuery } from '../../axiosQuery';
@@ -15,7 +14,6 @@ export type InitialPageParam = {
 export type {
   ApiResponse,
   PaginatedApiResponse,
-  PostQuestion,
   ResponseQuestion,
 };
 

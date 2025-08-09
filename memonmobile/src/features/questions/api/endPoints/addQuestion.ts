@@ -1,12 +1,12 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/query';
 import { nanoid } from '@reduxjs/toolkit';
 import { questionApi } from '../questionApi';
-import { ApiResponse, PostQuestion, ResponseQuestion } from '../types';
+import { ApiResponse, ResponseQuestion } from '../types';
 
 export const addQuestionEndpoint = (
   build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
-  build.mutation<ApiResponse<ResponseQuestion>, PostQuestion>({
+  build.mutation<ApiResponse<ResponseQuestion>, ResponseQuestion>({
     query: (data) => ({
       url: '/api/v1/question/add-question',
       method: 'POST',

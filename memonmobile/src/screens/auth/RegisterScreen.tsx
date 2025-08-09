@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,16 +17,15 @@ import {
 } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
 import { registerUser } from '@/src/features/auth/authActions';
-import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
-import { useNavigation } from '@react-navigation/native';
-import { ErrorResponse } from '@/src/constants/types';
+import { useAppDispatch } from '@/src/store/hooks';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ErrorResponse, RootStackParamList } from '@/src/constants/types';
 import { handleError } from '@/src/service/errorService';
 
 export default function RegisterScreen() {
   const { colors } = useTheme();
-  const { userInfo } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -37,11 +36,6 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  useEffect(() => {
-    if (userInfo) {
-      navigation.navigate('Dashboard');
-    }
-  }, [userInfo]);
 
   const validateEmail = (val: string) => /^\S+@\S+\.\S+$/.test(val);
 

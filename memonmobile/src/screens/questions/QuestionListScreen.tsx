@@ -50,14 +50,14 @@ const QuestionsListScreen = () => {
     data: questions,
     isLoading: loadingQuestions,
     isFetching: fetchingQuestions,
-    // refetch: refetchQuestions,
+    refetch: refetchQuestions,
   } = useGetQuestionsInfiniteQuery(undefined);
 
   const {
     data: revisions,
     isLoading: loadingRevisions,
     isFetching: fetchingRevisions,
-    // refetch: refetchRevisions,
+    refetch: refetchRevisions,
   } = useGetRevisionsInfiniteQuery(undefined);
 
   const allQuestions = useMemo<ResponseQuestion[]>(
@@ -70,8 +70,7 @@ const QuestionsListScreen = () => {
     [revisions],
   );
 
-
-  const [activeTab, setActiveTab] = useState<TabOption>('questions'); // Default to questions
+  const [activeTab, setActiveTab] = useState<TabOption>('questions'); 
   const [sortBy, setSortBy] = useState<SortOption>('difficulty');
 
   const isLoading: boolean = loadingQuestions || loadingRevisions;
@@ -80,6 +79,7 @@ const QuestionsListScreen = () => {
 
   const currentData: ResponseQuestion[] =
     activeTab === 'questions' ? allQuestions : allRevisions;
+
 
   const openQuestionModal = (question: ResponseQuestion): void => {
     setSelectedQuestion(question);
@@ -187,7 +187,7 @@ const QuestionsListScreen = () => {
           refreshControl={
             <RefreshControl
               refreshing={isFetching}
-              // onRefresh={handleRefresh}
+              onRefresh={activeTab === "revisions" ? refetchRevisions : refetchQuestions}
               tintColor={colors.primary}
             />
           }
@@ -273,6 +273,7 @@ const EnhancedQuestionItem: React.FC<EnhancedQuestionItemProps> = ({
         </Text>
       </View>
 
+      {/* Status Icon - Only show on revisions tab */}
       {showStatusIcon && (
         <IconButton
           icon={isCompleted ? 'check-circle' : 'check-circle-outline'}
@@ -337,7 +338,7 @@ const EmptyState = () => {
   );
 };
 
-
+// Styles remain the same
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {

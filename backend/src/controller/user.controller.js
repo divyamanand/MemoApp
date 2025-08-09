@@ -113,7 +113,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 })
 
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-  const refreshToken = req.cookies.refreshToken
+  const refreshToken = req.cookies.refreshToken || req.header("Authorization")?.replace("Bearer ", "")
   const clientType = req.get("x-client-type")
 
   if (!refreshToken) throw new ApiError(401, "Refresh Token Missing. Login Again")

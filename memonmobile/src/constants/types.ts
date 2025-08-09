@@ -36,22 +36,15 @@ export type ResponseQuestion = {
   formData?: any;
   upcomingRevisions: Revision[];
   revisionHistory?: Revision[];
-  createdAt?: Date;
-  updatedAt?: Date;
-  isPending: boolean;
+  description?: string;
+  options?: string[];
+  link?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  isPending?: boolean;
+  completedCount?: number;
 };
 
-export type PostQuestion = {
-  _id: string;
-  userId: string;
-  questionName: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  tags?: string[];
-  revisions?: Revision[];
-  formData?: Record<string, any>;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
 
 export type ApiResponse<T = any> = {
   statusCode?: number;

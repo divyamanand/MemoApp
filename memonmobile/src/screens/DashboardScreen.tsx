@@ -6,7 +6,6 @@ import {
   IconButton,
   Card,
   ActivityIndicator,
-  Badge,
   Surface,
 } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -49,7 +48,6 @@ const DashboardScreen = () => {
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Welcome row */}
         <View style={styles.welcomeRow}>
           <View style={{ flex: 1 }}>
             <Text style={[styles.welcomeTitle, { color: colors.onSurface }]}>
@@ -65,7 +63,6 @@ const DashboardScreen = () => {
             </Text>
           </View>
 
-          {/* Action icons: profile, settings, logout */}
           <IconButton
             icon="account"
             iconColor={colors.onSurfaceVariant}
@@ -90,7 +87,6 @@ const DashboardScreen = () => {
           />
         </View>
 
-        {/* Progress Overview */}
         <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
           Progress Overview
         </Text>
@@ -108,14 +104,12 @@ const DashboardScreen = () => {
           />
         </View>
 
-        {/* Streak banner */}
         <StreakStrip
           days={userInfo?.streakCount ?? 0}
           message="Keep the fire burning!"
           colors={colors}
         />
 
-        {/* Activity heatmap placeholder block (to match screenshot spacing) */}
         <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
           elevation={1}
@@ -136,7 +130,6 @@ const DashboardScreen = () => {
           </View>
         </Surface>
 
-        {/* Performance Insights */}
         <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
           elevation={1}
@@ -174,7 +167,6 @@ const DashboardScreen = () => {
           />
         </Surface>
 
-        {/* Quote */}
         <Surface
           style={[
             styles.quoteCard,

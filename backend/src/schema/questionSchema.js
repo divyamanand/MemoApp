@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const revisionSchema = new mongoose.Schema(
   {
@@ -45,13 +45,21 @@ const questionSchema = new mongoose.Schema(
       default: [],
     },
 
-    lastSolved: {
-      type: Date
+    description: {
+      type: String
+    },
+
+    options: {
+      type: [String]
+    },
+
+    link: {
+      type: String
     },
 
     formData: {
       type: mongoose.Schema.Types.Mixed,
-      default: {},
+      default: {}
     },
 
   },

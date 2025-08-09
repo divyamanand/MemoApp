@@ -59,7 +59,6 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
             iconColor={colors.onSurfaceVariant}
             onPress={() => {}}
           />
-          {/* Close button in top right */}
           <IconButton
             icon="close"
             size={24}
@@ -70,7 +69,6 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
       </Surface>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Tags and Difficulty */}
         <View style={styles.tagsSection}>
           <View style={styles.tagsContainer}>
             {question.tags?.map((tag) => (
@@ -99,7 +97,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           </View>
         </View>
 
-        {/* Question Description */}
+
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Question</Text>
           <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>
@@ -108,7 +106,6 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           </Text>
         </Surface>
 
-        {/* Insights Section */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Insights</Text>
           <View style={styles.insightsGrid}>
@@ -127,7 +124,6 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           </View>
         </Surface>
 
-        {/* Revision History */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <View style={styles.revisionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Revision History</Text>

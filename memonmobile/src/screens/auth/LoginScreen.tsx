@@ -52,7 +52,6 @@ const LoginScreen = () => {
         style={styles.keyboardView}
       >
         <View style={styles.content}>
-          {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.appTitle, { color: colors.primary }]}>
               StudySmart
@@ -108,7 +107,6 @@ const LoginScreen = () => {
               {loading ? 'Signing In...' : 'Sign In'}
             </PaperButton>
 
-            {/* Forgot Password */}
             <PaperButton
               mode="text"
               onPress={() => {
@@ -121,7 +119,6 @@ const LoginScreen = () => {
             </PaperButton>
           </Surface>
 
-          {/* Divider */}
           <View style={styles.dividerContainer}>
             <Divider
               style={[styles.divider, { backgroundColor: colors.outline }]}
@@ -135,8 +132,6 @@ const LoginScreen = () => {
               style={[styles.divider, { backgroundColor: colors.outline }]}
             />
           </View>
-
-          {/* Sign Up Section */}
           <Surface
             style={[styles.signupCard, { backgroundColor: colors.surface }]}
             elevation={0}
@@ -148,7 +143,7 @@ const LoginScreen = () => {
             </Text>
             <PaperButton
               mode="outlined"
-              onPress={() => navigation.navigate('Register')} // This should now work
+              onPress={() => navigation.navigate('Register')}
               style={[styles.signupButton, { borderColor: colors.primary }]}
               labelStyle={[styles.signupLabel, { color: colors.primary }]}
             >
@@ -156,7 +151,6 @@ const LoginScreen = () => {
             </PaperButton>
           </Surface>
 
-          {/* Loading Overlay */}
           {loading && (
             <View style={styles.loadingOverlay}>
               <ActivityIndicator size="large" color={colors.primary} />

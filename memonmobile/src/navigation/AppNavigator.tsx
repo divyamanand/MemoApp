@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar, useColorScheme } from 'react-native';
 
 import DashboardScreen from '../screens/DashboardScreen';
 import { RootStackParamList } from '@/src/constants/types';
@@ -21,75 +21,89 @@ const AppNavigator = () => {
   const Tab = createBottomTabNavigator();
   const { tokenValid } = useAppSelector((state) => state.app);
   const { colors } = useTheme();
+  const colorScheme = useColorScheme();
+  const isDarkMode = colorScheme === 'dark';
 
   if (!tokenValid)
     return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="Help" component={HelpScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-      </Stack.Navigator>
+      <>
+        <StatusBar
+          barStyle={isDarkMode ? 'dark-content' : "light-content"}
+          backgroundColor={colors.background}
+        />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="About" component={AboutScreen} />
+          <Stack.Screen name="Help" component={HelpScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+        </Stack.Navigator>
+      </>
     );
 
   return (
-    <Tab.Navigator
-      initialRouteName="Dashboard"
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.outline,
-          borderTopWidth: 0.5,
-        },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.onSurfaceVariant,
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
-      }}
-    >
-      <Tab.Screen
-        name="Dashboard"
-        component={SafeDashboard}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="view-dashboard"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
+    <>
+      <StatusBar
+        barStyle={isDarkMode ? 'dark-content' : "light-content"}
+        backgroundColor={colors.background}
       />
-      <Tab.Screen
-        name="Practice"
-        component={SafePractice}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="book-open-variant"
-              size={size}
-              color={color}
-            />
-          ),
+      <Tab.Navigator
+        initialRouteName="Dashboard"
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: colors.surface,
+            borderTopColor: colors.outline,
+            borderTopWidth: 0.5,
+          },
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.onSurfaceVariant,
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '600',
+          },
         }}
-      />
-      <Tab.Screen
-        name="Question"
-        component={SafeQuestionsList}
-        options={{
-          tabBarIcon: ({ focused, color, size }) => (
-            <MaterialCommunityIcons
-              name="format-list-bulleted"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen
+          name="Dashboard"
+          component={SafeDashboard}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="view-dashboard"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Practice"
+          component={SafePractice}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="book-open-variant"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Question"
+          component={SafeQuestionsList}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons
+                name="format-list-bulleted"
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </>
   );
 };
 
