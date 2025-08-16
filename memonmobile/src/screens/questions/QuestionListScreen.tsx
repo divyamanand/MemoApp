@@ -22,7 +22,8 @@ import {
   useGetRevisionsInfiniteQuery,
 } from '@/src/features/questions/api/questionApi';
 import QuestionInfoScreen from './QuestionInfoScreen';
-import { ResponseQuestion } from '@/src/constants/types';
+import { ResponseQuestion, RootStackParamList } from '@/src/constants/types';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 type SortOption = 'difficulty' | 'topic' | 'recency' | 'priority';
 type TabOption = 'questions' | 'revisions';
@@ -45,6 +46,7 @@ const QuestionsListScreen = () => {
   
   const [selectedQuestion, setSelectedQuestion] = useState<ResponseQuestion | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const {
     data: questions,
@@ -104,7 +106,7 @@ const QuestionsListScreen = () => {
           icon="plus"
           size={24}
           iconColor={colors.onSurface}
-          onPress={() => {}}
+          onPress={() => navigation.navigate("AddQuestion")}
         />
       </Surface>
 

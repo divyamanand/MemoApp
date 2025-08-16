@@ -18,6 +18,8 @@ import QuestionNavigator from './QuestionNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import ResetPassword from '../screens/auth/ResetPassword';
 
+
+
 const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -26,7 +28,7 @@ const AppNavigator: React.FC = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
-  const barStyle = isDarkMode ? 'light-content' : 'dark-content';
+  const barStyle = isDarkMode ?  'dark-content' : 'light-content';
 
   if (!tokenValid) {
     return (
@@ -34,7 +36,7 @@ const AppNavigator: React.FC = () => {
         <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Help" component={HelpScreen} />
+          {/* <Stack.Screen name="Help" component={HelpScreen} /> */}
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </Stack.Navigator>
@@ -74,17 +76,18 @@ const AppNavigator: React.FC = () => {
 
         <Tab.Screen
           name="Practice"
-          component={() => (
-            <SafeAreaView style={styles.safe}>
-              <PracticeScreen />
-            </SafeAreaView>
-          )}
           options={{
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="book-open-variant" size={size} color={color} />
             ),
           }}
-        />
+        >
+          {() => (
+            <SafeAreaView style={styles.safe}>
+              <PracticeScreen />
+            </SafeAreaView>
+          )}
+        </Tab.Screen>
 
         <Tab.Screen
           name="Question"

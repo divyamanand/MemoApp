@@ -22,7 +22,7 @@ const GenerateQuestionScreen = () => {
 
   // Form state
   const [topic, setTopic] = useState('');
-  const [numberOfQuestions, setNumberOfQuestions] = useState(10);
+  const [numberOfQuestions, setNumberOfQuestions] = useState(5);
   const [generatedQuestions, setGeneratedQuestions] = useState<GeneratedQuestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -151,7 +151,7 @@ const GenerateQuestionScreen = () => {
             <Slider
               style={{ width: '100%', height: 40 }}
               minimumValue={1}
-              maximumValue={50}
+              maximumValue={10}
               value={numberOfQuestions}
               onValueChange={setNumberOfQuestions}
               step={1}

@@ -16,7 +16,7 @@ const DashboardNavigator: React.FC = () => {
   const colorScheme = useColorScheme();
   const { colors } = useTheme();
   const isDarkMode = colorScheme === 'dark';
-  const barStyle = isDarkMode ? 'light-content' : 'dark-content';
+  const barStyle = isDarkMode ?  'dark-content' : 'light-content';
 
   const withSafeArea = (Comp: React.ComponentType<any>) => (props: any) => (
     <SafeAreaView style={{ flex: 1 }}>

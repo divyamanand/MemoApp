@@ -11,6 +11,8 @@ import {
   ActivityIndicator,
 } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/constants/types';
 
 // AI Suggestion Data
 const DIFFICULTY_SUGGESTIONS = ['Easy', 'Medium', 'Hard'];
@@ -22,7 +24,7 @@ const TAG_SUGGESTIONS = [
 
 const AddQuestionScreen = () => {
   const { colors } = useTheme();
-
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   // Form state
   const [questionName, setQuestionName] = useState('');
   const [difficulty, setDifficulty] = useState('');
@@ -151,6 +153,15 @@ const AddQuestionScreen = () => {
         <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Add Question</Text>
         <View style={{ width: 40 }} />
       </Surface>
+
+      <PaperButton
+              mode="contained"
+              onPress={() => navigation.navigate("GenerateQuestion")}
+              style={[styles.submitButton, { backgroundColor: colors.primary }]}
+              contentStyle={styles.submitButtonContent}
+            >
+              Generate With AI
+      </PaperButton>
 
       <KeyboardAvoidingView
         style={styles.keyboardView}
@@ -368,11 +379,11 @@ const AddQuestionScreen = () => {
       </KeyboardAvoidingView>
 
       {/* Loading Overlay */}
-      {loading && (
+      {/* {loading && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
-      )}
+      )} */}
     </SafeAreaView>
   );
 };

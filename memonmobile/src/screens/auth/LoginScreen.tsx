@@ -109,9 +109,7 @@ const LoginScreen = () => {
 
             <PaperButton
               mode="text"
-              onPress={() => {
-                // TODO: Navigate to forgot password
-              }}
+              onPress={() => navigation.navigate("ResetPassword")}
               style={styles.forgotButton}
               labelStyle={[styles.forgotLabel, { color: colors.primary }]}
             >
@@ -151,11 +149,11 @@ const LoginScreen = () => {
             </PaperButton>
           </Surface>
 
-          {loading && (
+          {/* {loading && (
             <View style={styles.loadingOverlay}>
               <ActivityIndicator size="large" color={colors.primary} />
             </View>
-          )}
+          )} */}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

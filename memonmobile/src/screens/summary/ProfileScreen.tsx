@@ -8,9 +8,13 @@ import {
   Button as PaperButton,
 } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@/src/constants/types';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   // Sample user data
   const userData = {
@@ -194,26 +198,26 @@ const ProfileScreen = () => {
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity 
-            style={[styles.actionButton, { backgroundColor: colors.surface }]}
-            onPress={handleEditProfile}
-          >
-            <MaterialIcons name="edit" size={20} color={colors.onSurfaceVariant} />
-            <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
-              Edit Profile
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionButton, { backgroundColor: colors.surface }]}
+          onPress={() => navigation.navigate('EditProfile')}
+        >
+          <MaterialIcons name="edit" size={20} color={colors.onSurfaceVariant} />
+          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
+            Edit Profile
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.actionButton, { backgroundColor: colors.surface }]}
-            onPress={handleSettings}
-          >
-            <MaterialIcons name="settings" size={20} color={colors.onSurfaceVariant} />
-            <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
-              Settings
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={[styles.actionButton, { backgroundColor: colors.surface }]}
+          onPress={() => navigation.navigate('Settings')}
+        >
+          <MaterialIcons name="settings" size={20} color={colors.onSurfaceVariant} />
+          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
+            Settings
+          </Text>
+        </TouchableOpacity>
+      </View>
       </ScrollView>
     </SafeAreaView>
   );
