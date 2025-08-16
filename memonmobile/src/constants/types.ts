@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Practice: undefined;
   Question: undefined;
   Profile: undefined;
+  EditProfile: undefined;
 
   Suggestions: undefined;
   Test: undefined;
@@ -23,6 +24,7 @@ export type RootStackParamList = {
   Register: undefined;
   Revision: undefined;
   About: undefined;
+  ResetPassword: undefined;
 };
 
 

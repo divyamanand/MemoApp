@@ -8,6 +8,8 @@ import { RootStackParamList } from '@/src/constants/types';
 import ProfileScreen from '../screens/summary/ProfileScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import HelpScreen from '../screens/summary/HelpScreen';
+import ResetPassword from '../screens/auth/ResetPassword';
+import EditProfileScreen from '../screens/auth/EditProfileScreen';
 
 const ProfileNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -29,6 +31,7 @@ const ProfileNavigator: React.FC = () => {
         <Stack.Screen name="Profile" component={withSafeArea(ProfileScreen)} />
         <Stack.Screen name="Settings" component={withSafeArea(SettingsScreen)} />
         <Stack.Screen name="Help" component={withSafeArea(HelpScreen)} />
+        <Stack.Screen name="EditProfile" component={withSafeArea(EditProfileScreen)} />
       </Stack.Navigator>
     </>
   );

@@ -16,6 +16,7 @@ import { useTheme } from 'react-native-paper';
 import DashboardNavigator from './DashboardNavigator';
 import QuestionNavigator from './QuestionNavigator';
 import ProfileNavigator from './ProfileNavigator';
+import ResetPassword from '../screens/auth/ResetPassword';
 
 const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -35,6 +36,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Help" component={HelpScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </Stack.Navigator>
       </>
     );
