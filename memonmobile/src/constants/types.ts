@@ -6,6 +6,8 @@ export type RootStackParamList = {
   Question: undefined;
   Profile: undefined;
   EditProfile: undefined;
+  ProfileScreen: undefined;
+  DashboardScreen: undefined;
 
   Suggestions: undefined;
   Test: undefined;
@@ -47,7 +49,7 @@ export type Revision = {
 
 export type ResponseQuestion = {
   _id: string;
-  userId: string;
+  userId?: string;
   questionName: string;
   difficulty: 'easy' | 'medium' | 'hard';
   tags?: string[];
@@ -59,9 +61,24 @@ export type ResponseQuestion = {
   link?: string;
   createdAt: Date;
   updatedAt: Date;
-  isPending?: boolean;
   completedCount?: number;
 };
+
+export type difficulty = "easy" | "medium" | "hard"
+
+export type PostQuestion = {
+  _id: string;
+  questionName: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  tags?: string[];
+  upcomingRevisions: Revision[];
+  description?: string;
+  link?: string;
+  formData?: any;
+  createdAt: Date;
+  updatedAt: Date;
+  isPending?: boolean;
+}
 
 
 export type ApiResponse<T = any> = {

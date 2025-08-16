@@ -27,8 +27,8 @@ const DashboardNavigator: React.FC = () => {
   return (
     <>
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Dashboard">
-        <Stack.Screen name="Dashboard" component={withSafeArea(DashboardScreen)} />
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="DashboardScreen">
+        <Stack.Screen name="DashboardScreen" component={withSafeArea(DashboardScreen)} />
         <Stack.Screen name="Suggestions" component={withSafeArea(SuggestionScreen)} />
         <Stack.Screen name="Test" component={withSafeArea(TestScreen)} />
         <Stack.Screen name="Roadmap" component={withSafeArea(RoadmapScreen)} />

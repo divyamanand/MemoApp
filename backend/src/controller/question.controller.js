@@ -19,7 +19,10 @@ const createRevisionPlan = async (questionId) => {
 }
 
 export const createQuestion = asyncHandler(async (req, res) => {
-  const questionData = { ...req.body, userId: req.user._id };
+  const {_id, ...rest} = req.body
+  const questionData = { ...rest, userId: req.user._id };
+
+  console.log("Data received from question", questionData)
 
   if (!questionData.formData) questionData.formData = {};
 

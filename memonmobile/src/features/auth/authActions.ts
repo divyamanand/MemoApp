@@ -16,9 +16,10 @@ const authHandler = async (
     const { data } = handleApiResponse(response);
 
     const { accessToken, refreshToken, user } = data;
-
-    await SecureStorage.setItemAsync('accessToken', accessToken);
-    await SecureStorage.setItemAsync('refreshToken', refreshToken);
+    console.log("Token from api", accessToken)
+    console.log(refreshToken)
+    await SecureStorage.setItemAsync('accessToken', String(accessToken));
+    await SecureStorage.setItemAsync('refreshToken', String(refreshToken));
     return user;
   } catch (error) {
     const formattedError: ErrorResponse = handleError(error);

@@ -1,31 +1,25 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/query';
-import { nanoid } from '@reduxjs/toolkit';
 import { questionApi } from '../questionApi';
 import { ApiResponse, ResponseQuestion } from '../types';
+import { PostQuestion } from '@/src/constants/types';
 
 export const addQuestionEndpoint = (
   build: EndpointBuilder<any, 'Questions' | 'Revisions', 'questionApi'>,
 ) =>
-  build.mutation<ApiResponse<ResponseQuestion>, ResponseQuestion>({
+  build.mutation<ApiResponse<ResponseQuestion>, PostQuestion>({
     query: (data) => ({
       url: '/api/v1/question/add-question',
       method: 'POST',
-      body: data,
+      data,
     }),
     async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-      const tempId = nanoid();
 
       const patchResult = dispatch(
         questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
           const lastPage = draft.pages[draft.pages.length - 1];
 
-          const optimisticQuestion: ResponseQuestion = {
+          const optimisticQuestion: PostQuestion = {
             ...arg,
-            _id: tempId,
-            upcomingRevisions: [],
-            formData: arg.formData ?? {},
-            createdAt: new Date(),
-            updatedAt: new Date(),
             isPending: true,
           };
 
@@ -61,7 +55,7 @@ export const addQuestionEndpoint = (
             (draft) => {
               for (const page of draft.pages) {
                 const questionIndex = page.data?.questions?.findIndex(
-                  (q) => q._id === tempId,
+                  (q) => q._id === arg._id,
                 );
                 if (
                   questionIndex !== undefined &&

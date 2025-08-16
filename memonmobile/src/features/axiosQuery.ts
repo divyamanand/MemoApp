@@ -12,7 +12,7 @@ interface AxiosBaseQueryArgs {
 export const axiosBaseQuery =
   () =>
   async ({ url, method, data, params, headers }: AxiosBaseQueryArgs) => {
-    console.log('executing basequery', url);
+    console.log('executing basequery', url, data);
     try {
       const result = await api({
         url,

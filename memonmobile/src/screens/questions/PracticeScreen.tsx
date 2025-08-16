@@ -77,7 +77,7 @@ const PracticeScreen = () => {
         </View>
       </Surface>
 
-      <Surface
+      {/* <Surface
         style={[styles.progressWrap, { backgroundColor: colors.surface }]}
         elevation={1}
       >
@@ -115,7 +115,7 @@ const PracticeScreen = () => {
         </View>
       </Surface>
 
-      <Divider style={{ opacity: 0.4 }} />
+      <Divider style={{ opacity: 0.4 }} /> */}
 
       {isLoading ? (
         <View style={styles.loader}>

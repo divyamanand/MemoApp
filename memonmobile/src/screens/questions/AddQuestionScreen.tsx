@@ -12,22 +12,25 @@ import {
 } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/constants/types';
+import { difficulty, PostQuestion, ResponseQuestion, RootStackParamList } from '@/src/constants/types';
+import { useAddQuestionMutation } from '@/src/features/questions/api/questionApi';
+import { nanoid } from '@reduxjs/toolkit';
 
 // AI Suggestion Data
-const DIFFICULTY_SUGGESTIONS = ['Easy', 'Medium', 'Hard'];
+const DIFFICULTY_SUGGESTIONS: difficulty[] = ['easy', 'medium', 'hard'];
 const TAG_SUGGESTIONS = [
   'Mathematics', 'Physics', 'Chemistry', 'Biology', 
   'Computer Science', 'Algorithms', 'Data Structures', 
   'Programming', 'General Knowledge', 'History'
 ];
 
+
 const AddQuestionScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   // Form state
   const [questionName, setQuestionName] = useState('');
-  const [difficulty, setDifficulty] = useState('');
+  const [difficulty, setDifficulty] = useState<difficulty>("medium");
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [options, setOptions] = useState<string[]>(['']);
@@ -40,8 +43,10 @@ const AddQuestionScreen = () => {
   const [tagInput, setTagInput] = useState('');
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
+  const [addQuestion, {isError}] = useAddQuestionMutation()
+
   // Difficulty handling
-  const selectDifficulty = (selectedDifficulty: string) => {
+  const selectDifficulty = (selectedDifficulty: difficulty) => {
     setDifficulty(selectedDifficulty);
     setShowDifficultySuggestions(false);
     setErrors(prev => ({ ...prev, difficulty: '' }));
@@ -103,34 +108,47 @@ const AddQuestionScreen = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const resetForm = () => {
+  setQuestionName('');
+  setDifficulty("medium");
+  setDescription('');
+  setTags([]);
+  setOptions(['']);
+  setLink('');
+  setErrors({});
+  setTagInput('');
+  setShowDifficultySuggestions(false);
+  setShowTagSuggestions(false);
+};
+
+
   // Submit handler
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
     try {
-      setLoading(true);
-      
-      const formData = {
+      const tempId = nanoid()
+      const formData : PostQuestion = {
         questionName: questionName.trim(),
         difficulty,
         description: description.trim(),
         tags,
-        options: options.filter(option => option.trim().length > 0),
+        // options: options.filter(option => option.trim().length > 0),
         link: link.trim(),
+        _id: tempId,
+        upcomingRevisions: [],
+        formData: {},
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
+      
+      await addQuestion(formData).unwrap()
 
-      // TODO: Call your API to submit the question
-      console.log('Submitting question:', formData);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // TODO: Navigate back or show success message
+      resetForm()
+
       
     } catch (error) {
       console.error('Error submitting question:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -205,7 +223,7 @@ const AddQuestionScreen = () => {
                   <Chip
                     style={[styles.selectedChip, { backgroundColor: colors.primaryContainer }]}
                     textStyle={{ color: colors.primary, fontWeight: '700' }}
-                    onClose={() => setDifficulty('')}
+                    onClose={() => setDifficulty("medium")}
                   >
                     {difficulty}
                   </Chip>
@@ -214,7 +232,7 @@ const AddQuestionScreen = () => {
               
               {showDifficultySuggestions && (
                 <View style={[styles.suggestionsGrid, { backgroundColor: colors.surfaceVariant }]}>
-                  {DIFFICULTY_SUGGESTIONS.map((suggestion) => (
+                  {DIFFICULTY_SUGGESTIONS.map((suggestion : difficulty) => (
                     <Chip
                       key={suggestion}
                       onPress={() => selectDifficulty(suggestion)}

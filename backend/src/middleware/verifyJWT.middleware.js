@@ -11,6 +11,8 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     throw new ApiError(401, "Unauthorized request: No token provided");
   }
 
+  console.log("JWT accesstoken", token)
+
   let decodedToken;
   try {
     decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_KEY);

@@ -39,14 +39,25 @@ api.interceptors.response.use(
           console.log('Trying to refresh token. RefreshToken found');
           const res = await axios.post(
             `${api.defaults.baseURL}/api/v1/user/refresh-token`,
-            { refreshToken },
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
           );
-          console.log('res form refresh api', res);
+          
           const newAccessToken = res.data.accessToken;
           const newRefreshToken = res.data.refreshToken;
 
-          await SecureStorage.setItemAsync('accessToken', newAccessToken);
-          await SecureStorage.setItemAsync('refreshToken', newRefreshToken);
+          console.log('Refresh API Response:', res.data);
+          console.log('New Tokens:', {
+            accessToken: res.data.accessToken,
+            refreshToken: res.data.refreshToken,
+          });
+
+          await SecureStorage.setItemAsync('accessToken', String(newAccessToken));
+          await SecureStorage.setItemAsync('refreshToken', String(newRefreshToken));
 
           originalRequest.headers = {
             ...originalRequest.headers,

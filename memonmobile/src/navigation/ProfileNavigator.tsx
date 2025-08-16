@@ -27,11 +27,11 @@ const ProfileNavigator: React.FC = () => {
   return (
     <>
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Profile">
-        <Stack.Screen name="Profile" component={withSafeArea(ProfileScreen)} />
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="ProfileScreen">
+        <Stack.Screen name="ProfileScreen" component={withSafeArea(ProfileScreen)} />
         <Stack.Screen name="Settings" component={withSafeArea(SettingsScreen)} />
         {/* <Stack.Screen name="Help" component={withSafeArea(HelpScreen)} /> */}
-        <Stack.Screen name="EditProfile" component={withSafeArea(EditProfileScreen)} />
+        {/* <Stack.Screen name="EditProfile" component={withSafeArea(EditProfileScreen)} /> */}
       </Stack.Navigator>
     </>
   );

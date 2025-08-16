@@ -9,9 +9,11 @@ import {
   Button as PaperButton,
   Divider,
   List,
+  Menu,
+  TouchableRipple,
 } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
-import { ResponseQuestion } from '@/src/constants/types';
+import { difficulty, ResponseQuestion } from '@/src/constants/types';
 
 interface QuestionInfoScreenProps {
   question: ResponseQuestion;
@@ -29,6 +31,19 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
   const [doubtText, setDoubtText] = useState('');
   const [notesText, setNotesText] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  const [editMode, setEditMode] = useState(false);
+
+  // Editable fields state
+  const [editableQuestionName, setEditableQuestionName] = useState(question.questionName || '');
+  const [editableDescription, setEditableDescription] = useState(
+    question.formData?.description || ''
+  );
+  const [editableTags, setEditableTags] = useState<string[]>(question.tags || []);
+  const [editableDifficulty, setEditableDifficulty] = useState(question.difficulty || 'Medium');
+  const [newTag, setNewTag] = useState('');
+  const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
+
+  const difficulties: difficulty[] = ['easy', 'medium', 'hard'];
 
   const getDifficultyColor = (difficulty: string) => {
     switch(difficulty?.toLowerCase()) {
@@ -39,7 +54,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
     }
   };
 
-  const difficultyColor = getDifficultyColor(question.difficulty);
+  const difficultyColor = getDifficultyColor(editableDifficulty);
 
   // Check if question has a reference link
   const hasReferenceLink = question?.formData?.link && question.formData.link.trim() !== '';
@@ -59,6 +74,54 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         console.error('Error opening link:', error);
       }
     }
+  };
+
+  // Handle saving edits
+  const handleSaveEdit = async () => {
+    try {
+      // TODO: Save edited data to backend
+      const updatedQuestion = {
+        ...question,
+        questionName: editableQuestionName,
+        difficulty: editableDifficulty,
+        tags: editableTags,
+        formData: {
+          ...question.formData,
+          description: editableDescription,
+        },
+      };
+      
+      console.log('Saving updated question:', updatedQuestion);
+      
+      // Exit edit mode
+      setEditMode(false);
+    } catch (error) {
+      console.error('Error saving question:', error);
+    }
+  };
+
+  // Handle adding new tag
+  const handleAddTag = () => {
+    if (newTag.trim() && !editableTags.includes(newTag.trim())) {
+      setEditableTags([...editableTags, newTag.trim()]);
+      setNewTag('');
+    }
+  };
+
+  // Handle removing tag
+  const handleRemoveTag = (tagToRemove: string) => {
+    setEditableTags(editableTags.filter(tag => tag !== tagToRemove));
+  };
+
+  // Cancel edit mode
+  const handleCancelEdit = () => {
+    // Reset to original values
+    setEditableQuestionName(question.questionName || '');
+    setEditableDescription(question.formData?.description || '');
+    setEditableTags(question.tags || []);
+    setEditableDifficulty(question.difficulty || 'Medium');
+    setNewTag('');
+    setEditMode(false);
   };
 
   // Sample data for FAQs and Related Questions
@@ -113,9 +176,20 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           iconColor={colors.onSurface}
           onPress={onClose}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]} numberOfLines={1}>
-          {question.questionName}
-        </Text>
+        
+        {editMode ? (
+          <TextInputField
+            value={editableQuestionName}
+            onChangeText={setEditableQuestionName}
+            style={[styles.headerTitleInput, { backgroundColor: colors.surface }]}
+            contentStyle={{ fontSize: 16, fontWeight: '700' }}
+          />
+        ) : (
+          <Text style={[styles.headerTitle, { color: colors.onSurface }]} numberOfLines={1}>
+            {editableQuestionName}
+          </Text>
+        )}
+        
         <View style={styles.headerActions}>
           <IconButton
             icon={isFavorite ? "star" : "star-outline"}
@@ -132,12 +206,31 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
               style={styles.linkIcon}
             />
           )}
-          <IconButton
-            icon="pencil"
-            size={20}
-            iconColor={colors.onSurfaceVariant}
-            onPress={() => {}}
-          />
+          
+          {editMode ? (
+            <>
+              <IconButton
+                icon="close"
+                size={20}
+                iconColor={colors.error}
+                onPress={handleCancelEdit}
+              />
+              <IconButton
+                icon="check"
+                size={20}
+                iconColor={colors.primary}
+                onPress={handleSaveEdit}
+              />
+            </>
+          ) : (
+            <IconButton
+              icon="pencil"
+              size={20}
+              iconColor={colors.onSurfaceVariant}
+              onPress={() => setEditMode(true)}
+            />
+          )}
+          
           <IconButton
             icon="delete-outline"
             size={20}
@@ -157,7 +250,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         {/* Tags and Difficulty */}
         <View style={styles.tagsSection}>
           <View style={styles.tagsContainer}>
-            {question.tags?.map((tag) => (
+            {editableTags.map((tag) => (
               <Chip
                 key={tag}
                 compact
@@ -166,30 +259,92 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
                   { backgroundColor: colors.primaryContainer },
                 ]}
                 textStyle={{ color: colors.primary, fontSize: 12, fontWeight: '600' }}
+                onClose={editMode ? () => handleRemoveTag(tag) : undefined}
               >
                 {tag}
               </Chip>
             ))}
-            <Chip
-              compact
-              style={[
-                styles.difficultyChip,
-                { backgroundColor: difficultyColor + '20' },
-              ]}
-              textStyle={{ color: difficultyColor, fontSize: 12, fontWeight: '700' }}
-            >
-              {question.difficulty || 'Medium'}
-            </Chip>
+            
+            {editMode && (
+              <View style={styles.addTagContainer}>
+                <TextInputField
+                  value={newTag}
+                  onChangeText={setNewTag}
+                  placeholder="Add tag..."
+                  style={styles.tagInput}
+                  onSubmitEditing={handleAddTag}
+                  rightIcon="plus"
+                  onRightIconPress={handleAddTag}
+                />
+              </View>
+            )}
+            
+            {/* Difficulty Chip */}
+            {editMode ? (
+              <Menu
+                visible={showDifficultyMenu}
+                onDismiss={() => setShowDifficultyMenu(false)}
+                anchor={
+                  <TouchableRipple onPress={() => setShowDifficultyMenu(true)}>
+                    <Chip
+                      compact
+                      style={[
+                        styles.difficultyChip,
+                        { backgroundColor: difficultyColor + '20' },
+                      ]}
+                      textStyle={{ color: difficultyColor, fontSize: 12, fontWeight: '700' }}
+                    >
+                      {editableDifficulty} ▼
+                    </Chip>
+                  </TouchableRipple>
+                }
+              >
+                {difficulties.map((diff) => (
+                  <Menu.Item
+                    key={diff}
+                    onPress={() => {
+                      setEditableDifficulty(diff);
+                      setShowDifficultyMenu(false);
+                    }}
+                    title={diff}
+                  />
+                ))}
+              </Menu>
+            ) : (
+              <Chip
+                compact
+                style={[
+                  styles.difficultyChip,
+                  { backgroundColor: difficultyColor + '20' },
+                ]}
+                textStyle={{ color: difficultyColor, fontSize: 12, fontWeight: '700' }}
+              >
+                {editableDifficulty}
+              </Chip>
+            )}
           </View>
         </View>
 
         {/* Question Description */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Question</Text>
-          <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>
-            {question.formData?.description || 
-              "Explain the process of photosynthesis, detailing the roles of chloroplasts, sunlight, water, and carbon dioxide. What are the primary products of this essential biological process?"}
-          </Text>
+          
+          {editMode ? (
+            <TextInputField
+              value={editableDescription}
+              onChangeText={setEditableDescription}
+              multiline
+              numberOfLines={4}
+              placeholder="Enter question description..."
+              style={{ backgroundColor: colors.surface }}
+            />
+          ) : (
+            <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>
+              {editableDescription || 
+                "Explain the process of photosynthesis, detailing the roles of chloroplasts, sunlight, water, and carbon dioxide. What are the primary products of this essential biological process?"}
+            </Text>
+          )}
+          
           {hasReferenceLink && (
             <View style={styles.referenceSection}>
               <Text style={[styles.referenceLabel, { color: colors.onSurfaceVariant }]}>
@@ -208,6 +363,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           )}
         </Surface>
 
+        {/* Rest of the sections remain the same */}
         {/* Insights */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Insights</Text>
@@ -428,6 +584,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginLeft: 8,
   },
+  headerTitleInput: {
+    flex: 1,
+    marginLeft: 8,
+    marginRight: 8,
+  },
   headerActions: {
     flexDirection: 'row',
   },
@@ -451,6 +612,13 @@ const styles = StyleSheet.create({
   },
   difficultyChip: {
     height: 28,
+  },
+  addTagContainer: {
+    minWidth: 120,
+  },
+  tagInput: {
+    height: 28,
+    backgroundColor: 'transparent',
   },
   card: {
     borderRadius: 16,
