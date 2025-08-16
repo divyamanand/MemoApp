@@ -1,14 +1,30 @@
+// src/constants/types.ts
 export type RootStackParamList = {
+  // Bottom tabs (entry points)
   Dashboard: undefined;
-  Profile: undefined;
-  Settings: undefined;
-  Login: { email?: string; password?: string } | undefined;
-  Revision: undefined;
+  Practice: undefined;
   Question: undefined;
-  About: undefined;
+  Profile: undefined;
+
+  Suggestions: undefined;
+  Test: undefined;
+  Roadmap: undefined;
+  Timeline: undefined;
+
+  Questions: undefined;            
+  AddQuestion: undefined;       
+  EditQuestion: { id: string } | undefined;
+  GenerateQuestion: { id?: string } | undefined;
+
+  Settings: undefined;
   Help: undefined;
+
+  Login: { email?: string; password?: string } | undefined;
   Register: undefined;
+  Revision: undefined;
+  About: undefined;
 };
+
 
 export type ErrorResponse = {
   statusCode?: number | null;

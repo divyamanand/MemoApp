@@ -1,36 +1,36 @@
+// src/navigation/AppNavigator.tsx
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, StatusBar, useColorScheme } from 'react-native';
-
-
 import { RootStackParamList } from '@/src/constants/types';
 import { useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
 import HelpScreen from '../screens/summary/HelpScreen';
 import PracticeScreen from '../screens/questions/PracticeScreen';
-import QuestionsListScreen from '../screens/questions/QuestionListScreen';
+import RegisterScreen from '../screens/auth/RegisterScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from 'react-native-paper';
-import RegisterScreen from '../screens/auth/RegisterScreen';
-import DashboardScreen from '../screens/summary/DashboardScreen';
 
-const AppNavigator = () => {
+import DashboardNavigator from './DashboardNavigator';
+import QuestionNavigator from './QuestionNavigator';
+import ProfileNavigator from './ProfileNavigator';
+
+const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const Tab = createBottomTabNavigator();
+  const Tab = createBottomTabNavigator<RootStackParamList>();
   const { tokenValid } = useAppSelector((state) => state.app);
   const { colors } = useTheme();
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
-  if (!tokenValid)
+  const barStyle = isDarkMode ? 'light-content' : 'dark-content';
+
+  if (!tokenValid) {
     return (
       <>
-        <StatusBar
-          barStyle={isDarkMode ? 'dark-content' : "light-content"}
-          backgroundColor={colors.background}
-        />
+        <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Help" component={HelpScreen} />
@@ -38,13 +38,11 @@ const AppNavigator = () => {
         </Stack.Navigator>
       </>
     );
+  }
 
   return (
     <>
-      <StatusBar
-        barStyle={isDarkMode ? 'dark-content' : "light-content"}
-        backgroundColor={colors.background}
-      />
+      <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
       <Tab.Navigator
         initialRouteName="Dashboard"
         screenOptions={{
@@ -64,40 +62,44 @@ const AppNavigator = () => {
       >
         <Tab.Screen
           name="Dashboard"
-          component={SafeDashboard}
+          component={DashboardNavigator}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="view-dashboard"
-                size={size}
-                color={color}
-              />
+              <MaterialCommunityIcons name="view-dashboard" size={size} color={color} />
             ),
           }}
         />
+
         <Tab.Screen
           name="Practice"
-          component={SafePractice}
+          component={() => (
+            <SafeAreaView style={styles.safe}>
+              <PracticeScreen />
+            </SafeAreaView>
+          )}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="book-open-variant"
-                size={size}
-                color={color}
-              />
+              <MaterialCommunityIcons name="book-open-variant" size={size} color={color} />
             ),
           }}
         />
+
         <Tab.Screen
           name="Question"
-          component={SafeQuestionsList}
+          component={QuestionNavigator}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="format-list-bulleted"
-                size={size}
-                color={color}
-              />
+              <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Tab.Screen
+          name="Profile"
+          component={ProfileNavigator}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="account" size={size} color={color} />
             ),
           }}
         />
@@ -105,24 +107,6 @@ const AppNavigator = () => {
     </>
   );
 };
-
-const SafeDashboard = () => (
-  <SafeAreaView style={styles.safe}>
-    <DashboardScreen />
-  </SafeAreaView>
-);
-
-const SafePractice = () => (
-  <SafeAreaView style={styles.safe}>
-    <PracticeScreen />
-  </SafeAreaView>
-);
-
-const SafeQuestionsList = () => (
-  <SafeAreaView style={styles.safe}>
-    <QuestionsListScreen />
-  </SafeAreaView>
-);
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },

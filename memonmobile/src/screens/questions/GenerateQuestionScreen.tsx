@@ -17,7 +17,7 @@ interface GeneratedQuestion {
   text: string;
 }
 
-const AddQuestionAIScreen = () => {
+const GenerateQuestionScreen = () => {
   const { colors } = useTheme();
 
   // Form state
@@ -146,8 +146,10 @@ const AddQuestionAIScreen = () => {
           </View>
           
           <View style={styles.sliderContainer}>
+            import Slider from '@react-native-community/slider';
+
             <Slider
-              style={styles.slider}
+              style={{ width: '100%', height: 40 }}
               minimumValue={1}
               maximumValue={50}
               value={numberOfQuestions}
@@ -155,8 +157,9 @@ const AddQuestionAIScreen = () => {
               step={1}
               minimumTrackTintColor={colors.primary}
               maximumTrackTintColor={colors.surfaceVariant}
-              thumbStyle={{ backgroundColor: colors.primary }}
+              thumbTintColor={colors.primary} 
             />
+
           </View>
         </View>
 
@@ -356,4 +359,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddQuestionAIScreen;
+export default GenerateQuestionScreen;

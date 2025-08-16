@@ -18,7 +18,7 @@ interface Question {
   difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
 }
 
-const AISuggestion = () => {
+const SuggestionScreen = () => {
   const { colors } = useTheme();
   
   const [questions, setQuestions] = useState<Question[]>([
@@ -274,4 +274,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AISuggestion;
+export default SuggestionScreen;

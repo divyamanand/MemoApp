@@ -72,22 +72,6 @@ const DashboardScreen = () => {
           />
 
           <IconButton
-            icon="account"
-            iconColor={colors.onSurfaceVariant}
-            size={24}
-            onPress={() => {
-              // TODO: Navigate to profile
-            }}
-          />
-          <IconButton
-            icon="cog"
-            iconColor={colors.onSurfaceVariant}
-            size={24}
-            onPress={() => {
-              // TODO: Navigate to settings
-            }}
-          />
-          <IconButton
             icon="logout"
             iconColor={colors.primary}
             size={24}

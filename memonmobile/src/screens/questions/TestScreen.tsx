@@ -140,7 +140,7 @@ const TestScreen = () => {
             step={1}
             minimumTrackTintColor={colors.primary}
             maximumTrackTintColor={colors.surfaceVariant}
-            thumbStyle={{ backgroundColor: colors.primary }}
+            thumbTintColor={colors.primary}
           />
           
           {/* Slider Labels */}
