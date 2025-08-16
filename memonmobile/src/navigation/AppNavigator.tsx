@@ -4,17 +4,17 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StyleSheet, StatusBar, useColorScheme } from 'react-native';
 
-import DashboardScreen from '../screens/DashboardScreen';
+
 import { RootStackParamList } from '@/src/constants/types';
 import { useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
-import AboutScreen from '../screens/AboutScreen';
-import HelpScreen from '../screens/HelpScreen';
+import HelpScreen from '../screens/summary/HelpScreen';
 import PracticeScreen from '../screens/questions/PracticeScreen';
 import QuestionsListScreen from '../screens/questions/QuestionListScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from 'react-native-paper';
 import RegisterScreen from '../screens/auth/RegisterScreen';
+import DashboardScreen from '../screens/summary/DashboardScreen';
 
 const AppNavigator = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,7 +33,6 @@ const AppNavigator = () => {
         />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="About" component={AboutScreen} />
           <Stack.Screen name="Help" component={HelpScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
         </Stack.Navigator>

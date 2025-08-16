@@ -8,18 +8,17 @@ import {
   ActivityIndicator,
   Surface,
 } from 'react-native-paper';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { logoutUser } from '../features/auth/authActions';
-import {
-  useGetCountTillDateQuery,
-  useGetRevisionsInfiniteQuery,
-} from '../features/questions/api/questionApi';
+import { useNetworkState } from "@uidotdev/usehooks"
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
+import { useGetCountTillDateQuery, useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import { logoutUser } from '@/src/features/auth/authActions';
 
 const DashboardScreen = () => {
   const theme = useTheme();
   const { colors } = theme;
   const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector((s) => s.app);
+  const {online} = useNetworkState()
 
   const [completedToday, setCompletedToday] = useState(0);
 
@@ -62,6 +61,15 @@ const DashboardScreen = () => {
               Let’s get learning.
             </Text>
           </View>
+
+          <IconButton
+            icon={online ? "wifi" : "wifi-off"}
+            iconColor={online? "green" : "red"}
+            size={24}
+            onPress={() => {
+              // TODO: Navigate to profile
+            }}
+          />
 
           <IconButton
             icon="account"

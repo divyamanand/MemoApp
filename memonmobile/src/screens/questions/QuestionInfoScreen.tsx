@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, SafeAreaView, ScrollView, Linking } from 'react-native';
 import {
   Text,
   useTheme,
@@ -8,7 +8,9 @@ import {
   Chip,
   Button as PaperButton,
   Divider,
+  List,
 } from 'react-native-paper';
+import TextInputField from '../../components/TextInputField';
 import { ResponseQuestion } from '@/src/constants/types';
 
 interface QuestionInfoScreenProps {
@@ -22,6 +24,12 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
 }) => {
   const { colors } = useTheme();
 
+  // State management
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [doubtText, setDoubtText] = useState('');
+  const [notesText, setNotesText] = useState('');
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+
   const getDifficultyColor = (difficulty: string) => {
     switch(difficulty?.toLowerCase()) {
       case 'easy': return '#7BCEDB';
@@ -33,9 +41,71 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
 
   const difficultyColor = getDifficultyColor(question.difficulty);
 
+  // Check if question has a reference link
+  const hasReferenceLink = question?.formData?.link && question.formData.link.trim() !== '';
+
+  // Handle opening the reference link
+  const openReferenceLink = async () => {
+    if (hasReferenceLink) {
+      try {
+        const url = question.formData.link;
+        const supported = await Linking.canOpenURL(url);
+        if (supported) {
+          await Linking.openURL(url);
+        } else {
+          console.log("Don't know how to open URI: " + url);
+        }
+      } catch (error) {
+        console.error('Error opening link:', error);
+      }
+    }
+  };
+
+  // Sample data for FAQs and Related Questions
+  const faqs = [
+    {
+      question: "What is the time complexity of this algorithm?",
+      answer: "The time complexity is O(log n) for binary search as we eliminate half of the elements in each iteration."
+    },
+    {
+      question: "When should I use this approach?",
+      answer: "This approach is best used when you have a sorted array and need to find a specific element efficiently."
+    },
+    {
+      question: "What are common pitfalls?",
+      answer: "Common mistakes include not handling edge cases properly and incorrect boundary calculations."
+    }
+  ];
+
+  const relatedQuestions = [
+    "Linear Search vs Binary Search",
+    "Implementing Binary Search Tree",
+    "Search Algorithms Comparison",
+    "Time Complexity Analysis"
+  ];
+
+  const toggleFAQ = (index: number) => {
+    setExpandedFAQ(expandedFAQ === index ? null : index);
+  };
+
+  const handleSubmitDoubt = () => {
+    if (doubtText.trim()) {
+      // TODO: Submit doubt to backend
+      console.log('Submitting doubt:', doubtText);
+      setDoubtText('');
+    }
+  };
+
+  const handleSaveNotes = () => {
+    if (notesText.trim()) {
+      // TODO: Save notes to backend
+      console.log('Saving notes:', notesText);
+    }
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-
+      {/* Header with Favorite and Link Icons */}
       <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
         <IconButton
           icon="arrow-left"
@@ -47,6 +117,21 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           {question.questionName}
         </Text>
         <View style={styles.headerActions}>
+          <IconButton
+            icon={isFavorite ? "star" : "star-outline"}
+            size={24}
+            iconColor={isFavorite ? "#FFD700" : colors.onSurfaceVariant}
+            onPress={() => setIsFavorite(!isFavorite)}
+          />
+          {hasReferenceLink && (
+            <IconButton
+              icon="link"
+              size={24}
+              iconColor={colors.primary}
+              onPress={openReferenceLink}
+              style={styles.linkIcon}
+            />
+          )}
           <IconButton
             icon="pencil"
             size={20}
@@ -69,6 +154,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
       </Surface>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Tags and Difficulty */}
         <View style={styles.tagsSection}>
           <View style={styles.tagsContainer}>
             {question.tags?.map((tag) => (
@@ -97,15 +183,32 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           </View>
         </View>
 
-
+        {/* Question Description */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Question</Text>
           <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>
             {question.formData?.description || 
               "Explain the process of photosynthesis, detailing the roles of chloroplasts, sunlight, water, and carbon dioxide. What are the primary products of this essential biological process?"}
           </Text>
+          {hasReferenceLink && (
+            <View style={styles.referenceSection}>
+              <Text style={[styles.referenceLabel, { color: colors.onSurfaceVariant }]}>
+                Reference:
+              </Text>
+              <PaperButton
+                mode="text"
+                onPress={openReferenceLink}
+                icon="open-in-new"
+                labelStyle={{ color: colors.primary, fontSize: 12 }}
+                style={styles.referenceButton}
+              >
+                View Reference Link
+              </PaperButton>
+            </View>
+          )}
         </Surface>
 
+        {/* Insights */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Insights</Text>
           <View style={styles.insightsGrid}>
@@ -124,6 +227,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           </View>
         </Surface>
 
+        {/* Revision History */}
         <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
           <View style={styles.revisionHeader}>
             <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Revision History</Text>
@@ -154,7 +258,125 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           </View>
         </Surface>
 
+        {/* FAQs Section */}
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>FAQs</Text>
+          {faqs.map((faq, index) => (
+            <View key={index} style={styles.faqItem}>
+              <List.Accordion
+                title={faq.question}
+                expanded={expandedFAQ === index}
+                onPress={() => toggleFAQ(index)}
+                titleStyle={{ color: colors.onSurface, fontSize: 14, fontWeight: '600' }}
+                style={{ backgroundColor: 'transparent', paddingHorizontal: 0 }}
+              >
+                <Text style={[styles.faqAnswer, { color: colors.onSurfaceVariant }]}>
+                  {faq.answer}
+                </Text>
+              </List.Accordion>
+              {index < faqs.length - 1 && <Divider style={styles.faqDivider} />}
+            </View>
+          ))}
+        </Surface>
 
+        {/* Related Questions */}
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Related Questions</Text>
+          <View style={styles.relatedQuestionsContainer}>
+            {relatedQuestions.map((relatedQuestion, index) => (
+              <Chip
+                key={index}
+                mode="outlined"
+                onPress={() => {
+                  // TODO: Navigate to related question
+                  console.log('Navigate to:', relatedQuestion);
+                }}
+                style={[styles.relatedQuestionChip, { borderColor: colors.outline }]}
+                textStyle={{ color: colors.onSurfaceVariant, fontSize: 12 }}
+              >
+                {relatedQuestion}
+              </Chip>
+            ))}
+          </View>
+          <PaperButton
+            mode="text"
+            onPress={() => {}}
+            icon="lightbulb-outline"
+            labelStyle={{ color: colors.primary, fontSize: 12 }}
+            style={styles.generateMoreButton}
+          >
+            Generate More Related Questions
+          </PaperButton>
+        </Surface>
+
+        {/* Ask Doubt Section */}
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Ask a Doubt</Text>
+          <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
+            Have questions? Ask our AI assistant or community
+          </Text>
+          <View style={styles.doubtInputContainer}>
+            <TextInputField
+              label="Type your question..."
+              value={doubtText}
+              onChangeText={setDoubtText}
+              multiline
+              numberOfLines={3}
+              leftIcon="help-circle"
+            />
+            <View style={styles.doubtActions}>
+              <PaperButton
+                mode="outlined"
+                onPress={handleSubmitDoubt}
+                disabled={!doubtText.trim()}
+                style={[styles.doubtButton, { borderColor: colors.primary }]}
+                labelStyle={{ color: colors.primary, fontWeight: '600' }}
+                icon="send"
+              >
+                Ask AI
+              </PaperButton>
+              <PaperButton
+                mode="text"
+                onPress={handleSubmitDoubt}
+                disabled={!doubtText.trim()}
+                labelStyle={{ color: colors.secondary, fontWeight: '600' }}
+                icon="account-group"
+              >
+                Ask Community
+              </PaperButton>
+            </View>
+          </View>
+        </Surface>
+
+        {/* Notes Section */}
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Personal Notes</Text>
+          <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
+            Add your own notes and thoughts about this question
+          </Text>
+          <View style={styles.notesContainer}>
+            <TextInputField
+              label="Write your notes here..."
+              value={notesText}
+              onChangeText={setNotesText}
+              multiline
+              numberOfLines={4}
+              leftIcon="note-text"
+            />
+            <PaperButton
+              mode="contained"
+              onPress={handleSaveNotes}
+              disabled={!notesText.trim()}
+              style={[styles.saveNotesButton, { backgroundColor: colors.primary }]}
+              labelStyle={{ fontWeight: '700' }}
+              icon="content-save"
+            >
+              Save Notes
+            </PaperButton>
+          </View>
+        </Surface>
+
+        {/* Action Buttons */}
         <View style={styles.actionButtons}>
           <PaperButton
             mode="outlined"
@@ -174,18 +396,17 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           >
             Increase
           </PaperButton>
-          
         </View>
 
         <PaperButton
-            mode="contained"
-            onPress={() => {}}
-            style={[styles.actionButton, { backgroundColor: colors.secondary }]}
-            labelStyle={{ fontWeight: '700' }}
-            icon="lightbulb-outline"
-          >
-            Generate Related Questions
-          </PaperButton>
+          mode="contained"
+          onPress={() => {}}
+          style={[styles.actionButton, { backgroundColor: colors.secondary }]}
+          labelStyle={{ fontWeight: '700' }}
+          icon="lightbulb-outline"
+        >
+          Generate Related Questions
+        </PaperButton>
       </ScrollView>
     </SafeAreaView>
   );
@@ -209,6 +430,9 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     flexDirection: 'row',
+  },
+  linkIcon: {
+    margin: 0,
   },
   content: {
     padding: 16,
@@ -238,9 +462,28 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 12,
   },
+  sectionSubtitle: {
+    fontSize: 12,
+    marginBottom: 12,
+    opacity: 0.8,
+  },
   description: {
     fontSize: 14,
     lineHeight: 20,
+  },
+  referenceSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    gap: 8,
+  },
+  referenceLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  referenceButton: {
+    margin: 0,
+    paddingHorizontal: 0,
   },
   insightsGrid: {
     flexDirection: 'row',
@@ -287,6 +530,49 @@ const styles = StyleSheet.create({
     height: 30,
     width: 1,
   },
+  faqItem: {
+    marginBottom: 8,
+  },
+  faqAnswer: {
+    fontSize: 13,
+    lineHeight: 18,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  faqDivider: {
+    marginTop: 8,
+    opacity: 0.3,
+  },
+  relatedQuestionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  relatedQuestionChip: {
+    marginBottom: 4,
+  },
+  generateMoreButton: {
+    alignSelf: 'flex-start',
+  },
+  doubtInputContainer: {
+    gap: 12,
+  },
+  doubtActions: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  doubtButton: {
+    flex: 1,
+    borderRadius: 12,
+  },
+  notesContainer: {
+    gap: 12,
+  },
+  saveNotesButton: {
+    alignSelf: 'flex-start',
+    borderRadius: 12,
+  },
   actionButtons: {
     flexDirection: 'row',
     gap: 12,
@@ -295,13 +581,6 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
     borderRadius: 12,
-  },
-  frequencyButton: {
-    alignSelf: 'center',
-  },
-  frequencyLabel: {
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
 

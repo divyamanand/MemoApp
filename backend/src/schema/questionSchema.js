@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const revisionSchema = new mongoose.Schema(
   {
@@ -49,8 +49,9 @@ const questionSchema = new mongoose.Schema(
       type: String
     },
 
-    options: {
-      type: [String]
+    choices: {
+      options: {type: [String]},
+      multipleCorrect: {type: Boolean, default: false},
     },
 
     link: {
@@ -61,6 +62,11 @@ const questionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       default: {}
     },
+
+    favourite: {
+      type: Boolean,
+      default: false
+    }
 
   },
   {
@@ -100,6 +106,17 @@ questionSchema.methods.deleteRevision = async function (revisionId) {
 questionSchema.virtual('completedCount').get(function () {
   return this.revisions.filter(r => r.completed).length;
 });
+
+questionSchema.virtual('lastRevised').get(function() {
+  const n = this.revisions.length
+
+  for (let i = n-1; i--; i >= 0) {
+    const revision = this.revisions[i]
+    if (revision.completed === true) {
+      return revision.date
+    }
+  }
+})
 
 questionSchema.set("toJSON", { virtuals: true });
 questionSchema.set("toObject", { virtuals: true });
