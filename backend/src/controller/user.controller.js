@@ -181,3 +181,5 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, updatedUser, "User Details Updated Successfully"))
 })
+
+

@@ -429,3 +429,50 @@ export const markRevisionCompleted = asyncHandler(async (req, res) => {
   );
 });
 
+export const getHeatmap = asyncHandler(async (req, res) => {
+  const user = req.user
+  const {from, to} = req.query
+
+  const matchStage = {
+    userId: user._id
+  }
+
+  let dateFilter = {}
+
+  if (from) dateFilter.$gte = new Date(from)
+  if (to) dateFilter.$lte = new Date(to)
+  
+  if (Object.keys(dateFilter).length > 0) {
+    matchStage["revisions.date"] = dateFilter
+  }
+
+  const result = await Question.aggregate([
+    {$match: matchStage},
+    {$unwind: "$revisions"},
+
+    { $match: { "revisions.completed": true } },
+
+    {
+      $group: {
+        _id: {
+          $dateToString: {format: "%Y-%m-%d", date: "$revisions.date"}
+        },
+        count: {$sum: 1}
+      },
+    },
+
+    {$sort: {_id: 1}},
+    {
+      $project: {
+        _id: 0,
+        day: "$_id",
+        count: 1,
+      }
+    }
+  ])
+
+  return res.status(200).json(
+    new ApiResponse(200, result, "Heatmap fetched successfully")
+  );
+
+})

@@ -17,13 +17,14 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ErrorResponse, RootStackParamList } from '@/src/constants/types';
-import { useAppDispatch } from '@/src/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
 import { logoutUser } from '@/src/features/auth/authActions';
 import { handleError } from '@/src/service/errorService';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
   const dispatch = useAppDispatch();
+  const {userInfo} = useAppSelector(state => state.app)
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -40,8 +41,8 @@ const ProfileScreen = () => {
 
   // Sample user data
   const userData = {
-    name: 'Ethan Carter',
-    email: 'ethan.carter@email.com',
+    name: userInfo?.name ?? "User",
+    email: userInfo?.email ?? null,
     avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
   };
 
@@ -85,15 +86,7 @@ const ProfileScreen = () => {
   const handleBack = () => {
     navigation.goBack();
   };
-
-  const handleEditProfile = () => {
-    navigation.navigate('EditProfile');
-  };
-
-  const handleSettings = () => {
-    navigation.navigate('Settings');
-  };
-
+  
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}

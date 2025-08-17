@@ -55,14 +55,15 @@ const QuestionsListScreen = () => {
     [questions],
   );
 
+  const allTags = useMemo(() => {
+    return [...new Set(allQuestions.flatMap(q => q.tags))];
+  }, [allQuestions]);
+
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    const allTags = (questions: ResponseQuestion[]) => {
-    questions.forEach(q => dispatch(addTags(q.tags)) )
-  }
-    allTags(allQuestions)
-  }, [allQuestions, dispatch])
+    dispatch(addTags(allTags))
+  }, [dispatch, allTags])
   
 
   const currentData = allQuestions;
