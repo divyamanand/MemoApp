@@ -81,7 +81,6 @@ questionSchema.methods.generateRevision = function () {
   const {k,c,i} = this.formData.revisionFormula
   const baseDate = this.createdAt || new Date()
 
-  // console.log(baseDate, "Base Date")
 
   for (let index = 0; index< i; index++) {
     const day = Math.round(k* (c**index))
@@ -90,7 +89,6 @@ questionSchema.methods.generateRevision = function () {
     newDate.setDate(newDate.getDate() + day);
     newDate.setUTCHours(0, 0, 0, 0);
 
-    // console.log(newDate, "new Date")
     this.revisions.push({date: newDate})
   }
 
@@ -103,20 +101,51 @@ questionSchema.methods.deleteRevision = async function (revisionId) {
   return this;
 };
 
-questionSchema.virtual('completedCount').get(function () {
-  return this.revisions.filter(r => r.completed).length;
-});
+// questionSchema.virtual('completedCount').get(function () {
+//   return this.revisions.filter(r => r && r.completed).length;
+// });
 
-questionSchema.virtual('lastRevised').get(function() {
-  const n = this.revisions.length
+// questionSchema.virtual('lastRevised').get(function() {
+//   for (let i = this.revisions.length - 1; i >= 0; i--) {
+//     const revision = this.revisions[i];
+//     if (revision && revision.completed) {
+//       return revision.date;
+//     }
+//   }
+//   return null;
+// });
 
-  for (let i = n-1; i--; i >= 0) {
-    const revision = this.revisions[i]
-    if (revision.completed === true) {
-      return revision.date
-    }
-  }
-})
+
+// questionSchema.virtual("upcomingRevisions").get(function () {
+//   const today = new Date();
+//   today.setUTCHours(0, 0, 0, 0);
+
+//   const n = this.revisions.length;
+//   let lastCompletedIndex = -1;
+
+//   for (let i = n - 1; i >= 0; i--) {
+//     if (this.revisions[i] && this.revisions[i].completed) {
+//       lastCompletedIndex = i;
+//       break;
+//     }
+//   }
+
+//   questionSchema.virtual("lastRevisions").get(function () {
+//   const completed = this.revisions
+//     .filter(r => r && r.completed)      
+//     .sort((a, b) => b.date - a.date);  
+
+//   return completed.slice(0, 3);         
+// });
+
+
+//   const startIndex = lastCompletedIndex === -1 ? 0 : lastCompletedIndex + 1;
+
+//   return this.revisions
+//     .slice(startIndex, startIndex + 3)
+//     .filter(rev => rev && rev.date >= today && !rev.completed);
+// });
+
 
 questionSchema.set("toJSON", { virtuals: true });
 questionSchema.set("toObject", { virtuals: true });

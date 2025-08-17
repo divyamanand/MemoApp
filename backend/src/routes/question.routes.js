@@ -8,9 +8,9 @@ router.post("/add-question", verifyJWT, createQuestion)
 router.delete("/delete-question/:questionId", verifyJWT, deleteQuestion)
 router.get("/questions", verifyJWT, getAllQuestionsOfUser)
 router.get("/revisions", verifyJWT, getTodaysRevisions)
-router.post("/complete-potd", verifyJWT, markPOTDCompleted)
+router.patch("/complete-potd", verifyJWT, markPOTDCompleted)
 router.get("/complete-n-count/:numberOfTimes", verifyJWT, countNCompleted)
 router.get("/total-count", verifyJWT, countTotalCompleted)
-router.post("/mark-revision/:questionID/:revisionID", verifyJWT, markRevisionCompleted)
+router.patch("/mark-revision/:questionID/:revisionID", verifyJWT, markRevisionCompleted)
 
 export default router

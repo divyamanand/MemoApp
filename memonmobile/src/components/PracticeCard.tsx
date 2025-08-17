@@ -17,6 +17,7 @@ interface PracticeCardProps {
   subtitleColor?: string;
   accentColor?: string;
   chipColor?: string;
+  completed: boolean;
 }
 
 const PracticeCard: React.FC<PracticeCardProps> = ({
@@ -33,6 +34,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
   subtitleColor,
   accentColor,
   chipColor,
+  completed
 }) => {
   const { colors } = useTheme();
 
@@ -123,7 +125,7 @@ const PracticeCard: React.FC<PracticeCardProps> = ({
           style={[styles.button, { backgroundColor: colors.surfaceVariant }]}
         >
           <Text style={[styles.buttonText, { color: colors.onSurface }]}>
-            Mark as Done
+            {completed ? "Completed" : "Mark Done"}
           </Text>
         </TouchableOpacity>
 

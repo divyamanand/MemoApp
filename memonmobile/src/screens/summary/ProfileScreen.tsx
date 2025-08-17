@@ -9,12 +9,27 @@ import {
 } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/constants/types';
+import { ErrorResponse, RootStackParamList } from '@/src/constants/types';
+import { useAppDispatch } from '@/src/store/hooks';
+import { logoutUser } from '@/src/features/auth/authActions';
+import { handleError } from '@/src/service/errorService';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
+  const dispatch = useAppDispatch()
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser())
+      navigation.navigate("Login")
+    } catch (error) {
+      const formattedError: ErrorResponse = handleError(error)
+      if (formattedError.statusCode === 403) navigation.navigate("Login") 
+      //else error logout. 
+    }
+  }
 
   // Sample user data
   const userData = {
@@ -61,18 +76,15 @@ const ProfileScreen = () => {
   ];
 
   const handleBack = () => {
-    // TODO: Navigate back
-    console.log('Navigate back');
+    navigation.goBack()
   };
 
   const handleEditProfile = () => {
-    // TODO: Navigate to Edit Profile
-    console.log('Edit Profile');
+    navigation.navigate("EditProfile")
   };
 
   const handleSettings = () => {
-    // TODO: Navigate to Settings
-    console.log('Settings');
+    navigation.navigate("Settings")
   };
 
   return (
@@ -215,6 +227,16 @@ const ProfileScreen = () => {
           <MaterialIcons name="settings" size={20} color={colors.onSurfaceVariant} />
           <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
             Settings
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.actionButton, { backgroundColor: colors.surface }]}
+          onPress={handleLogout}
+        >
+          <MaterialIcons name="settings" size={20} color={colors.onSurfaceVariant} />
+          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
+            Logout
           </Text>
         </TouchableOpacity>
       </View>

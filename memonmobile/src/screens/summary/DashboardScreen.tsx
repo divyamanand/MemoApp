@@ -10,10 +10,8 @@ import {
   Chip,
   Button as PaperButton,
 } from 'react-native-paper';
-import { useNetworkState } from "@uidotdev/usehooks"
 import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
 import { useGetCountTillDateQuery, useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
-import { logoutUser } from '@/src/features/auth/authActions';
 import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/constants/types';
@@ -21,7 +19,6 @@ import { RootStackParamList } from '@/src/constants/types';
 const DashboardScreen = () => {
   const theme = useTheme();
   const { colors } = theme;
-  const dispatch = useAppDispatch();
   const { userInfo } = useAppSelector((s) => s.app);
   // const {online} = useNetworkState()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -109,13 +106,6 @@ const DashboardScreen = () => {
             onPress={() => {
               // TODO: Navigate to profile
             }}
-          />
-
-          <IconButton
-            icon="logout"
-            iconColor={colors.primary}
-            size={24}
-            onPress={() => dispatch(logoutUser())}
           />
         </View>
 

@@ -92,13 +92,80 @@ export const getTodaysRevisions = asyncHandler(async (req, res) => {
         }
       }
     },
-    // Only keep questions that have at least 1 revision today
+
+    // Keep only questions that have at least one revision today
     { $match: { "todaysRevisions.0": { $exists: true } } },
-    { $project: { revisions: 0 } },
+
+    // Compute metadata fields
+    {
+      $addFields: {
+        completedCount: {
+          $size: {
+            $filter: {
+              input: "$revisions",
+              as: "rev",
+              cond: { $eq: ["$$rev.completed", true] }
+            }
+          }
+        },
+        lastRevised: {
+          $max: {
+            $map: {
+              input: {
+                $filter: {
+                  input: "$revisions",
+                  as: "rev",
+                  cond: { $eq: ["$$rev.completed", true] }
+                }
+              },
+              as: "r",
+              in: "$$r.date"
+            }
+          }
+        },
+        upcomingRevisions: {
+          $slice: [
+            {
+              $filter: {
+                input: "$revisions",
+                as: "rev",
+                cond: { $gte: ["$$rev.date", new Date()] }
+              }
+            },
+            3
+          ]
+        },
+        pastRevisions: {
+          $slice: [
+            {
+              $reverseArray: {
+                $filter: {
+                  input: "$revisions",
+                  as: "rev",
+                  cond: { $lt: ["$$rev.date", new Date()] }
+                }
+              }
+            },
+            3
+          ]
+        }
+      }
+    },
+
+    // Remove revisions + todaysRevisions array
+    {
+      $project: {
+        revisions: 0,
+        todaysRevisions: 0
+      }
+    },
+
+    // Facet for pagination + metadata
     {
       $facet: {
         metadata: [{ $count: "total" }],
         data: [
+          { $sort: { createdAt: -1 } },
           { $skip: (page - 1) * pageSize },
           { $limit: pageSize }
         ]
@@ -119,83 +186,96 @@ export const getTodaysRevisions = asyncHandler(async (req, res) => {
 });
 
 
+
 export const getAllQuestionsOfUser = asyncHandler(async (req, res) => {
   let { page, pageSize } = req.query;
 
   page = parseInt(page, 10) || 1;
   pageSize = parseInt(pageSize, 10) || 10;
 
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setUTCDate(today.getUTCDate() + 1);
-
-  const questions = await Question.aggregate([
+  const pipeline = [
     { $match: { userId: req.user._id } },
+    { $sort: { createdAt: -1 } },
+    { $skip: (page - 1) * pageSize },
+    { $limit: pageSize },
+
     {
       $addFields: {
-        hasTodaysRevision: {
-          $gt: [
-            {
-              $size: {
-                $filter: {
-                  input: "$revisions",
-                  as: "rev",
-                  cond: {
-                    $and: [
-                      { $gte: ["$$rev.date", today] },
-                      { $lt: ["$$rev.date", tomorrow] }
-                    ]
-                  }
-                }
-              }
-            },
-            0
-          ]
+        completedRevisions: {
+          $filter: {
+            input: "$revisions",
+            as: "rev",
+            cond: { $eq: ["$$rev.completed", true] }
+          }
+        },
+        pendingRevisions: {
+          $filter: {
+            input: "$revisions",
+            as: "rev",
+            cond: { $eq: ["$$rev.completed", false] }
+          }
         }
       }
     },
-    // Exclude questions that have any revision today
-    { $match: { hasTodaysRevision: false } },
     {
       $addFields: {
+        completedCount: { $size: "$completedRevisions" },
+        lastRevised: {
+          $max: {
+            $map: {
+              input: "$completedRevisions",
+              as: "rev",
+              in: "$$rev.date"
+            }
+          }
+        },
+        pastRevisions: {
+          $slice: [
+            {
+              $reverseArray: {
+                $sortArray: { input: "$completedRevisions", sortBy: { date: 1 } }
+              }
+            },
+            3
+          ]
+        },
         upcomingRevisions: {
           $slice: [
             {
-              $filter: {
-                input: "$revisions",
-                as: "rev",
-                cond: { $gte: ["$$rev.date", today] }
-              }
+              $sortArray: { input: "$pendingRevisions", sortBy: { date: 1 } }
             },
             3
           ]
         }
       }
     },
-    { $project: { revisions: 0, hasTodaysRevision: 0 } },
     {
-      $facet: {
-        metadata: [{ $count: "totalQuestions" }],
-        data: [
-          { $skip: (page - 1) * pageSize },
-          { $limit: pageSize }
-        ]
+      $project: {
+        revisions: 0,
+        completedRevisions: 0,
+        pendingRevisions: 0
       }
     }
-  ]);
+  ];
 
-  const totalQuestions = questions[0].metadata[0]?.totalQuestions || 0;
+  const questions = await Question.aggregate(pipeline);
+
+  const totalQuestions = await Question.countDocuments({ userId: req.user._id });
   const totalPages = Math.ceil(totalQuestions / pageSize) || 1;
 
   return res.status(200).json(
     new ApiResponse(
       200,
-      { metadata: { totalQuestions, totalPages, page, pageSize }, questions: questions[0].data || [] },
-      "Questions fetched excluding today's revisions"
+      {
+        metadata: { totalQuestions, totalPages, page, pageSize },
+        questions,
+      },
+      "All questions fetched successfully"
     )
   );
 });
+
+
 
 export const markPOTDCompleted = asyncHandler(async (req, res) => {
   const userId = req.user._id;
@@ -349,19 +429,3 @@ export const markRevisionCompleted = asyncHandler(async (req, res) => {
   );
 });
 
-// export const countIndividualQuestionRevisionsCompleted = asyncHandler(async (req, res) => {
-//     const user = req.user
-//     const {questionID} = req.params
-
-//     const question = Question.findOne({_id: questionID, userId: user._id})
-    
-//     if (!question) {
-//       throw new ApiError(404, null, "Question Not Found")
-//     }
-
-//     const completedCount  = question.completedCount
-
-//     return res.status(200).json(
-//       new ApiResponse(200, {completedCount}, "Completed count fetched successffully")
-//     )
-// })

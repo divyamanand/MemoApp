@@ -7,7 +7,7 @@ import { useTheme } from 'react-native-paper';
 import { RootStackParamList } from '@/src/constants/types';
 import QuestionsListScreen from '../screens/questions/QuestionListScreen';
 import AddQuestionScreen from '../screens/questions/AddQuestionScreen';
-import EditQuestionScreen from '../screens/questions/EditQuestionScreen';
+// import EditQuestionScreen from '../screens/questions/EditQuestionScreen';
 import GenerateQuestionScreen from '../screens/questions/GenerateQuestionScreen';
 
 const QuestionNavigator: React.FC = () => {
@@ -29,7 +29,7 @@ const QuestionNavigator: React.FC = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Questions">
         <Stack.Screen name="Questions" component={withSafeArea(QuestionsListScreen)} />
         <Stack.Screen name="AddQuestion" component={withSafeArea(AddQuestionScreen)} />
-        <Stack.Screen name="EditQuestion" component={withSafeArea(EditQuestionScreen)} />
+        {/* <Stack.Screen name="EditQuestion" component={withSafeArea(EditQuestionScreen)} /> */}
         <Stack.Screen name="GenerateQuestion" component={withSafeArea(GenerateQuestionScreen)} />
       </Stack.Navigator>
     </>

@@ -12,7 +12,7 @@ import {
 import CircularProgress from '../../components/CircularProgress';
 import PracticeCard from '../../components/PracticeCard';
 import QuestionInfoScreen from './QuestionInfoScreen';
-import { useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import { useGetRevisionsInfiniteQuery, useUpdateRevisionMutation } from '@/src/features/questions/api/questionApi';
 import { ResponseQuestion } from '@/src/constants/types';
 
 const PracticeScreen = () => {
@@ -23,6 +23,8 @@ const PracticeScreen = () => {
 
   const { data, isLoading, isFetching, refetch } =
     useGetRevisionsInfiniteQuery(undefined);
+
+  const [updateRevision] = useUpdateRevisionMutation()
 
   const allQuestions = useMemo(
     () => data?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
@@ -36,6 +38,15 @@ const PracticeScreen = () => {
       ).length,
     [allQuestions],
   );
+
+  const handleMarkDone = async (questionId: string, revisionId: string) => {
+    try {
+      await updateRevision({ questionId, revisionId }).unwrap();
+    } catch (error) {
+      console.log("failed to update revision", error);
+    }
+  };
+
 
   const totalTarget = allQuestions.length;
   const progress = completedCount / totalTarget;
@@ -149,7 +160,7 @@ const PracticeScreen = () => {
             />
           }
         >
-          {allQuestions.map((q: any) => (
+          {allQuestions.map((q: ResponseQuestion) => (
             <PracticeCard
               key={q._id}
               title={q.questionName}
@@ -157,9 +168,8 @@ const PracticeScreen = () => {
               difficulty={q.difficulty}
               description={q.formData?.description}
               estimateTime="5-7 minutes"
-              onMarkDone={() => {
-                // TODO: Implement mark-as-done
-              }}
+              completed = {q.upcomingRevisions[0].completed}
+              onMarkDone={() => handleMarkDone(q._id, q.upcomingRevisions[0]._id)}
               onStartTimer={() => {
                 // TODO: Implement start timer
               }}

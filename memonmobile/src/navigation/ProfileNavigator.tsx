@@ -7,9 +7,7 @@ import { useTheme } from 'react-native-paper';
 import { RootStackParamList } from '@/src/constants/types';
 import ProfileScreen from '../screens/summary/ProfileScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
-import HelpScreen from '../screens/summary/HelpScreen';
-import ResetPassword from '../screens/auth/ResetPassword';
-import EditProfileScreen from '../screens/auth/EditProfileScreen';
+import LoginScreen from '../screens/auth/LoginScreen';
 
 const ProfileNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -30,6 +28,7 @@ const ProfileNavigator: React.FC = () => {
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="ProfileScreen">
         <Stack.Screen name="ProfileScreen" component={withSafeArea(ProfileScreen)} />
         <Stack.Screen name="Settings" component={withSafeArea(SettingsScreen)} />
+        <Stack.Screen name="Login" component={withSafeArea(LoginScreen)} />
         {/* <Stack.Screen name="Help" component={withSafeArea(HelpScreen)} /> */}
         {/* <Stack.Screen name="EditProfile" component={withSafeArea(EditProfileScreen)} /> */}
       </Stack.Navigator>
