@@ -19,6 +19,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
 import {
   useGetCountTillDateQuery,
+  useGetHeatMapQuery,
   useGetRevisionsInfiniteQuery,
 } from '@/src/features/questions/api/questionApi';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -29,8 +30,9 @@ const DashboardScreen = () => {
   const theme = useTheme();
   const { colors } = theme;
   const { userInfo } = useAppSelector((s) => s.app);
-  // const {online} = useNetworkState()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const {data: heatmap} = useGetHeatMapQuery({from: "2025-01-01", to: "2025-12-31"})
 
   const [completedToday, setCompletedToday] = useState(0);
 
@@ -55,6 +57,8 @@ const DashboardScreen = () => {
   const totalCompleted =
     (completedUptodate?.totalCompleted ?? 0) + completedToday;
   const loading = loadingRevisions || loadingCounts;
+
+  console.log(heatmap)
 
   // Sample data for new features
   const aiSuggestions = [

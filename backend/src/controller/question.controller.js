@@ -449,7 +449,9 @@ export const getHeatmap = asyncHandler(async (req, res) => {
   const result = await Question.aggregate([
     {$match: matchStage},
     {$unwind: "$revisions"},
-
+    { $match: { 
+      "revisions.date": { $gte: new Date(from), $lte: new Date(to) } 
+    }},
     { $match: { "revisions.completed": true } },
 
     {

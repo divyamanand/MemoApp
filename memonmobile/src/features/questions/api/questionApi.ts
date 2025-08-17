@@ -8,11 +8,12 @@ import { updateRevisionEndPoint } from './endPoints/updateRevision';
 import { updateQuestionEndPoint } from './endPoints/updateQuestion';
 import { getRevisionsEndpoint } from './endPoints/getRevisions';
 import { getCompletedCountUptoDate } from './endPoints/countCompletedUptoDate';
+import { getHeatmapEndpoint } from './endPoints/getHeatmap';
 
 export const questionApi = createApi({
   reducerPath: 'questionApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Questions', 'Revisions'], // keep this in sync with providesTags above
+  tagTypes: ['Questions', 'Revisions'], 
   endpoints: (build) => ({
     getQuestions: getQuestionsEndpoint(build),
     getRevisions: getRevisionsEndpoint(build),
@@ -21,6 +22,7 @@ export const questionApi = createApi({
     updateRevision: updateRevisionEndPoint(build),
     updateQuestion: updateQuestionEndPoint(build),
     getCountTillDate: getCompletedCountUptoDate(build),
+    getHeatMap: getHeatmapEndpoint(build),
   }),
 });
 
@@ -32,4 +34,5 @@ export const {
   useUpdateQuestionMutation,
   useUpdateRevisionMutation,
   useGetCountTillDateQuery,
+  useGetHeatMapQuery,
 } = questionApi;
