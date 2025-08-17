@@ -20,6 +20,7 @@ import {
 } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
 import { difficulty, ResponseQuestion } from '@/src/constants/types';
+import { useDeleteQuestionMutation } from '@/src/features/questions/api/questionApi';
 
 interface QuestionInfoScreenProps {
   question: ResponseQuestion;
@@ -69,6 +70,17 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         return colors.primary;
     }
   };
+
+  const [deleteQuestion] = useDeleteQuestionMutation()
+
+  const handleDelete = async (questionId: string) => {
+    try {
+      await deleteQuestion(questionId).unwrap()
+      onClose?.()
+    } catch (error) {
+      console.log("Error deleting question", error)
+    }
+  }
 
   const difficultyColor = getDifficultyColor(editableDifficulty);
 
@@ -136,7 +148,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
     setEditableQuestionName(question.questionName || '');
     setEditableDescription(question.formData?.description || '');
     setEditableTags(question.tags || []);
-    setEditableDifficulty(question.difficulty || 'Medium');
+    setEditableDifficulty(question.difficulty || 'medium');
     setNewTag('');
     setEditMode(false);
   };
@@ -266,7 +278,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
             icon="delete-outline"
             size={20}
             iconColor={colors.onSurfaceVariant}
-            onPress={() => {}}
+            onPress={() => handleDelete(question._id)}
           />
           <IconButton
             icon="close"

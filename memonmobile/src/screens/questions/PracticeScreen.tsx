@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -23,6 +23,8 @@ import {
   useUpdateRevisionMutation,
 } from '@/src/features/questions/api/questionApi';
 import { ResponseQuestion } from '@/src/constants/types';
+import { useAppDispatch } from '@/src/store/hooks';
+import { addTags } from '@/src/features/app/appSlice';
 
 const PracticeScreen = () => {
   const { colors } = useTheme();
@@ -40,6 +42,15 @@ const PracticeScreen = () => {
     () => data?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
     [data],
   );
+
+  const dispatch = useAppDispatch()
+  
+    useEffect(() => {
+      const allTags = (questions: ResponseQuestion[]) => {
+      questions.forEach(q => dispatch(addTags(q.tags)) )
+    }
+      allTags(allQuestions)
+    }, [allQuestions, dispatch])
 
   const completedCount = useMemo(
     () =>

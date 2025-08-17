@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -21,6 +21,8 @@ import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/quest
 import QuestionInfoScreen from './QuestionInfoScreen';
 import { ResponseQuestion, RootStackParamList } from '@/src/constants/types';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useAppDispatch } from '@/src/store/hooks';
+import { addTags } from '@/src/features/app/appSlice';
 
 type SortOption = 'difficulty' | 'topic' | 'recency' | 'priority';
 
@@ -52,6 +54,16 @@ const QuestionsListScreen = () => {
     () => questions?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
     [questions],
   );
+
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    const allTags = (questions: ResponseQuestion[]) => {
+    questions.forEach(q => dispatch(addTags(q.tags)) )
+  }
+    allTags(allQuestions)
+  }, [allQuestions, dispatch])
+  
 
   const currentData = allQuestions;
 

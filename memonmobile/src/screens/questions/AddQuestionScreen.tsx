@@ -27,21 +27,10 @@ import {
 } from '@/src/constants/types';
 import { useAddQuestionMutation } from '@/src/features/questions/api/questionApi';
 import { nanoid } from '@reduxjs/toolkit';
+import { useAppSelector } from '@/src/store/hooks';
 
-// AI Suggestion Data
+
 const DIFFICULTY_SUGGESTIONS: difficulty[] = ['easy', 'medium', 'hard'];
-const TAG_SUGGESTIONS = [
-  'Mathematics',
-  'Physics',
-  'Chemistry',
-  'Biology',
-  'Computer Science',
-  'Algorithms',
-  'Data Structures',
-  'Programming',
-  'General Knowledge',
-  'History',
-];
 
 const AddQuestionScreen = () => {
   const { colors } = useTheme();
@@ -55,6 +44,10 @@ const AddQuestionScreen = () => {
   const [link, setLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const {tags: tag_suggestions} = useAppSelector(state => state.app)
+
+  console.log(tag_suggestions)
 
   // AI Suggestion states
   const [showDifficultySuggestions, setShowDifficultySuggestions] =
@@ -168,7 +161,7 @@ const AddQuestionScreen = () => {
     }
   };
 
-  const filteredTagSuggestions = TAG_SUGGESTIONS.filter(
+  const filteredTagSuggestions = tag_suggestions.filter(
     (tag) =>
       tag.toLowerCase().includes(tagInput.toLowerCase()) && !tags.includes(tag),
   );

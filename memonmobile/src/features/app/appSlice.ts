@@ -48,11 +48,13 @@ interface UserInfo {
 interface AppState {
   userInfo?: UserInfo;
   tokenValid: boolean;
+  tags: string[]
 }
 
 const initialState: AppState = {
   userInfo: undefined,
   tokenValid: false,
+  tags: []
 };
 
 const appSlice = createSlice({
@@ -63,7 +65,11 @@ const appSlice = createSlice({
       state.userInfo = action.payload;
       state.tokenValid = true;
     },
-    resetUser: () => initialState,
+    resetUser: () => ({ ...initialState }),
+    addTags: (state, action: PayloadAction<string[]>) => {
+        state.tags = [...new Set([...state.tags, ...action.payload])];
+      }
+
   },
   extraReducers: (builder) => {
     builder
@@ -78,5 +84,5 @@ const appSlice = createSlice({
   },
 });
 
-export const { setCredentials, resetUser } = appSlice.actions;
+export const { setCredentials, resetUser, addTags } = appSlice.actions;
 export default appSlice.reducer;

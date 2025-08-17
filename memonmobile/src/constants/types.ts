@@ -51,7 +51,7 @@ export type ResponseQuestion = {
   userId?: string;
   questionName: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  tags?: string[];
+  tags: string[];
   formData?: any;
   upcomingRevisions: Revision[];
   revisionHistory?: Revision[];
