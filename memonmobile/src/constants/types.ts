@@ -79,7 +79,7 @@ export type PostQuestion = {
   _id: string;
   questionName: string;
   difficulty: 'easy' | 'medium' | 'hard';
-  tags?: string[];
+  tags: string[];
   upcomingRevisions: Revision[];
   description?: string;
   link?: string;
