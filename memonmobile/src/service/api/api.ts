@@ -44,9 +44,9 @@ api.interceptors.response.use(
               headers: {
                 Authorization: `Bearer ${refreshToken}`,
               },
-            }
+            },
           );
-          
+
           const newAccessToken = res.data.accessToken;
           const newRefreshToken = res.data.refreshToken;
 
@@ -56,8 +56,14 @@ api.interceptors.response.use(
             refreshToken: res.data.refreshToken,
           });
 
-          await SecureStorage.setItemAsync('accessToken', String(newAccessToken));
-          await SecureStorage.setItemAsync('refreshToken', String(newRefreshToken));
+          await SecureStorage.setItemAsync(
+            'accessToken',
+            String(newAccessToken),
+          );
+          await SecureStorage.setItemAsync(
+            'refreshToken',
+            String(newRefreshToken),
+          );
 
           originalRequest.headers = {
             ...originalRequest.headers,

@@ -13,7 +13,6 @@ export const addQuestionEndpoint = (
       data,
     }),
     async onQueryStarted(arg, { dispatch, queryFulfilled }) {
-
       const patchResult = dispatch(
         questionApi.util.updateQueryData('getQuestions', undefined, (draft) => {
           const lastPage = draft.pages[draft.pages.length - 1];

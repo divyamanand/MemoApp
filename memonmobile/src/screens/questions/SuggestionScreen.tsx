@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -9,46 +15,50 @@ import {
   Button as PaperButton,
 } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { difficulty } from '@/src/constants/types';
 
 interface Question {
   id: string;
   title: string;
   description: string;
   subject: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard' | 'Expert';
+  difficulty: difficulty;
 }
 
 const SuggestionScreen = () => {
   const { colors } = useTheme();
-  
+
   const [questions, setQuestions] = useState<Question[]>([
     {
       id: '1',
       title: 'Question 1',
-      description: 'Analyze the impact of the Industrial Revolution on global trade patterns.',
+      description:
+        'Analyze the impact of the Industrial Revolution on global trade patterns.',
       subject: 'Economics',
-      difficulty: 'Medium',
+      difficulty: 'medium',
     },
     {
       id: '2',
       title: 'Question 2',
-      description: 'Discuss the key factors that led to the fall of the Roman Empire.',
+      description:
+        'Discuss the key factors that led to the fall of the Roman Empire.',
       subject: 'History',
-      difficulty: 'Hard',
+      difficulty: 'hard',
     },
     {
       id: '3',
       title: 'Question 3',
-      description: 'Explain the principles of quantum mechanics and their applications.',
+      description:
+        'Explain the principles of quantum mechanics and their applications.',
       subject: 'Physics',
-      difficulty: 'Expert',
+      difficulty: 'medium',
     },
     {
       id: '4',
       title: 'Question 4',
       description: 'Describe the process of photosynthesis in plants.',
       subject: 'Biology',
-      difficulty: 'Easy',
+      difficulty: 'easy',
     },
   ]);
 
@@ -88,8 +98,8 @@ const SuggestionScreen = () => {
   };
 
   const handleDismiss = (questionId: string) => {
-    setQuestions(prevQuestions => 
-      prevQuestions.filter(q => q.id !== questionId)
+    setQuestions((prevQuestions) =>
+      prevQuestions.filter((q) => q.id !== questionId),
     );
   };
 
@@ -99,9 +109,14 @@ const SuggestionScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
@@ -114,7 +129,7 @@ const SuggestionScreen = () => {
         <View style={{ width: 40 }} />
       </Surface>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -128,8 +143,11 @@ const SuggestionScreen = () => {
             <Text style={[styles.emptyTitle, { color: colors.onSurface }]}>
               No Recommendations Yet
             </Text>
-            <Text style={[styles.emptySubtitle, { color: colors.onSurfaceVariant }]}>
-              AI recommendations will appear here based on your learning progress
+            <Text
+              style={[styles.emptySubtitle, { color: colors.onSurfaceVariant }]}
+            >
+              AI recommendations will appear here based on your learning
+              progress
             </Text>
           </View>
         ) : (
@@ -139,36 +157,60 @@ const SuggestionScreen = () => {
               onPress={() => handleQuestionPress(question)}
               activeOpacity={0.7}
             >
-              <Surface style={[styles.questionCard, { backgroundColor: colors.surface }]} elevation={1}>
+              <Surface
+                style={[
+                  styles.questionCard,
+                  { backgroundColor: colors.surface },
+                ]}
+                elevation={1}
+              >
                 <View style={styles.cardHeader}>
-                  <Text style={[styles.questionTitle, { color: colors.onSurface }]}>
+                  <Text
+                    style={[styles.questionTitle, { color: colors.onSurface }]}
+                  >
                     {question.title}
                   </Text>
                 </View>
-                
-                <Text style={[styles.questionDescription, { color: colors.onSurfaceVariant }]}>
+
+                <Text
+                  style={[
+                    styles.questionDescription,
+                    { color: colors.onSurfaceVariant },
+                  ]}
+                >
                   {question.description}
                 </Text>
-                
+
                 <View style={styles.tagsContainer}>
                   <Chip
                     compact
-                    style={[styles.subjectChip, { backgroundColor: colors.surfaceVariant }]}
-                    textStyle={{ color: colors.onSurfaceVariant, fontSize: 12, fontWeight: '600' }}
+                    style={[
+                      styles.subjectChip,
+                      { backgroundColor: colors.surfaceVariant },
+                    ]}
+                    textStyle={{
+                      color: colors.onSurfaceVariant,
+                      fontSize: 12,
+                      fontWeight: '600',
+                    }}
                   >
                     {question.subject}
                   </Chip>
-                  
+
                   <Chip
                     compact
                     style={[
                       styles.difficultyChip,
-                      { backgroundColor: getDifficultyColor(question.difficulty) }
+                      {
+                        backgroundColor: getDifficultyColor(
+                          question.difficulty,
+                        ),
+                      },
                     ]}
                     textStyle={{
                       color: getDifficultyTextColor(question.difficulty),
                       fontSize: 12,
-                      fontWeight: '700'
+                      fontWeight: '700',
                     }}
                   >
                     {question.difficulty}
@@ -181,7 +223,10 @@ const SuggestionScreen = () => {
                     mode="text"
                     onPress={() => handleDismiss(question.id)}
                     icon="eye-off"
-                    labelStyle={{ color: colors.onSurfaceVariant, fontSize: 12 }}
+                    labelStyle={{
+                      color: colors.onSurfaceVariant,
+                      fontSize: 12,
+                    }}
                     style={styles.dismissButton}
                   >
                     Dismiss

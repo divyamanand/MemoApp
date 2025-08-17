@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
 import {
-  Text,
-  useTheme,
-  Surface,
-  IconButton,
-} from 'react-native-paper';
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import { Text, useTheme, Surface, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const HelpScreen = () => {
@@ -76,12 +77,17 @@ const HelpScreen = () => {
         style={[
           styles.categoryCard,
           isFullWidth && styles.categoryCardFullWidth,
-          { backgroundColor: colors.surface }
+          { backgroundColor: colors.surface },
         ]}
         onPress={category.onPress}
         activeOpacity={0.7}
       >
-        <View style={[styles.iconContainer, { backgroundColor: colors.primaryContainer }]}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: colors.primaryContainer },
+          ]}
+        >
           <MaterialIcons
             name={category.icon as any}
             size={32}
@@ -91,7 +97,9 @@ const HelpScreen = () => {
         <Text style={[styles.categoryTitle, { color: colors.onSurface }]}>
           {category.title}
         </Text>
-        <Text style={[styles.categorySubtitle, { color: colors.onSurfaceVariant }]}>
+        <Text
+          style={[styles.categorySubtitle, { color: colors.onSurfaceVariant }]}
+        >
           {category.subtitle}
         </Text>
       </TouchableOpacity>
@@ -99,9 +107,14 @@ const HelpScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
@@ -114,7 +127,7 @@ const HelpScreen = () => {
         <View style={{ width: 40 }} />
       </Surface>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >

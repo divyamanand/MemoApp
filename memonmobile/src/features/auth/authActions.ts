@@ -16,8 +16,8 @@ const authHandler = async (
     const { data } = handleApiResponse(response);
 
     const { accessToken, refreshToken, user } = data;
-    console.log("Token from api", accessToken)
-    console.log(refreshToken)
+    console.log('Token from api', accessToken);
+    console.log(refreshToken);
     await SecureStorage.setItemAsync('accessToken', String(accessToken));
     await SecureStorage.setItemAsync('refreshToken', String(refreshToken));
     return user;
@@ -36,7 +36,10 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async (payload : {name: string; email: string; password: string}, { rejectWithValue }) => {
+  async (
+    payload: { name: string; email: string; password: string },
+    { rejectWithValue },
+  ) => {
     return authHandler('/api/v1/user/register', payload, rejectWithValue);
   },
 );

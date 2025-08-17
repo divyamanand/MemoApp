@@ -170,26 +170,22 @@ const SettingsScreen = () => {
         disabled={item.hideChevron}
       >
         <View style={[styles.iconContainer, { backgroundColor: item.iconBg }]}>
-          <MaterialIcons
-            name={item.icon}
-            size={20}
-            color="#FFFFFF"
-          />
+          <MaterialIcons name={item.icon} size={20} color="#FFFFFF" />
         </View>
-        
+
         <View style={styles.textContainer}>
-          <Text 
+          <Text
             style={[
-              styles.itemTitle, 
-              { color: item.textColor || colors.onSurface }
+              styles.itemTitle,
+              { color: item.textColor || colors.onSurface },
             ]}
           >
             {item.title}
           </Text>
-          <Text 
+          <Text
             style={[
-              styles.itemSubtitle, 
-              { color: item.textColor || colors.onSurfaceVariant }
+              styles.itemSubtitle,
+              { color: item.textColor || colors.onSurfaceVariant },
             ]}
           >
             {item.subtitle}
@@ -214,9 +210,14 @@ const SettingsScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
@@ -230,13 +231,15 @@ const SettingsScreen = () => {
       </Surface>
 
       {/* Settings Content */}
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {sections.map((section) => (
           <View key={section.title} style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.sectionTitle, { color: colors.onSurfaceVariant }]}
+            >
               {section.title}
             </Text>
             <View style={styles.sectionItems}>

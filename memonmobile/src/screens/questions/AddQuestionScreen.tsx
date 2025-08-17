@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -12,44 +19,56 @@ import {
 } from 'react-native-paper';
 import TextInputField from '../../components/TextInputField';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { difficulty, PostQuestion, ResponseQuestion, RootStackParamList } from '@/src/constants/types';
+import {
+  difficulty,
+  PostQuestion,
+  ResponseQuestion,
+  RootStackParamList,
+} from '@/src/constants/types';
 import { useAddQuestionMutation } from '@/src/features/questions/api/questionApi';
 import { nanoid } from '@reduxjs/toolkit';
 
 // AI Suggestion Data
 const DIFFICULTY_SUGGESTIONS: difficulty[] = ['easy', 'medium', 'hard'];
 const TAG_SUGGESTIONS = [
-  'Mathematics', 'Physics', 'Chemistry', 'Biology', 
-  'Computer Science', 'Algorithms', 'Data Structures', 
-  'Programming', 'General Knowledge', 'History'
+  'Mathematics',
+  'Physics',
+  'Chemistry',
+  'Biology',
+  'Computer Science',
+  'Algorithms',
+  'Data Structures',
+  'Programming',
+  'General Knowledge',
+  'History',
 ];
-
 
 const AddQuestionScreen = () => {
   const { colors } = useTheme();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   // Form state
   const [questionName, setQuestionName] = useState('');
-  const [difficulty, setDifficulty] = useState<difficulty>("medium");
+  const [difficulty, setDifficulty] = useState<difficulty>('medium');
   const [description, setDescription] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [options, setOptions] = useState<string[]>(['']);
   const [link, setLink] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   // AI Suggestion states
-  const [showDifficultySuggestions, setShowDifficultySuggestions] = useState(false);
+  const [showDifficultySuggestions, setShowDifficultySuggestions] =
+    useState(false);
   const [tagInput, setTagInput] = useState('');
   const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
-  const [addQuestion, {isError}] = useAddQuestionMutation()
+  const [addQuestion, { isError }] = useAddQuestionMutation();
 
   // Difficulty handling
   const selectDifficulty = (selectedDifficulty: difficulty) => {
     setDifficulty(selectedDifficulty);
     setShowDifficultySuggestions(false);
-    setErrors(prev => ({ ...prev, difficulty: '' }));
+    setErrors((prev) => ({ ...prev, difficulty: '' }));
   };
 
   // Tag handling
@@ -57,14 +76,14 @@ const AddQuestionScreen = () => {
     const trimmedTag = tag.trim();
     if (trimmedTag.length > 0 && !tags.includes(trimmedTag)) {
       setTags([...tags, trimmedTag]);
-      setErrors(prev => ({ ...prev, tags: '' }));
+      setErrors((prev) => ({ ...prev, tags: '' }));
     }
     setTagInput('');
     setShowTagSuggestions(false);
   };
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter(tag => tag !== tagToRemove));
+    setTags(tags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleTagInputSubmit = () => {
@@ -92,7 +111,7 @@ const AddQuestionScreen = () => {
 
   // Form validation
   const validateForm = () => {
-    const newErrors: {[key: string]: string} = {};
+    const newErrors: { [key: string]: string } = {};
 
     if (!questionName.trim()) {
       newErrors.questionName = 'Question name is required';
@@ -109,26 +128,25 @@ const AddQuestionScreen = () => {
   };
 
   const resetForm = () => {
-  setQuestionName('');
-  setDifficulty("medium");
-  setDescription('');
-  setTags([]);
-  setOptions(['']);
-  setLink('');
-  setErrors({});
-  setTagInput('');
-  setShowDifficultySuggestions(false);
-  setShowTagSuggestions(false);
-};
-
+    setQuestionName('');
+    setDifficulty('medium');
+    setDescription('');
+    setTags([]);
+    setOptions(['']);
+    setLink('');
+    setErrors({});
+    setTagInput('');
+    setShowDifficultySuggestions(false);
+    setShowTagSuggestions(false);
+  };
 
   // Submit handler
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
     try {
-      const tempId = nanoid()
-      const formData : PostQuestion = {
+      const tempId = nanoid();
+      const formData: PostQuestion = {
         questionName: questionName.trim(),
         difficulty,
         description: description.trim(),
@@ -141,25 +159,29 @@ const AddQuestionScreen = () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-      
-      await addQuestion(formData).unwrap()
 
-      resetForm()
+      await addQuestion(formData).unwrap();
 
-      
+      resetForm();
     } catch (error) {
       console.error('Error submitting question:', error);
     }
   };
 
   const filteredTagSuggestions = TAG_SUGGESTIONS.filter(
-    tag => tag.toLowerCase().includes(tagInput.toLowerCase()) && !tags.includes(tag)
+    (tag) =>
+      tag.toLowerCase().includes(tagInput.toLowerCase()) && !tags.includes(tag),
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
@@ -168,17 +190,19 @@ const AddQuestionScreen = () => {
             // TODO: Navigate back
           }}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Add Question</Text>
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Add Question
+        </Text>
         <View style={{ width: 40 }} />
       </Surface>
 
       <PaperButton
-              mode="contained"
-              onPress={() => navigation.navigate("GenerateQuestion")}
-              style={[styles.submitButton, { backgroundColor: colors.primary }]}
-              contentStyle={styles.submitButtonContent}
-            >
-              Generate With AI
+        mode="contained"
+        onPress={() => navigation.navigate('GenerateQuestion')}
+        style={[styles.submitButton, { backgroundColor: colors.primary }]}
+        contentStyle={styles.submitButtonContent}
+      >
+        Generate With AI
       </PaperButton>
 
       <KeyboardAvoidingView
@@ -186,8 +210,10 @@ const AddQuestionScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Surface style={[styles.formCard, { backgroundColor: colors.surface }]} elevation={1}>
-            
+          <Surface
+            style={[styles.formCard, { backgroundColor: colors.surface }]}
+            elevation={1}
+          >
             {/* Question Name */}
             <View style={styles.fieldContainer}>
               <TextInputField
@@ -195,7 +221,7 @@ const AddQuestionScreen = () => {
                 value={questionName}
                 onChangeText={(text) => {
                   setQuestionName(text);
-                  setErrors(prev => ({ ...prev, questionName: '' }));
+                  setErrors((prev) => ({ ...prev, questionName: '' }));
                 }}
                 leftIcon="help-circle"
               />
@@ -212,8 +238,13 @@ const AddQuestionScreen = () => {
               <View style={styles.suggestionContainer}>
                 <PaperButton
                   mode="outlined"
-                  onPress={() => setShowDifficultySuggestions(!showDifficultySuggestions)}
-                  style={[styles.suggestionButton, { borderColor: colors.primary }]}
+                  onPress={() =>
+                    setShowDifficultySuggestions(!showDifficultySuggestions)
+                  }
+                  style={[
+                    styles.suggestionButton,
+                    { borderColor: colors.primary },
+                  ]}
                   icon="lightbulb"
                   labelStyle={{ color: colors.primary, fontWeight: '600' }}
                 >
@@ -221,18 +252,26 @@ const AddQuestionScreen = () => {
                 </PaperButton>
                 {difficulty && (
                   <Chip
-                    style={[styles.selectedChip, { backgroundColor: colors.primaryContainer }]}
+                    style={[
+                      styles.selectedChip,
+                      { backgroundColor: colors.primaryContainer },
+                    ]}
                     textStyle={{ color: colors.primary, fontWeight: '700' }}
-                    onClose={() => setDifficulty("medium")}
+                    onClose={() => setDifficulty('medium')}
                   >
                     {difficulty}
                   </Chip>
                 )}
               </View>
-              
+
               {showDifficultySuggestions && (
-                <View style={[styles.suggestionsGrid, { backgroundColor: colors.surfaceVariant }]}>
-                  {DIFFICULTY_SUGGESTIONS.map((suggestion : difficulty) => (
+                <View
+                  style={[
+                    styles.suggestionsGrid,
+                    { backgroundColor: colors.surfaceVariant },
+                  ]}
+                >
+                  {DIFFICULTY_SUGGESTIONS.map((suggestion: difficulty) => (
                     <Chip
                       key={suggestion}
                       onPress={() => selectDifficulty(suggestion)}
@@ -269,14 +308,17 @@ const AddQuestionScreen = () => {
               <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
                 Tags * (At least one required)
               </Text>
-              
+
               {/* Selected Tags */}
               <View style={styles.tagsContainer}>
                 {tags.map((tag) => (
                   <Chip
                     key={tag}
                     onClose={() => removeTag(tag)}
-                    style={[styles.selectedTagChip, { backgroundColor: colors.primaryContainer }]}
+                    style={[
+                      styles.selectedTagChip,
+                      { backgroundColor: colors.primaryContainer },
+                    ]}
                     textStyle={{ color: colors.primary }}
                   >
                     {tag}
@@ -298,7 +340,7 @@ const AddQuestionScreen = () => {
                   rightIcon="plus"
                   onRightIconPress={handleTagInputSubmit}
                 />
-                
+
                 <PaperButton
                   mode="text"
                   onPress={() => setShowTagSuggestions(!showTagSuggestions)}
@@ -310,7 +352,12 @@ const AddQuestionScreen = () => {
               </View>
 
               {showTagSuggestions && filteredTagSuggestions.length > 0 && (
-                <View style={[styles.suggestionsGrid, { backgroundColor: colors.surfaceVariant }]}>
+                <View
+                  style={[
+                    styles.suggestionsGrid,
+                    { backgroundColor: colors.surfaceVariant },
+                  ]}
+                >
                   {filteredTagSuggestions.slice(0, 6).map((suggestion) => (
                     <Chip
                       key={suggestion}
@@ -391,7 +438,6 @@ const AddQuestionScreen = () => {
             >
               {loading ? 'Creating Question...' : 'Create Question'}
             </PaperButton>
-
           </Surface>
         </ScrollView>
       </KeyboardAvoidingView>

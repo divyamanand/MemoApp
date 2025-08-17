@@ -18,8 +18,6 @@ import QuestionNavigator from './QuestionNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import ResetPassword from '../screens/auth/ResetPassword';
 
-
-
 const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -28,7 +26,7 @@ const AppNavigator: React.FC = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
-  const barStyle = isDarkMode ?  'dark-content' : 'light-content';
+  const barStyle = isDarkMode ? 'dark-content' : 'light-content';
 
   if (!tokenValid) {
     return (
@@ -69,7 +67,11 @@ const AppNavigator: React.FC = () => {
           component={DashboardNavigator}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="view-dashboard" size={size} color={color} />
+              <MaterialCommunityIcons
+                name="view-dashboard"
+                size={size}
+                color={color}
+              />
             ),
           }}
         />
@@ -78,7 +80,11 @@ const AppNavigator: React.FC = () => {
           name="Practice"
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="book-open-variant" size={size} color={color} />
+              <MaterialCommunityIcons
+                name="book-open-variant"
+                size={size}
+                color={color}
+              />
             ),
           }}
         >
@@ -94,7 +100,11 @@ const AppNavigator: React.FC = () => {
           component={QuestionNavigator}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
+              <MaterialCommunityIcons
+                name="format-list-bulleted"
+                size={size}
+                color={color}
+              />
             ),
           }}
         />
@@ -104,7 +114,11 @@ const AppNavigator: React.FC = () => {
           component={ProfileNavigator}
           options={{
             tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="account" size={size} color={color} />
+              <MaterialCommunityIcons
+                name="account"
+                size={size}
+                color={color}
+              />
             ),
           }}
         />

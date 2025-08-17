@@ -1,5 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Modal } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  Modal,
+} from 'react-native';
 import {
   useTheme,
   Text,
@@ -12,19 +18,23 @@ import {
 import CircularProgress from '../../components/CircularProgress';
 import PracticeCard from '../../components/PracticeCard';
 import QuestionInfoScreen from './QuestionInfoScreen';
-import { useGetRevisionsInfiniteQuery, useUpdateRevisionMutation } from '@/src/features/questions/api/questionApi';
+import {
+  useGetRevisionsInfiniteQuery,
+  useUpdateRevisionMutation,
+} from '@/src/features/questions/api/questionApi';
 import { ResponseQuestion } from '@/src/constants/types';
 
 const PracticeScreen = () => {
   const { colors } = useTheme();
 
-  const [selectedQuestion, setSelectedQuestion] = useState<ResponseQuestion | null>(null);
+  const [selectedQuestion, setSelectedQuestion] =
+    useState<ResponseQuestion | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   const { data, isLoading, isFetching, refetch } =
     useGetRevisionsInfiniteQuery(undefined);
 
-  const [updateRevision] = useUpdateRevisionMutation()
+  const [updateRevision] = useUpdateRevisionMutation();
 
   const allQuestions = useMemo(
     () => data?.pages.flatMap((p) => p.data?.questions ?? []) ?? [],
@@ -43,10 +53,9 @@ const PracticeScreen = () => {
     try {
       await updateRevision({ questionId, revisionId }).unwrap();
     } catch (error) {
-      console.log("failed to update revision", error);
+      console.log('failed to update revision', error);
     }
   };
-
 
   const totalTarget = allQuestions.length;
   const progress = completedCount / totalTarget;
@@ -168,8 +177,10 @@ const PracticeScreen = () => {
               difficulty={q.difficulty}
               description={q.formData?.description}
               estimateTime="5-7 minutes"
-              completed = {q.upcomingRevisions[0].completed}
-              onMarkDone={() => handleMarkDone(q._id, q.upcomingRevisions[0]._id)}
+              completed={q.upcomingRevisions[0].completed}
+              onMarkDone={() =>
+                handleMarkDone(q._id, q.upcomingRevisions[0]._id)
+              }
               onStartTimer={() => {
                 // TODO: Implement start timer
               }}
@@ -195,8 +206,8 @@ const PracticeScreen = () => {
         onRequestClose={closeQuestionModal}
       >
         {selectedQuestion && (
-          <QuestionInfoScreen 
-            question={selectedQuestion} 
+          <QuestionInfoScreen
+            question={selectedQuestion}
             onClose={closeQuestionModal}
           />
         )}

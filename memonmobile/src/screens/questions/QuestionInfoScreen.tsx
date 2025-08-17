@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, Linking } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Linking,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -34,30 +40,41 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
   const [editMode, setEditMode] = useState(false);
 
   // Editable fields state
-  const [editableQuestionName, setEditableQuestionName] = useState(question.questionName || '');
-  const [editableDescription, setEditableDescription] = useState(
-    question.formData?.description || ''
+  const [editableQuestionName, setEditableQuestionName] = useState(
+    question.questionName || '',
   );
-  const [editableTags, setEditableTags] = useState<string[]>(question.tags || []);
-  const [editableDifficulty, setEditableDifficulty] = useState(question.difficulty || 'Medium');
+  const [editableDescription, setEditableDescription] = useState(
+    question.formData?.description || '',
+  );
+  const [editableTags, setEditableTags] = useState<string[]>(
+    question.tags || [],
+  );
+  const [editableDifficulty, setEditableDifficulty] = useState(
+    question.difficulty || 'Medium',
+  );
   const [newTag, setNewTag] = useState('');
   const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
 
   const difficulties: difficulty[] = ['easy', 'medium', 'hard'];
 
   const getDifficultyColor = (difficulty: string) => {
-    switch(difficulty?.toLowerCase()) {
-      case 'easy': return '#7BCEDB';
-      case 'medium': return '#FFC15A';
-      case 'hard': return '#FF6B6B';
-      default: return colors.primary;
+    switch (difficulty?.toLowerCase()) {
+      case 'easy':
+        return '#7BCEDB';
+      case 'medium':
+        return '#FFC15A';
+      case 'hard':
+        return '#FF6B6B';
+      default:
+        return colors.primary;
     }
   };
 
   const difficultyColor = getDifficultyColor(editableDifficulty);
 
   // Check if question has a reference link
-  const hasReferenceLink = question?.formData?.link && question.formData.link.trim() !== '';
+  const hasReferenceLink =
+    question?.formData?.link && question.formData.link.trim() !== '';
 
   // Handle opening the reference link
   const openReferenceLink = async () => {
@@ -90,9 +107,9 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
           description: editableDescription,
         },
       };
-      
+
       console.log('Saving updated question:', updatedQuestion);
-      
+
       // Exit edit mode
       setEditMode(false);
     } catch (error) {
@@ -110,7 +127,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
 
   // Handle removing tag
   const handleRemoveTag = (tagToRemove: string) => {
-    setEditableTags(editableTags.filter(tag => tag !== tagToRemove));
+    setEditableTags(editableTags.filter((tag) => tag !== tagToRemove));
   };
 
   // Cancel edit mode
@@ -127,24 +144,27 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
   // Sample data for FAQs and Related Questions
   const faqs = [
     {
-      question: "What is the time complexity of this algorithm?",
-      answer: "The time complexity is O(log n) for binary search as we eliminate half of the elements in each iteration."
+      question: 'What is the time complexity of this algorithm?',
+      answer:
+        'The time complexity is O(log n) for binary search as we eliminate half of the elements in each iteration.',
     },
     {
-      question: "When should I use this approach?",
-      answer: "This approach is best used when you have a sorted array and need to find a specific element efficiently."
+      question: 'When should I use this approach?',
+      answer:
+        'This approach is best used when you have a sorted array and need to find a specific element efficiently.',
     },
     {
-      question: "What are common pitfalls?",
-      answer: "Common mistakes include not handling edge cases properly and incorrect boundary calculations."
-    }
+      question: 'What are common pitfalls?',
+      answer:
+        'Common mistakes include not handling edge cases properly and incorrect boundary calculations.',
+    },
   ];
 
   const relatedQuestions = [
-    "Linear Search vs Binary Search",
-    "Implementing Binary Search Tree",
-    "Search Algorithms Comparison",
-    "Time Complexity Analysis"
+    'Linear Search vs Binary Search',
+    'Implementing Binary Search Tree',
+    'Search Algorithms Comparison',
+    'Time Complexity Analysis',
   ];
 
   const toggleFAQ = (index: number) => {
@@ -167,34 +187,45 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header with Favorite and Link Icons */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
           iconColor={colors.onSurface}
           onPress={onClose}
         />
-        
+
         {editMode ? (
           <TextInputField
             value={editableQuestionName}
             onChangeText={setEditableQuestionName}
-            style={[styles.headerTitleInput, { backgroundColor: colors.surface }]}
+            style={[
+              styles.headerTitleInput,
+              { backgroundColor: colors.surface },
+            ]}
             contentStyle={{ fontSize: 16, fontWeight: '700' }}
           />
         ) : (
-          <Text style={[styles.headerTitle, { color: colors.onSurface }]} numberOfLines={1}>
+          <Text
+            style={[styles.headerTitle, { color: colors.onSurface }]}
+            numberOfLines={1}
+          >
             {editableQuestionName}
           </Text>
         )}
-        
+
         <View style={styles.headerActions}>
           <IconButton
-            icon={isFavorite ? "star" : "star-outline"}
+            icon={isFavorite ? 'star' : 'star-outline'}
             size={24}
-            iconColor={isFavorite ? "#FFD700" : colors.onSurfaceVariant}
+            iconColor={isFavorite ? '#FFD700' : colors.onSurfaceVariant}
             onPress={() => setIsFavorite(!isFavorite)}
           />
           {hasReferenceLink && (
@@ -206,7 +237,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
               style={styles.linkIcon}
             />
           )}
-          
+
           {editMode ? (
             <>
               <IconButton
@@ -230,7 +261,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
               onPress={() => setEditMode(true)}
             />
           )}
-          
+
           <IconButton
             icon="delete-outline"
             size={20}
@@ -258,13 +289,17 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
                   styles.tagChip,
                   { backgroundColor: colors.primaryContainer },
                 ]}
-                textStyle={{ color: colors.primary, fontSize: 12, fontWeight: '600' }}
+                textStyle={{
+                  color: colors.primary,
+                  fontSize: 12,
+                  fontWeight: '600',
+                }}
                 onClose={editMode ? () => handleRemoveTag(tag) : undefined}
               >
                 {tag}
               </Chip>
             ))}
-            
+
             {editMode && (
               <View style={styles.addTagContainer}>
                 <TextInputField
@@ -278,7 +313,7 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
                 />
               </View>
             )}
-            
+
             {/* Difficulty Chip */}
             {editMode ? (
               <Menu
@@ -292,7 +327,11 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
                         styles.difficultyChip,
                         { backgroundColor: difficultyColor + '20' },
                       ]}
-                      textStyle={{ color: difficultyColor, fontSize: 12, fontWeight: '700' }}
+                      textStyle={{
+                        color: difficultyColor,
+                        fontSize: 12,
+                        fontWeight: '700',
+                      }}
                     >
                       {editableDifficulty} ▼
                     </Chip>
@@ -317,7 +356,11 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
                   styles.difficultyChip,
                   { backgroundColor: difficultyColor + '20' },
                 ]}
-                textStyle={{ color: difficultyColor, fontSize: 12, fontWeight: '700' }}
+                textStyle={{
+                  color: difficultyColor,
+                  fontSize: 12,
+                  fontWeight: '700',
+                }}
               >
                 {editableDifficulty}
               </Chip>
@@ -326,9 +369,14 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         </View>
 
         {/* Question Description */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Question</Text>
-          
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            Question
+          </Text>
+
           {editMode ? (
             <TextInputField
               value={editableDescription}
@@ -339,15 +387,22 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
               style={{ backgroundColor: colors.surface }}
             />
           ) : (
-            <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>
-              {editableDescription || 
-                "Explain the process of photosynthesis, detailing the roles of chloroplasts, sunlight, water, and carbon dioxide. What are the primary products of this essential biological process?"}
+            <Text
+              style={[styles.description, { color: colors.onSurfaceVariant }]}
+            >
+              {editableDescription ||
+                'Explain the process of photosynthesis, detailing the roles of chloroplasts, sunlight, water, and carbon dioxide. What are the primary products of this essential biological process?'}
             </Text>
           )}
-          
+
           {hasReferenceLink && (
             <View style={styles.referenceSection}>
-              <Text style={[styles.referenceLabel, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[
+                  styles.referenceLabel,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
                 Reference:
               </Text>
               <PaperButton
@@ -365,28 +420,65 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
 
         {/* Rest of the sections remain the same */}
         {/* Insights */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Insights</Text>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            Insights
+          </Text>
           <View style={styles.insightsGrid}>
             <View style={styles.insightItem}>
-              <Text style={[styles.insightLabel, { color: colors.onSurfaceVariant }]}>Practiced</Text>
-              <Text style={[styles.insightValue, { color: colors.onSurface }]}>5 times</Text>
+              <Text
+                style={[
+                  styles.insightLabel,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
+                Practiced
+              </Text>
+              <Text style={[styles.insightValue, { color: colors.onSurface }]}>
+                5 times
+              </Text>
             </View>
             <View style={styles.insightItem}>
-              <Text style={[styles.insightLabel, { color: colors.onSurfaceVariant }]}>Last Practiced</Text>
-              <Text style={[styles.insightValue, { color: colors.onSurface }]}>3 minutes</Text>
+              <Text
+                style={[
+                  styles.insightLabel,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
+                Last Practiced
+              </Text>
+              <Text style={[styles.insightValue, { color: colors.onSurface }]}>
+                3 minutes
+              </Text>
             </View>
             <View style={styles.insightItem}>
-              <Text style={[styles.insightLabel, { color: colors.onSurfaceVariant }]}>AI Estimated Time</Text>
-              <Text style={[styles.insightValue, { color: colors.onSurface }]}>5-7 minutes</Text>
+              <Text
+                style={[
+                  styles.insightLabel,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
+                AI Estimated Time
+              </Text>
+              <Text style={[styles.insightValue, { color: colors.onSurface }]}>
+                5-7 minutes
+              </Text>
             </View>
           </View>
         </Surface>
 
         {/* Revision History */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
           <View style={styles.revisionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Revision History</Text>
+            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+              Revision History
+            </Text>
             <Chip
               compact
               style={{ backgroundColor: '#E7F7EE' }}
@@ -395,38 +487,67 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
               +10% vs Last 7 days
             </Chip>
           </View>
-          
+
           <View style={styles.historyStats}>
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.onSurface }]}>88%</Text>
-              <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Accuracy</Text>
+              <Text style={[styles.statValue, { color: colors.onSurface }]}>
+                88%
+              </Text>
+              <Text
+                style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
+              >
+                Accuracy
+              </Text>
             </View>
             <Divider style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.onSurface }]}>12</Text>
-              <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Total Reviews</Text>
+              <Text style={[styles.statValue, { color: colors.onSurface }]}>
+                12
+              </Text>
+              <Text
+                style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
+              >
+                Total Reviews
+              </Text>
             </View>
             <Divider style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.onSurface }]}>4.2m</Text>
-              <Text style={[styles.statLabel, { color: colors.onSurfaceVariant }]}>Avg Time</Text>
+              <Text style={[styles.statValue, { color: colors.onSurface }]}>
+                4.2m
+              </Text>
+              <Text
+                style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
+              >
+                Avg Time
+              </Text>
             </View>
           </View>
         </Surface>
 
         {/* FAQs Section */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>FAQs</Text>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            FAQs
+          </Text>
           {faqs.map((faq, index) => (
             <View key={index} style={styles.faqItem}>
               <List.Accordion
                 title={faq.question}
                 expanded={expandedFAQ === index}
                 onPress={() => toggleFAQ(index)}
-                titleStyle={{ color: colors.onSurface, fontSize: 14, fontWeight: '600' }}
+                titleStyle={{
+                  color: colors.onSurface,
+                  fontSize: 14,
+                  fontWeight: '600',
+                }}
                 style={{ backgroundColor: 'transparent', paddingHorizontal: 0 }}
               >
-                <Text style={[styles.faqAnswer, { color: colors.onSurfaceVariant }]}>
+                <Text
+                  style={[styles.faqAnswer, { color: colors.onSurfaceVariant }]}
+                >
                   {faq.answer}
                 </Text>
               </List.Accordion>
@@ -436,8 +557,13 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         </Surface>
 
         {/* Related Questions */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Related Questions</Text>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            Related Questions
+          </Text>
           <View style={styles.relatedQuestionsContainer}>
             {relatedQuestions.map((relatedQuestion, index) => (
               <Chip
@@ -447,7 +573,10 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
                   // TODO: Navigate to related question
                   console.log('Navigate to:', relatedQuestion);
                 }}
-                style={[styles.relatedQuestionChip, { borderColor: colors.outline }]}
+                style={[
+                  styles.relatedQuestionChip,
+                  { borderColor: colors.outline },
+                ]}
                 textStyle={{ color: colors.onSurfaceVariant, fontSize: 12 }}
               >
                 {relatedQuestion}
@@ -466,9 +595,16 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         </Surface>
 
         {/* Ask Doubt Section */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Ask a Doubt</Text>
-          <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            Ask a Doubt
+          </Text>
+          <Text
+            style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}
+          >
             Have questions? Ask our AI assistant or community
           </Text>
           <View style={styles.doubtInputContainer}>
@@ -505,9 +641,16 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
         </Surface>
 
         {/* Notes Section */}
-        <Surface style={[styles.card, { backgroundColor: colors.surface }]} elevation={1}>
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>Personal Notes</Text>
-          <Text style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}>
+        <Surface
+          style={[styles.card, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            Personal Notes
+          </Text>
+          <Text
+            style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}
+          >
             Add your own notes and thoughts about this question
           </Text>
           <View style={styles.notesContainer}>
@@ -523,7 +666,10 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
               mode="contained"
               onPress={handleSaveNotes}
               disabled={!notesText.trim()}
-              style={[styles.saveNotesButton, { backgroundColor: colors.primary }]}
+              style={[
+                styles.saveNotesButton,
+                { backgroundColor: colors.primary },
+              ]}
               labelStyle={{ fontWeight: '700' }}
               icon="content-save"
             >

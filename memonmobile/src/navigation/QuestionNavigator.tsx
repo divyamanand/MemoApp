@@ -15,7 +15,7 @@ const QuestionNavigator: React.FC = () => {
   const colorScheme = useColorScheme();
   const { colors } = useTheme();
   const isDarkMode = colorScheme === 'dark';
-  const barStyle = isDarkMode ?  'dark-content' : 'light-content';
+  const barStyle = isDarkMode ? 'dark-content' : 'light-content';
 
   const withSafeArea = (Comp: React.ComponentType<any>) => (props: any) => (
     <SafeAreaView style={{ flex: 1 }}>
@@ -26,11 +26,23 @@ const QuestionNavigator: React.FC = () => {
   return (
     <>
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Questions">
-        <Stack.Screen name="Questions" component={withSafeArea(QuestionsListScreen)} />
-        <Stack.Screen name="AddQuestion" component={withSafeArea(AddQuestionScreen)} />
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="Questions"
+      >
+        <Stack.Screen
+          name="Questions"
+          component={withSafeArea(QuestionsListScreen)}
+        />
+        <Stack.Screen
+          name="AddQuestion"
+          component={withSafeArea(AddQuestionScreen)}
+        />
         {/* <Stack.Screen name="EditQuestion" component={withSafeArea(EditQuestionScreen)} /> */}
-        <Stack.Screen name="GenerateQuestion" component={withSafeArea(GenerateQuestionScreen)} />
+        <Stack.Screen
+          name="GenerateQuestion"
+          component={withSafeArea(GenerateQuestionScreen)}
+        />
       </Stack.Navigator>
     </>
   );

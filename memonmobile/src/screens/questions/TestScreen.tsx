@@ -14,29 +14,33 @@ const { width } = Dimensions.get('window');
 
 const TestScreen = () => {
   const { colors } = useTheme();
-  
+
   // Test state
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [totalQuestions] = useState(10);
   const [totalScore, setTotalScore] = useState(7);
   const [confidenceValue, setConfidenceValue] = useState(7);
-  
+
   // Sample question data
   const questionData = {
-    title: "Derivative of a function",
-    difficulty: "Medium",
-    subject: "Calculus",
+    title: 'Derivative of a function',
+    difficulty: 'Medium',
+    subject: 'Calculus',
   };
 
   const progressPercentage = (totalScore / totalQuestions) * 100;
   const questionProgressPercentage = (currentQuestion / totalQuestions) * 100;
 
   const getDifficultyColor = (difficulty: string) => {
-    switch(difficulty.toLowerCase()) {
-      case 'easy': return '#7BCEDB';
-      case 'medium': return '#FFC15A';
-      case 'hard': return '#FF6B6B';
-      default: return colors.primary;
+    switch (difficulty.toLowerCase()) {
+      case 'easy':
+        return '#7BCEDB';
+      case 'medium':
+        return '#FFC15A';
+      case 'hard':
+        return '#FF6B6B';
+      default:
+        return colors.primary;
     }
   };
 
@@ -55,16 +59,23 @@ const TestScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="close"
           size={24}
           iconColor={colors.onSurface}
           onPress={handleCloseTest}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Test Mode</Text>
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Test Mode
+        </Text>
         <View style={{ width: 40 }} />
       </Surface>
 
@@ -72,60 +83,91 @@ const TestScreen = () => {
       <View style={styles.progressSection}>
         <View style={styles.scoreRow}>
           <Text style={[styles.scoreText, { color: colors.onSurface }]}>
-            Total Score: <Text style={styles.scoreValue}>{totalScore}/{totalQuestions}</Text>
+            Total Score:{' '}
+            <Text style={styles.scoreValue}>
+              {totalScore}/{totalQuestions}
+            </Text>
           </Text>
-          <Text style={[styles.questionProgress, { color: colors.onSurfaceVariant }]}>
+          <Text
+            style={[
+              styles.questionProgress,
+              { color: colors.onSurfaceVariant },
+            ]}
+          >
             {currentQuestion}/{totalQuestions} questions
           </Text>
         </View>
-        
+
         {/* Progress Bar */}
-        <View style={[styles.progressBarContainer, { backgroundColor: colors.surfaceVariant }]}>
-          <View 
+        <View
+          style={[
+            styles.progressBarContainer,
+            { backgroundColor: colors.surfaceVariant },
+          ]}
+        >
+          <View
             style={[
-              styles.progressBar, 
-              { 
-                width: `${progressPercentage}%`, 
-                backgroundColor: colors.primary 
-              }
-            ]} 
+              styles.progressBar,
+              {
+                width: `${progressPercentage}%`,
+                backgroundColor: colors.primary,
+              },
+            ]}
           />
         </View>
       </View>
 
       {/* Question Card */}
-      <Surface style={[styles.questionCard, { backgroundColor: colors.surface }]} elevation={2}>
+      <Surface
+        style={[styles.questionCard, { backgroundColor: colors.surface }]}
+        elevation={2}
+      >
         <Text style={[styles.questionTitle, { color: colors.onSurface }]}>
           Question {currentQuestion}: {questionData.title}
         </Text>
-        
+
         {/* Tags */}
         <View style={styles.tagsContainer}>
           <Chip
             compact
             style={[
               styles.difficultyChip,
-              { backgroundColor: getDifficultyColor(questionData.difficulty) + '20' }
+              {
+                backgroundColor:
+                  getDifficultyColor(questionData.difficulty) + '20',
+              },
             ]}
-            textStyle={{ 
-              color: getDifficultyColor(questionData.difficulty), 
-              fontSize: 12, 
-              fontWeight: '700' 
+            textStyle={{
+              color: getDifficultyColor(questionData.difficulty),
+              fontSize: 12,
+              fontWeight: '700',
             }}
           >
             {questionData.difficulty}
           </Chip>
           <Chip
             compact
-            style={[styles.subjectChip, { backgroundColor: colors.surfaceVariant }]}
-            textStyle={{ color: colors.onSurfaceVariant, fontSize: 12, fontWeight: '600' }}
+            style={[
+              styles.subjectChip,
+              { backgroundColor: colors.surfaceVariant },
+            ]}
+            textStyle={{
+              color: colors.onSurfaceVariant,
+              fontSize: 12,
+              fontWeight: '600',
+            }}
           >
             {questionData.subject}
           </Chip>
         </View>
 
         {/* Confidence Question */}
-        <Text style={[styles.confidenceQuestion, { color: colors.onSurfaceVariant }]}>
+        <Text
+          style={[
+            styles.confidenceQuestion,
+            { color: colors.onSurfaceVariant },
+          ]}
+        >
           How well do you remember this?
         </Text>
 
@@ -142,16 +184,16 @@ const TestScreen = () => {
             maximumTrackTintColor={colors.surfaceVariant}
             thumbTintColor={colors.primary}
           />
-          
+
           {/* Slider Labels */}
           <View style={styles.sliderLabels}>
             <View style={styles.sliderLabelContainer}>
               {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                <Text 
-                  key={num} 
+                <Text
+                  key={num}
                   style={[
-                    styles.sliderNumber, 
-                    { color: colors.onSurfaceVariant }
+                    styles.sliderNumber,
+                    { color: colors.onSurfaceVariant },
                   ]}
                 >
                   {num}
@@ -159,10 +201,14 @@ const TestScreen = () => {
               ))}
             </View>
             <View style={styles.sliderTextLabels}>
-              <Text style={[styles.sliderLabel, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[styles.sliderLabel, { color: colors.onSurfaceVariant }]}
+              >
                 Forget
               </Text>
-              <Text style={[styles.sliderLabel, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[styles.sliderLabel, { color: colors.onSurfaceVariant }]}
+              >
                 Remember
               </Text>
             </View>
@@ -178,10 +224,11 @@ const TestScreen = () => {
             style={[
               styles.dot,
               {
-                backgroundColor: index < currentQuestion 
-                  ? colors.primary 
-                  : colors.surfaceVariant
-              }
+                backgroundColor:
+                  index < currentQuestion
+                    ? colors.primary
+                    : colors.surfaceVariant,
+              },
             ]}
           />
         ))}
@@ -202,7 +249,7 @@ const TestScreen = () => {
         >
           Previous
         </PaperButton>
-        
+
         <PaperButton
           mode="contained"
           onPress={handleNextQuestion}

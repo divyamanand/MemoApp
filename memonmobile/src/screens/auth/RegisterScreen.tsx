@@ -36,7 +36,6 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-
   const validateEmail = (val: string) => /^\S+@\S+\.\S+$/.test(val);
 
   const isFormValid =

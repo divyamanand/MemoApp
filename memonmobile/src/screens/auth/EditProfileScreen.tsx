@@ -25,7 +25,7 @@ interface EditingState {
 
 const EditProfileScreen = () => {
   const { colors } = useTheme();
-  
+
   // Profile data state
   const [profileData, setProfileData] = useState<ProfileData>({
     name: 'Alex Morgan',
@@ -48,55 +48,66 @@ const EditProfileScreen = () => {
   const [errors, setErrors] = useState<Partial<ProfileData>>({});
 
   const validateEmail = (email: string) => /^\S+@\S+\.\S+$/.test(email);
-  
+
   const handleEdit = (field: keyof EditingState) => {
-    setEditing(prev => ({ ...prev, [field]: true }));
+    setEditing((prev) => ({ ...prev, [field]: true }));
     setTempValues({ ...profileData });
     setErrors({});
     setSuccessMessage('');
   };
 
   const handleCancel = (field: keyof EditingState) => {
-    setEditing(prev => ({ ...prev, [field]: false }));
+    setEditing((prev) => ({ ...prev, [field]: false }));
     setTempValues({ ...profileData });
-    setErrors(prev => ({ ...prev, [field]: undefined }));
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   const handleSave = async (field: keyof EditingState) => {
     setErrors({});
-    
+
     // Validation
     if (field === 'name' && tempValues.name.trim().length < 2) {
-      setErrors(prev => ({ ...prev, name: 'Name must be at least 2 characters' }));
+      setErrors((prev) => ({
+        ...prev,
+        name: 'Name must be at least 2 characters',
+      }));
       return;
     }
-    
+
     if (field === 'email' && !validateEmail(tempValues.email)) {
-      setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+      setErrors((prev) => ({
+        ...prev,
+        email: 'Please enter a valid email address',
+      }));
       return;
     }
-    
+
     if (field === 'password' && tempValues.password.length < 6) {
-      setErrors(prev => ({ ...prev, password: 'Password must be at least 6 characters' }));
+      setErrors((prev) => ({
+        ...prev,
+        password: 'Password must be at least 6 characters',
+      }));
       return;
     }
 
     try {
       setLoading(true);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       // Update profile data
-      setProfileData(prev => ({ ...prev, [field]: tempValues[field] }));
-      setEditing(prev => ({ ...prev, [field]: false }));
+      setProfileData((prev) => ({ ...prev, [field]: tempValues[field] }));
+      setEditing((prev) => ({ ...prev, [field]: false }));
       setSuccessMessage('Your profile has been updated.');
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(''), 3000);
-      
     } catch (error) {
-      setErrors(prev => ({ ...prev, [field]: `Failed to update. Please try again. ${error}` }));
+      setErrors((prev) => ({
+        ...prev,
+        [field]: `Failed to update. Please try again. ${error}`,
+      }));
     } finally {
       setLoading(false);
     }
@@ -106,7 +117,7 @@ const EditProfileScreen = () => {
     field: keyof ProfileData,
     label: string,
     icon: string,
-    isPassword = false
+    isPassword = false,
   ) => {
     const isEditing = editing[field];
     const value = isEditing ? tempValues[field] : profileData[field];
@@ -114,11 +125,15 @@ const EditProfileScreen = () => {
 
     return (
       <View style={styles.fieldContainer}>
-        <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>{label}</Text>
-        
+        <Text style={[styles.fieldLabel, { color: colors.onSurface }]}>
+          {label}
+        </Text>
+
         {!isEditing ? (
           <View style={styles.displayRow}>
-            <Text style={[styles.fieldValue, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.fieldValue, { color: colors.onSurfaceVariant }]}
+            >
               {isPassword ? '••••••••••' : value}
             </Text>
             <PaperButton
@@ -137,13 +152,27 @@ const EditProfileScreen = () => {
                 <TextInputField
                   label={label}
                   value={tempValues[field]}
-                  onChangeText={(text) => setTempValues(prev => ({ ...prev, [field]: text }))}
+                  onChangeText={(text) =>
+                    setTempValues((prev) => ({ ...prev, [field]: text }))
+                  }
                   leftIcon={icon}
                   secureTextEntry={isPassword && !showPassword}
-                  rightIcon={isPassword ? (showPassword ? "eye-off" : "eye") : undefined}
-                  onRightIconPress={isPassword ? () => setShowPassword(!showPassword) : undefined}
+                  rightIcon={
+                    isPassword ? (showPassword ? 'eye-off' : 'eye') : undefined
+                  }
+                  onRightIconPress={
+                    isPassword
+                      ? () => setShowPassword(!showPassword)
+                      : undefined
+                  }
                   keyboardType={field === 'email' ? 'email-address' : 'default'}
-                  autoCapitalize={field === 'email' ? 'none' : field === 'name' ? 'words' : 'none'}
+                  autoCapitalize={
+                    field === 'email'
+                      ? 'none'
+                      : field === 'name'
+                        ? 'words'
+                        : 'none'
+                  }
                 />
                 {error && (
                   <HelperText type="error" visible={true}>
@@ -152,7 +181,7 @@ const EditProfileScreen = () => {
                 )}
               </View>
             </View>
-            
+
             <View style={styles.actionButtons}>
               <PaperButton
                 mode="outlined"
@@ -176,15 +205,22 @@ const EditProfileScreen = () => {
             </View>
           </View>
         )}
-        
-        {field !== 'password' && <View style={[styles.divider, { backgroundColor: colors.outline }]} />}
+
+        {field !== 'password' && (
+          <View style={[styles.divider, { backgroundColor: colors.outline }]} />
+        )}
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="close"
           size={24}
@@ -193,19 +229,31 @@ const EditProfileScreen = () => {
             // TODO: Navigate back
           }}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Edit Profile</Text>
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Edit Profile
+        </Text>
         <View style={{ width: 40 }} />
       </Surface>
 
       <ScrollView contentContainerStyle={styles.content}>
         {successMessage ? (
-          <Surface style={[styles.successCard, { backgroundColor: '#E7F7EE' }]} elevation={0}>
-            <Text style={[styles.successText, { color: '#1E7F4B' }]}>Success!</Text>
-            <Text style={[styles.successMessage, { color: '#1E7F4B' }]}>{successMessage}</Text>
+          <Surface
+            style={[styles.successCard, { backgroundColor: '#E7F7EE' }]}
+            elevation={0}
+          >
+            <Text style={[styles.successText, { color: '#1E7F4B' }]}>
+              Success!
+            </Text>
+            <Text style={[styles.successMessage, { color: '#1E7F4B' }]}>
+              {successMessage}
+            </Text>
           </Surface>
         ) : null}
 
-        <Surface style={[styles.formCard, { backgroundColor: colors.surface }]} elevation={1}>
+        <Surface
+          style={[styles.formCard, { backgroundColor: colors.surface }]}
+          elevation={1}
+        >
           {renderField('name', 'Name', 'account')}
           {renderField('email', 'Email', 'email')}
           {renderField('password', 'Password', 'lock', true)}

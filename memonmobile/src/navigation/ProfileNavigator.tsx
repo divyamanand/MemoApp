@@ -14,7 +14,7 @@ const ProfileNavigator: React.FC = () => {
   const colorScheme = useColorScheme();
   const { colors } = useTheme();
   const isDarkMode = colorScheme === 'dark';
-  const barStyle = isDarkMode ?  'dark-content' : 'light-content';
+  const barStyle = isDarkMode ? 'dark-content' : 'light-content';
 
   const withSafeArea = (Comp: React.ComponentType<any>) => (props: any) => (
     <SafeAreaView style={{ flex: 1 }}>
@@ -25,9 +25,18 @@ const ProfileNavigator: React.FC = () => {
   return (
     <>
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="ProfileScreen">
-        <Stack.Screen name="ProfileScreen" component={withSafeArea(ProfileScreen)} />
-        <Stack.Screen name="Settings" component={withSafeArea(SettingsScreen)} />
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="ProfileScreen"
+      >
+        <Stack.Screen
+          name="ProfileScreen"
+          component={withSafeArea(ProfileScreen)}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={withSafeArea(SettingsScreen)}
+        />
         <Stack.Screen name="Login" component={withSafeArea(LoginScreen)} />
         {/* <Stack.Screen name="Help" component={withSafeArea(HelpScreen)} /> */}
         {/* <Stack.Screen name="EditProfile" component={withSafeArea(EditProfileScreen)} /> */}

@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -11,7 +17,10 @@ import {
   Button as PaperButton,
 } from 'react-native-paper';
 import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
-import { useGetCountTillDateQuery, useGetRevisionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import {
+  useGetCountTillDateQuery,
+  useGetRevisionsInfiniteQuery,
+} from '@/src/features/questions/api/questionApi';
 import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/constants/types';
@@ -21,7 +30,7 @@ const DashboardScreen = () => {
   const { colors } = theme;
   const { userInfo } = useAppSelector((s) => s.app);
   // const {online} = useNetworkState()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const [completedToday, setCompletedToday] = useState(0);
 
@@ -50,12 +59,29 @@ const DashboardScreen = () => {
   // Sample data for new features
   const aiSuggestions = [
     { id: 1, title: 'Algebra Practice', subject: 'Math', difficulty: 'Medium' },
-    { id: 2, title: 'World History Quiz', subject: 'History', difficulty: 'Easy' },
+    {
+      id: 2,
+      title: 'World History Quiz',
+      subject: 'History',
+      difficulty: 'Easy',
+    },
   ];
 
   const recentTimeline = [
-    { id: 1, type: 'achievement', title: 'Streak Reward', time: '2 hours ago', icon: 'local-fire-department' },
-    { id: 2, type: 'practice', title: 'Completed Physics Quiz', time: '1 day ago', icon: 'quiz' },
+    {
+      id: 1,
+      type: 'achievement',
+      title: 'Streak Reward',
+      time: '2 hours ago',
+      icon: 'local-fire-department',
+    },
+    {
+      id: 2,
+      type: 'practice',
+      title: 'Completed Physics Quiz',
+      time: '1 day ago',
+      icon: 'quiz',
+    },
   ];
 
   const roadmapData = {
@@ -67,19 +93,25 @@ const DashboardScreen = () => {
   };
 
   const recentTests = [
-    { id: 1, name: 'Math Assessment', score: 85, total: 100, date: 'Yesterday' },
+    {
+      id: 1,
+      name: 'Math Assessment',
+      score: 85,
+      total: 100,
+      date: 'Yesterday',
+    },
     { id: 2, name: 'Science Quiz', score: 92, total: 100, date: '3 days ago' },
   ];
 
-  const navigateToAISuggestions = () => navigation.navigate("Suggestions");
+  const navigateToAISuggestions = () => navigation.navigate('Suggestions');
 
-  const navigateToTimeline = () => navigation.navigate("Timeline");
+  const navigateToTimeline = () => navigation.navigate('Timeline');
 
-  const navigateToRoadmap = () => navigation.navigate("Roadmap")
+  const navigateToRoadmap = () => navigation.navigate('Roadmap');
 
-  const navigateToTestScreen = () => navigation.navigate("Test")
+  const navigateToTestScreen = () => navigation.navigate('Test');
 
-  const startPracticeTest = () => navigation.navigate("Practice")
+  const startPracticeTest = () => navigation.navigate('Practice');
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
@@ -100,8 +132,8 @@ const DashboardScreen = () => {
           </View>
 
           <IconButton
-            icon={"wifi-off"}
-            iconColor={"red"}
+            icon={'wifi-off'}
+            iconColor={'red'}
             size={24}
             onPress={() => {
               // TODO: Navigate to profile
@@ -142,37 +174,68 @@ const DashboardScreen = () => {
               AI Suggestions
             </Text>
             <TouchableOpacity onPress={navigateToAISuggestions}>
-              <Text style={[styles.seeAllText, { color: colors.primary }]}>See All</Text>
+              <Text style={[styles.seeAllText, { color: colors.primary }]}>
+                See All
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.suggestionsList}>
             {aiSuggestions.map((suggestion) => (
-              <TouchableOpacity 
-                key={suggestion.id} 
+              <TouchableOpacity
+                key={suggestion.id}
                 style={styles.suggestionItem}
                 onPress={navigateToAISuggestions}
               >
-                <View style={[styles.suggestionIcon, { backgroundColor: colors.primaryContainer }]}>
-                  <MaterialIcons name="lightbulb" size={16} color={colors.primary} />
+                <View
+                  style={[
+                    styles.suggestionIcon,
+                    { backgroundColor: colors.primaryContainer },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="lightbulb"
+                    size={16}
+                    color={colors.primary}
+                  />
                 </View>
                 <View style={styles.suggestionContent}>
-                  <Text style={[styles.suggestionTitle, { color: colors.onSurface }]}>
+                  <Text
+                    style={[
+                      styles.suggestionTitle,
+                      { color: colors.onSurface },
+                    ]}
+                  >
                     {suggestion.title}
                   </Text>
                   <View style={styles.suggestionTags}>
-                    <Text style={[styles.suggestionSubject, { color: colors.onSurfaceVariant }]}>
+                    <Text
+                      style={[
+                        styles.suggestionSubject,
+                        { color: colors.onSurfaceVariant },
+                      ]}
+                    >
                       {suggestion.subject}
                     </Text>
                     <Chip
                       compact
-                      style={[styles.difficultyChip, { backgroundColor: colors.surfaceVariant }]}
-                      textStyle={{ color: colors.onSurfaceVariant, fontSize: 10 }}
+                      style={[
+                        styles.difficultyChip,
+                        { backgroundColor: colors.surfaceVariant },
+                      ]}
+                      textStyle={{
+                        color: colors.onSurfaceVariant,
+                        fontSize: 10,
+                      }}
                     >
                       {suggestion.difficulty}
                     </Chip>
                   </View>
                 </View>
-                <MaterialIcons name="chevron-right" size={20} color={colors.onSurfaceVariant} />
+                <MaterialIcons
+                  name="chevron-right"
+                  size={20}
+                  color={colors.onSurfaceVariant}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -188,32 +251,57 @@ const DashboardScreen = () => {
               Learning Roadmap
             </Text>
             <TouchableOpacity onPress={navigateToRoadmap}>
-              <Text style={[styles.seeAllText, { color: colors.primary }]}>View All</Text>
+              <Text style={[styles.seeAllText, { color: colors.primary }]}>
+                View All
+              </Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.roadmapContent} onPress={navigateToRoadmap}>
+          <TouchableOpacity
+            style={styles.roadmapContent}
+            onPress={navigateToRoadmap}
+          >
             <View style={styles.roadmapHeader}>
               <Text style={[styles.currentTopic, { color: colors.onSurface }]}>
                 Current: {roadmapData.currentTopic}
               </Text>
-              <Text style={[styles.roadmapStats, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[
+                  styles.roadmapStats,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
                 {roadmapData.completedTopics}/{roadmapData.totalTopics} topics
               </Text>
             </View>
             <View style={styles.progressContainer}>
-              <View style={[styles.progressBar, { backgroundColor: colors.surfaceVariant }]}>
-                <View 
+              <View
+                style={[
+                  styles.progressBar,
+                  { backgroundColor: colors.surfaceVariant },
+                ]}
+              >
+                <View
                   style={[
-                    styles.progressFill, 
-                    { backgroundColor: colors.primary, width: `${roadmapData.progress}%` }
-                  ]} 
+                    styles.progressFill,
+                    {
+                      backgroundColor: colors.primary,
+                      width: `${roadmapData.progress}%`,
+                    },
+                  ]}
                 />
               </View>
-              <Text style={[styles.progressText, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[
+                  styles.progressText,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
                 {roadmapData.progress}%
               </Text>
             </View>
-            <Text style={[styles.nextTopic, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.nextTopic, { color: colors.onSurfaceVariant }]}
+            >
               Next: {roadmapData.nextTopic}
             </Text>
           </TouchableOpacity>
@@ -229,28 +317,50 @@ const DashboardScreen = () => {
               Recent Activity
             </Text>
             <TouchableOpacity onPress={navigateToTimeline}>
-              <Text style={[styles.seeAllText, { color: colors.primary }]}>View Timeline</Text>
+              <Text style={[styles.seeAllText, { color: colors.primary }]}>
+                View Timeline
+              </Text>
             </TouchableOpacity>
           </View>
           <View style={styles.timelineList}>
             {recentTimeline.map((item) => (
-              <TouchableOpacity 
-                key={item.id} 
+              <TouchableOpacity
+                key={item.id}
                 style={styles.timelineItem}
                 onPress={navigateToTimeline}
               >
-                <View style={[styles.timelineIcon, { backgroundColor: colors.primaryContainer }]}>
-                  <MaterialIcons name={item.icon as any} size={16} color={colors.primary} />
+                <View
+                  style={[
+                    styles.timelineIcon,
+                    { backgroundColor: colors.primaryContainer },
+                  ]}
+                >
+                  <MaterialIcons
+                    name={item.icon as any}
+                    size={16}
+                    color={colors.primary}
+                  />
                 </View>
                 <View style={styles.timelineContent}>
-                  <Text style={[styles.timelineTitle, { color: colors.onSurface }]}>
+                  <Text
+                    style={[styles.timelineTitle, { color: colors.onSurface }]}
+                  >
                     {item.title}
                   </Text>
-                  <Text style={[styles.timelineTime, { color: colors.onSurfaceVariant }]}>
+                  <Text
+                    style={[
+                      styles.timelineTime,
+                      { color: colors.onSurfaceVariant },
+                    ]}
+                  >
                     {item.time}
                   </Text>
                 </View>
-                <MaterialIcons name="chevron-right" size={16} color={colors.onSurfaceVariant} />
+                <MaterialIcons
+                  name="chevron-right"
+                  size={16}
+                  color={colors.onSurfaceVariant}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -266,14 +376,21 @@ const DashboardScreen = () => {
               Test Center
             </Text>
             <TouchableOpacity onPress={navigateToTestScreen}>
-              <MaterialIcons name="play-circle-fill" size={24} color={colors.primary} />
+              <MaterialIcons
+                name="play-circle-fill"
+                size={24}
+                color={colors.primary}
+              />
             </TouchableOpacity>
           </View>
-          
+
           <PaperButton
             mode="contained"
             onPress={startPracticeTest}
-            style={[styles.startTestButton, { backgroundColor: colors.primary }]}
+            style={[
+              styles.startTestButton,
+              { backgroundColor: colors.primary },
+            ]}
             contentStyle={styles.testButtonContent}
             labelStyle={styles.testButtonLabel}
             icon="play-arrow"
@@ -281,13 +398,18 @@ const DashboardScreen = () => {
             Start Practice Test
           </PaperButton>
 
-          <Text style={[styles.recentTestsTitle, { color: colors.onSurfaceVariant }]}>
+          <Text
+            style={[
+              styles.recentTestsTitle,
+              { color: colors.onSurfaceVariant },
+            ]}
+          >
             Recent Tests
           </Text>
           <View style={styles.testsList}>
             {recentTests.map((test) => (
-              <TouchableOpacity 
-                key={test.id} 
+              <TouchableOpacity
+                key={test.id}
                 style={styles.testItem}
                 onPress={navigateToTestScreen}
               >
@@ -295,7 +417,12 @@ const DashboardScreen = () => {
                   <Text style={[styles.testName, { color: colors.onSurface }]}>
                     {test.name}
                   </Text>
-                  <Text style={[styles.testDate, { color: colors.onSurfaceVariant }]}>
+                  <Text
+                    style={[
+                      styles.testDate,
+                      { color: colors.onSurfaceVariant },
+                    ]}
+                  >
                     {test.date}
                   </Text>
                 </View>
@@ -303,11 +430,20 @@ const DashboardScreen = () => {
                   <Text style={[styles.scoreValue, { color: colors.primary }]}>
                     {test.score}/{test.total}
                   </Text>
-                  <Text style={[styles.scorePercent, { color: colors.onSurfaceVariant }]}>
+                  <Text
+                    style={[
+                      styles.scorePercent,
+                      { color: colors.onSurfaceVariant },
+                    ]}
+                  >
                     {Math.round((test.score / test.total) * 100)}%
                   </Text>
                 </View>
-                <MaterialIcons name="chevron-right" size={16} color={colors.onSurfaceVariant} />
+                <MaterialIcons
+                  name="chevron-right"
+                  size={16}
+                  color={colors.onSurfaceVariant}
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -517,7 +653,7 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 14, fontWeight: '600', marginBottom: 8 },
   seeAllText: { fontSize: 12, fontWeight: '600' },
-  
+
   // AI Suggestions
   suggestionsList: {
     gap: 12,

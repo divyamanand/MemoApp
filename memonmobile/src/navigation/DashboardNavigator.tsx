@@ -16,7 +16,7 @@ const DashboardNavigator: React.FC = () => {
   const colorScheme = useColorScheme();
   const { colors } = useTheme();
   const isDarkMode = colorScheme === 'dark';
-  const barStyle = isDarkMode ?  'dark-content' : 'light-content';
+  const barStyle = isDarkMode ? 'dark-content' : 'light-content';
 
   const withSafeArea = (Comp: React.ComponentType<any>) => (props: any) => (
     <SafeAreaView style={{ flex: 1 }}>
@@ -27,12 +27,24 @@ const DashboardNavigator: React.FC = () => {
   return (
     <>
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="DashboardScreen">
-        <Stack.Screen name="DashboardScreen" component={withSafeArea(DashboardScreen)} />
-        <Stack.Screen name="Suggestions" component={withSafeArea(SuggestionScreen)} />
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="DashboardScreen"
+      >
+        <Stack.Screen
+          name="DashboardScreen"
+          component={withSafeArea(DashboardScreen)}
+        />
+        <Stack.Screen
+          name="Suggestions"
+          component={withSafeArea(SuggestionScreen)}
+        />
         <Stack.Screen name="Test" component={withSafeArea(TestScreen)} />
         <Stack.Screen name="Roadmap" component={withSafeArea(RoadmapScreen)} />
-        <Stack.Screen name="Timeline" component={withSafeArea(TimelineScreen)} />
+        <Stack.Screen
+          name="Timeline"
+          component={withSafeArea(TimelineScreen)}
+        />
       </Stack.Navigator>
     </>
   );

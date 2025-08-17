@@ -11,11 +11,7 @@ export type InitialPageParam = {
   pageSize: number;
 };
 
-export type {
-  ApiResponse,
-  PaginatedApiResponse,
-  ResponseQuestion,
-};
+export type { ApiResponse, PaginatedApiResponse, ResponseQuestion };
 
 export type MyBaseQuery = ReturnType<typeof axiosBaseQuery>;
 export type TagUnion = 'Questions' | 'Revisions';

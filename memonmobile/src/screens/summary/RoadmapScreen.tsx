@@ -102,25 +102,34 @@ const RoadmapScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
           iconColor={colors.onSurface}
           onPress={handleBack}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Roadmap</Text>
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Roadmap
+        </Text>
         <View style={{ width: 40 }} />
       </Surface>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Subject Title */}
-        <Text style={[styles.subjectTitle, { color: colors.onSurface }]}>Math</Text>
+        <Text style={[styles.subjectTitle, { color: colors.onSurface }]}>
+          Math
+        </Text>
 
         {/* Roadmap Items */}
         <View style={styles.roadmapContainer}>
@@ -128,70 +137,80 @@ const RoadmapScreen = () => {
             <View key={item.id} style={styles.roadmapItem}>
               {/* Connecting Line */}
               {index < roadmapData.length - 1 && (
-                <View 
+                <View
                   style={[
-                    styles.connectingLine, 
-                    { backgroundColor: colors.outline }
-                  ]} 
+                    styles.connectingLine,
+                    { backgroundColor: colors.outline },
+                  ]}
                 />
               )}
 
               {/* Icon Circle */}
-              <View 
+              <View
                 style={[
-                  styles.iconCircle, 
-                  { 
+                  styles.iconCircle,
+                  {
                     backgroundColor: getStatusColor(item.status),
-                    opacity: item.status === 'locked' ? 0.5 : 1
-                  }
+                    opacity: item.status === 'locked' ? 0.5 : 1,
+                  },
                 ]}
               >
                 <MaterialIcons
                   name={getStatusIcon(item.status) as any}
                   size={24}
-                  color={item.status === 'locked' ? colors.onSurfaceVariant : '#FFFFFF'}
+                  color={
+                    item.status === 'locked'
+                      ? colors.onSurfaceVariant
+                      : '#FFFFFF'
+                  }
                 />
               </View>
 
               {/* Content Card */}
-              <Surface 
+              <Surface
                 style={[
-                  styles.contentCard, 
-                  { 
+                  styles.contentCard,
+                  {
                     backgroundColor: colors.surface,
-                    opacity: item.status === 'locked' ? 0.6 : 1
-                  }
-                ]} 
+                    opacity: item.status === 'locked' ? 0.6 : 1,
+                  },
+                ]}
                 elevation={item.status === 'locked' ? 0 : 1}
               >
                 <View style={styles.cardContent}>
                   <View style={styles.cardLeft}>
-                    <Text 
+                    <Text
                       style={[
-                        styles.statusText, 
-                        { 
-                          color: item.status === 'completed' ? colors.primary 
-                               : item.status === 'in-progress' ? colors.primary
-                               : colors.onSurfaceVariant
-                        }
+                        styles.statusText,
+                        {
+                          color:
+                            item.status === 'completed'
+                              ? colors.primary
+                              : item.status === 'in-progress'
+                                ? colors.primary
+                                : colors.onSurfaceVariant,
+                        },
                       ]}
                     >
                       {getStatusText(item.status, item.progress)}
                     </Text>
-                    <Text 
+                    <Text
                       style={[
-                        styles.itemTitle, 
-                        { 
-                          color: item.status === 'locked' ? colors.onSurfaceVariant : colors.onSurface 
-                        }
+                        styles.itemTitle,
+                        {
+                          color:
+                            item.status === 'locked'
+                              ? colors.onSurfaceVariant
+                              : colors.onSurface,
+                        },
                       ]}
                     >
                       {item.title}
                     </Text>
-                    <Text 
+                    <Text
                       style={[
-                        styles.questionCount, 
-                        { color: colors.onSurfaceVariant }
+                        styles.questionCount,
+                        { color: colors.onSurfaceVariant },
                       ]}
                     >
                       {item.questions} questions
@@ -209,26 +228,34 @@ const RoadmapScreen = () => {
 
                   {/* Decorative Icon/Illustration */}
                   <View style={styles.cardRight}>
-                    <View 
+                    <View
                       style={[
-                        styles.decorativeIcon, 
-                        { 
-                          backgroundColor: item.status === 'completed' ? '#F0F4FF'
-                                         : item.status === 'in-progress' ? '#F0F8FF'
-                                         : colors.surfaceVariant
-                        }
+                        styles.decorativeIcon,
+                        {
+                          backgroundColor:
+                            item.status === 'completed'
+                              ? '#F0F4FF'
+                              : item.status === 'in-progress'
+                                ? '#F0F8FF'
+                                : colors.surfaceVariant,
+                        },
                       ]}
                     >
                       <MaterialIcons
                         name={
-                          item.title === 'Algebra' ? 'calculate' 
-                          : item.title === 'Geometry' ? 'polyline'
-                          : item.title === 'Calculus' ? 'functions'
-                          : 'bar-chart'
+                          item.title === 'Algebra'
+                            ? 'calculate'
+                            : item.title === 'Geometry'
+                              ? 'polyline'
+                              : item.title === 'Calculus'
+                                ? 'functions'
+                                : 'bar-chart'
                         }
                         size={32}
                         color={
-                          item.status === 'locked' ? colors.onSurfaceVariant : colors.primary
+                          item.status === 'locked'
+                            ? colors.onSurfaceVariant
+                            : colors.primary
                         }
                       />
                     </View>

@@ -1,11 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import {
-  Text,
-  useTheme,
-  Surface,
-  IconButton,
-} from 'react-native-paper';
+import { Text, useTheme, Surface, IconButton } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 
 const TimelineScreen = () => {
@@ -56,21 +51,28 @@ const TimelineScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
           iconColor={colors.onSurface}
           onPress={handleBack}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Rewards</Text>
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Rewards
+        </Text>
         <View style={{ width: 40 }} />
       </Surface>
 
       {/* Timeline Content */}
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -79,32 +81,47 @@ const TimelineScreen = () => {
             <View key={item.id} style={styles.timelineItem}>
               {/* Timeline Line */}
               {index < timelineData.length - 1 && (
-                <View 
+                <View
                   style={[
-                    styles.timelineLine, 
-                    { backgroundColor: colors.outline }
-                  ]} 
+                    styles.timelineLine,
+                    { backgroundColor: colors.outline },
+                  ]}
                 />
               )}
-              
+
               {/* Icon Circle */}
-              <View style={[styles.iconContainer, { backgroundColor: colors.primary }]}>
+              <View
+                style={[
+                  styles.iconContainer,
+                  { backgroundColor: colors.primary },
+                ]}
+              >
                 <MaterialIcons
                   name={item.icon as any}
                   size={24}
                   color="#FFFFFF"
                 />
               </View>
-              
+
               {/* Content */}
               <View style={styles.contentContainer}>
                 <Text style={[styles.titleText, { color: colors.onSurface }]}>
                   {item.title}
                 </Text>
-                <Text style={[styles.subtitleText, { color: colors.onSurfaceVariant }]}>
+                <Text
+                  style={[
+                    styles.subtitleText,
+                    { color: colors.onSurfaceVariant },
+                  ]}
+                >
                   {item.subtitle}
                 </Text>
-                <Text style={[styles.timestampText, { color: colors.onSurfaceVariant }]}>
+                <Text
+                  style={[
+                    styles.timestampText,
+                    { color: colors.onSurfaceVariant },
+                  ]}
+                >
                   {item.timestamp}
                 </Text>
               </View>

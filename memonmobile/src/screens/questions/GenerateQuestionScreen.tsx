@@ -23,7 +23,9 @@ const GenerateQuestionScreen = () => {
   // Form state
   const [topic, setTopic] = useState('');
   const [numberOfQuestions, setNumberOfQuestions] = useState(5);
-  const [generatedQuestions, setGeneratedQuestions] = useState<GeneratedQuestion[]>([]);
+  const [generatedQuestions, setGeneratedQuestions] = useState<
+    GeneratedQuestion[]
+  >([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -31,16 +33,16 @@ const GenerateQuestionScreen = () => {
   const sampleQuestions: GeneratedQuestion[] = [
     {
       id: 1,
-      text: "What is the capital of France, and why is it significant?"
+      text: 'What is the capital of France, and why is it significant?',
     },
     {
       id: 2,
-      text: "Explain the core principles of Einstein's theory of general..."
+      text: "Explain the core principles of Einstein's theory of general...",
     },
     {
       id: 3,
-      text: "List three major human activities contributing to climate change..."
-    }
+      text: 'List three major human activities contributing to climate change...',
+    },
   ];
 
   const handleBack = () => {
@@ -58,8 +60,8 @@ const GenerateQuestionScreen = () => {
     try {
       // TODO: Call AI API to generate questions
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       setGeneratedQuestions(sampleQuestions);
     } catch (error) {
       console.error('Error generating questions:', error);
@@ -72,7 +74,7 @@ const GenerateQuestionScreen = () => {
     setIsGenerating(true);
     try {
       // TODO: Regenerate questions with same parameters
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setGeneratedQuestions([...sampleQuestions].reverse()); // Just reverse for demo
     } catch (error) {
       console.error('Error regenerating questions:', error);
@@ -88,8 +90,8 @@ const GenerateQuestionScreen = () => {
     try {
       // TODO: Save questions to backend
       console.log('Saving questions:', generatedQuestions);
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       // TODO: Navigate back or show success message
     } catch (error) {
       console.error('Error saving questions:', error);
@@ -99,9 +101,14 @@ const GenerateQuestionScreen = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
-      <Surface style={[styles.header, { backgroundColor: colors.surface }]} elevation={0}>
+      <Surface
+        style={[styles.header, { backgroundColor: colors.surface }]}
+        elevation={0}
+      >
         <IconButton
           icon="arrow-left"
           size={24}
@@ -114,13 +121,15 @@ const GenerateQuestionScreen = () => {
         <View style={{ width: 40 }} />
       </Surface>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         {/* Topic Input */}
         <View style={styles.section}>
-          <Text style={[styles.sectionLabel, { color: colors.onSurfaceVariant }]}>
+          <Text
+            style={[styles.sectionLabel, { color: colors.onSurfaceVariant }]}
+          >
             TOPIC
           </Text>
           <TextInputField
@@ -130,24 +139,28 @@ const GenerateQuestionScreen = () => {
             onChangeText={setTopic}
             multiline
             numberOfLines={3}
-            style={[styles.topicInput, { backgroundColor: colors.surfaceVariant }]}
+            style={[
+              styles.topicInput,
+              { backgroundColor: colors.surfaceVariant },
+            ]}
           />
         </View>
 
         {/* Number of Questions */}
         <View style={styles.section}>
           <View style={styles.questionCountHeader}>
-            <Text style={[styles.sectionLabel, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.sectionLabel, { color: colors.onSurfaceVariant }]}
+            >
               NUMBER OF QUESTIONS
             </Text>
             <Text style={[styles.questionCount, { color: colors.onSurface }]}>
               {numberOfQuestions}
             </Text>
           </View>
-          
+
           <View style={styles.sliderContainer}>
             import Slider from '@react-native-community/slider';
-
             <Slider
               style={{ width: '100%', height: 40 }}
               minimumValue={1}
@@ -157,9 +170,8 @@ const GenerateQuestionScreen = () => {
               step={1}
               minimumTrackTintColor={colors.primary}
               maximumTrackTintColor={colors.surfaceVariant}
-              thumbTintColor={colors.primary} 
+              thumbTintColor={colors.primary}
             />
-
           </View>
         </View>
 
@@ -182,10 +194,15 @@ const GenerateQuestionScreen = () => {
             <Text style={[styles.generatedTitle, { color: colors.onSurface }]}>
               Generated Questions
             </Text>
-            
+
             {generatedQuestions.map((question, index) => (
               <View key={question.id} style={styles.questionItem}>
-                <View style={[styles.questionIcon, { backgroundColor: colors.primaryContainer }]}>
+                <View
+                  style={[
+                    styles.questionIcon,
+                    { backgroundColor: colors.primaryContainer },
+                  ]}
+                >
                   <MaterialIcons
                     name="help-outline"
                     size={24}
@@ -193,10 +210,17 @@ const GenerateQuestionScreen = () => {
                   />
                 </View>
                 <View style={styles.questionContent}>
-                  <Text style={[styles.questionText, { color: colors.onSurface }]}>
+                  <Text
+                    style={[styles.questionText, { color: colors.onSurface }]}
+                  >
                     {question.text}
                   </Text>
-                  <Text style={[styles.questionLabel, { color: colors.onSurfaceVariant }]}>
+                  <Text
+                    style={[
+                      styles.questionLabel,
+                      { color: colors.onSurfaceVariant },
+                    ]}
+                  >
                     Question {index + 1}
                   </Text>
                 </View>
@@ -210,7 +234,10 @@ const GenerateQuestionScreen = () => {
                 onPress={handleRegenerate}
                 disabled={isGenerating}
                 style={[styles.actionButton, { borderColor: colors.outline }]}
-                labelStyle={{ color: colors.onSurfaceVariant, fontWeight: '600' }}
+                labelStyle={{
+                  color: colors.onSurfaceVariant,
+                  fontWeight: '600',
+                }}
               >
                 Regenerate
               </PaperButton>
@@ -219,7 +246,10 @@ const GenerateQuestionScreen = () => {
                 onPress={handleSaveQuestions}
                 disabled={isSaving}
                 loading={isSaving}
-                style={[styles.actionButton, { backgroundColor: colors.primary }]}
+                style={[
+                  styles.actionButton,
+                  { backgroundColor: colors.primary },
+                ]}
                 labelStyle={{ fontWeight: '700' }}
               >
                 Save Questions
@@ -232,7 +262,9 @@ const GenerateQuestionScreen = () => {
         {isGenerating && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text style={[styles.loadingText, { color: colors.onSurfaceVariant }]}>
+            <Text
+              style={[styles.loadingText, { color: colors.onSurfaceVariant }]}
+            >
               AI is generating your questions...
             </Text>
           </View>

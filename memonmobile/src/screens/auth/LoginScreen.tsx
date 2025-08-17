@@ -109,7 +109,7 @@ const LoginScreen = () => {
 
             <PaperButton
               mode="text"
-              onPress={() => navigation.navigate("ResetPassword")}
+              onPress={() => navigation.navigate('ResetPassword')}
               style={styles.forgotButton}
               labelStyle={[styles.forgotLabel, { color: colors.primary }]}
             >

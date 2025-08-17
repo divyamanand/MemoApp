@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 import {
   TextInput,
   TextInputProps as PaperTextInputProps,
-} from "react-native-paper";
+} from 'react-native-paper';
 
 interface TextInputFieldProps extends PaperTextInputProps {
   leftIcon?: string;

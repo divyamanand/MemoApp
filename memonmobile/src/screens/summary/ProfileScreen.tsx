@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -16,20 +23,20 @@ import { handleError } from '@/src/service/errorService';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser())
-      navigation.navigate("Login")
+      await dispatch(logoutUser());
+      navigation.navigate('Login');
     } catch (error) {
-      const formattedError: ErrorResponse = handleError(error)
-      if (formattedError.statusCode === 403) navigation.navigate("Login") 
-      //else error logout. 
+      const formattedError: ErrorResponse = handleError(error);
+      if (formattedError.statusCode === 403) navigation.navigate('Login');
+      //else error logout.
     }
-  }
+  };
 
   // Sample user data
   const userData = {
@@ -76,19 +83,21 @@ const ProfileScreen = () => {
   ];
 
   const handleBack = () => {
-    navigation.goBack()
+    navigation.goBack();
   };
 
   const handleEditProfile = () => {
-    navigation.navigate("EditProfile")
+    navigation.navigate('EditProfile');
   };
 
   const handleSettings = () => {
-    navigation.navigate("Settings")
+    navigation.navigate('Settings');
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Header */}
       <View style={[styles.header, { backgroundColor: colors.surface }]}>
         <IconButton
@@ -97,11 +106,13 @@ const ProfileScreen = () => {
           iconColor={colors.onSurface}
           onPress={handleBack}
         />
-        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>Profile</Text>
+        <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
+          Profile
+        </Text>
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
@@ -125,17 +136,39 @@ const ProfileScreen = () => {
             Learning Progress
           </Text>
           <View style={styles.progressGrid}>
-            <Surface style={[styles.progressCard, { backgroundColor: colors.surfaceVariant }]} elevation={0}>
-              <Text style={[styles.progressLabel, { color: colors.onSurfaceVariant }]}>
+            <Surface
+              style={[
+                styles.progressCard,
+                { backgroundColor: colors.surfaceVariant },
+              ]}
+              elevation={0}
+            >
+              <Text
+                style={[
+                  styles.progressLabel,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
                 Questions{'\n'}Completed
               </Text>
               <Text style={[styles.progressValue, { color: colors.primary }]}>
                 {learningProgress.questionsCompleted}
               </Text>
             </Surface>
-            
-            <Surface style={[styles.progressCard, { backgroundColor: colors.surfaceVariant }]} elevation={0}>
-              <Text style={[styles.progressLabel, { color: colors.onSurfaceVariant }]}>
+
+            <Surface
+              style={[
+                styles.progressCard,
+                { backgroundColor: colors.surfaceVariant },
+              ]}
+              elevation={0}
+            >
+              <Text
+                style={[
+                  styles.progressLabel,
+                  { color: colors.onSurfaceVariant },
+                ]}
+              >
                 Streak
               </Text>
               <Text style={[styles.progressValue, { color: colors.primary }]}>
@@ -143,9 +176,17 @@ const ProfileScreen = () => {
               </Text>
             </Surface>
           </View>
-          
-          <Surface style={[styles.progressCardFull, { backgroundColor: colors.surfaceVariant }]} elevation={0}>
-            <Text style={[styles.progressLabel, { color: colors.onSurfaceVariant }]}>
+
+          <Surface
+            style={[
+              styles.progressCardFull,
+              { backgroundColor: colors.surfaceVariant },
+            ]}
+            elevation={0}
+          >
+            <Text
+              style={[styles.progressLabel, { color: colors.onSurfaceVariant }]}
+            >
               Accuracy
             </Text>
             <Text style={[styles.progressValue, { color: colors.primary }]}>
@@ -162,7 +203,12 @@ const ProfileScreen = () => {
           <View style={styles.activityList}>
             {recentActivity.map((activity) => (
               <View key={activity.id} style={styles.activityItem}>
-                <View style={[styles.activityIcon, { backgroundColor: colors.surfaceVariant }]}>
+                <View
+                  style={[
+                    styles.activityIcon,
+                    { backgroundColor: colors.surfaceVariant },
+                  ]}
+                >
                   <MaterialIcons
                     name={activity.icon as any}
                     size={20}
@@ -170,10 +216,17 @@ const ProfileScreen = () => {
                   />
                 </View>
                 <View style={styles.activityContent}>
-                  <Text style={[styles.activityTitle, { color: colors.onSurface }]}>
+                  <Text
+                    style={[styles.activityTitle, { color: colors.onSurface }]}
+                  >
                     {activity.title}
                   </Text>
-                  <Text style={[styles.activitySubject, { color: colors.onSurfaceVariant }]}>
+                  <Text
+                    style={[
+                      styles.activitySubject,
+                      { color: colors.onSurfaceVariant },
+                    ]}
+                  >
                     {activity.subject}
                   </Text>
                 </View>
@@ -189,19 +242,23 @@ const ProfileScreen = () => {
           </Text>
           <View style={styles.achievementsGrid}>
             {achievements.map((achievement) => (
-              <Surface 
+              <Surface
                 key={achievement.id}
                 style={[
                   styles.achievementBadge,
                   { backgroundColor: achievement.color },
-                  achievement.disabled && { opacity: 0.3 }
+                  achievement.disabled && { opacity: 0.3 },
                 ]}
                 elevation={achievement.disabled ? 0 : 2}
               >
                 <MaterialIcons
                   name={achievement.icon as any}
                   size={32}
-                  color={achievement.disabled ? colors.onSurfaceVariant : colors.primary}
+                  color={
+                    achievement.disabled
+                      ? colors.onSurfaceVariant
+                      : colors.primary
+                  }
                 />
               </Surface>
             ))}
@@ -210,36 +267,54 @@ const ProfileScreen = () => {
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: colors.surface }]}
-          onPress={() => navigation.navigate('EditProfile')}
-        >
-          <MaterialIcons name="edit" size={20} color={colors.onSurfaceVariant} />
-          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
-            Edit Profile
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: colors.surface }]}
+            onPress={() => navigation.navigate('EditProfile')}
+          >
+            <MaterialIcons
+              name="edit"
+              size={20}
+              color={colors.onSurfaceVariant}
+            />
+            <Text
+              style={[styles.actionButtonText, { color: colors.onSurface }]}
+            >
+              Edit Profile
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: colors.surface }]}
-          onPress={() => navigation.navigate('Settings')}
-        >
-          <MaterialIcons name="settings" size={20} color={colors.onSurfaceVariant} />
-          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
-            Settings
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: colors.surface }]}
+            onPress={() => navigation.navigate('Settings')}
+          >
+            <MaterialIcons
+              name="settings"
+              size={20}
+              color={colors.onSurfaceVariant}
+            />
+            <Text
+              style={[styles.actionButtonText, { color: colors.onSurface }]}
+            >
+              Settings
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: colors.surface }]}
-          onPress={handleLogout}
-        >
-          <MaterialIcons name="settings" size={20} color={colors.onSurfaceVariant} />
-          <Text style={[styles.actionButtonText, { color: colors.onSurface }]}>
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: colors.surface }]}
+            onPress={handleLogout}
+          >
+            <MaterialIcons
+              name="settings"
+              size={20}
+              color={colors.onSurfaceVariant}
+            />
+            <Text
+              style={[styles.actionButtonText, { color: colors.onSurface }]}
+            >
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

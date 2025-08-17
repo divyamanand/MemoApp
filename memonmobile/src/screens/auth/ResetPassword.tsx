@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import {
   Text,
   useTheme,
@@ -25,9 +32,12 @@ const ResetPassword = () => {
   const [error, setError] = useState<string>('');
 
   const validateEmail = (val: string) => /^\S+@\S+\.\S+$/.test(val);
-  
+
   const isEmailValid = email.length > 0 && validateEmail(email);
-  const isPasswordValid = newPassword.length >= 6 && confirmPassword.length > 0 && newPassword === confirmPassword;
+  const isPasswordValid =
+    newPassword.length >= 6 &&
+    confirmPassword.length > 0 &&
+    newPassword === confirmPassword;
 
   const handleSendOTP = async () => {
     setError('');
@@ -40,9 +50,9 @@ const ResetPassword = () => {
       setLoading(true);
       // TODO: Call your send OTP API here
       // await api.sendResetOTP(email);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setCurrentStep('password');
     } catch (err) {
       setError(`Failed to send OTP. Please try again. ${err}`);
@@ -66,9 +76,9 @@ const ResetPassword = () => {
       setLoading(true);
       // TODO: Call your reset password API here
       // await api.resetPassword(email, newPassword, otp);
-      
+
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       // Navigate back to login or show success message
     } catch (err) {
       setError(`Failed to reset password. Please try again. ${err}`);
@@ -86,12 +96,14 @@ const ResetPassword = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -105,17 +117,23 @@ const ResetPassword = () => {
                 onPress={handleBack}
                 style={styles.backButton}
               />
-              <Text style={[styles.appTitle, { color: colors.primary }]}>Reset Password</Text>
-              <Text style={[styles.subtitle, { color: colors.onSurfaceVariant }]}>
-                {currentStep === 'email' 
+              <Text style={[styles.appTitle, { color: colors.primary }]}>
+                Reset Password
+              </Text>
+              <Text
+                style={[styles.subtitle, { color: colors.onSurfaceVariant }]}
+              >
+                {currentStep === 'email'
                   ? 'Enter your email to receive a One-Time Password (OTP).'
-                  : 'Create a new, secure password for your account.'
-                }
+                  : 'Create a new, secure password for your account.'}
               </Text>
             </View>
 
             {/* Form Card */}
-            <Surface style={[styles.formCard, { backgroundColor: colors.surface }]} elevation={1}>
+            <Surface
+              style={[styles.formCard, { backgroundColor: colors.surface }]}
+              elevation={1}
+            >
               {currentStep === 'email' ? (
                 <>
                   {/* Email Step */}
@@ -129,14 +147,30 @@ const ResetPassword = () => {
                       autoCapitalize="none"
                       autoComplete="email"
                     />
-                    <HelperText type="error" visible={email.length > 0 && !validateEmail(email)}>
+                    <HelperText
+                      type="error"
+                      visible={email.length > 0 && !validateEmail(email)}
+                    >
                       Please enter a valid email address
                     </HelperText>
                   </View>
 
                   {error ? (
-                    <Surface style={[styles.errorCard, { backgroundColor: colors.errorContainer }]} elevation={0}>
-                      <Text style={[styles.errorText, { color: colors.onErrorContainer }]}>{error}</Text>
+                    <Surface
+                      style={[
+                        styles.errorCard,
+                        { backgroundColor: colors.errorContainer },
+                      ]}
+                      elevation={0}
+                    >
+                      <Text
+                        style={[
+                          styles.errorText,
+                          { color: colors.onErrorContainer },
+                        ]}
+                      >
+                        {error}
+                      </Text>
                     </Surface>
                   ) : null}
 
@@ -145,7 +179,10 @@ const ResetPassword = () => {
                     onPress={handleSendOTP}
                     disabled={!isEmailValid || loading}
                     loading={loading}
-                    style={[styles.actionButton, { backgroundColor: colors.primary }]}
+                    style={[
+                      styles.actionButton,
+                      { backgroundColor: colors.primary },
+                    ]}
                     contentStyle={styles.buttonContent}
                     labelStyle={styles.buttonLabel}
                   >
@@ -162,8 +199,10 @@ const ResetPassword = () => {
                       onChangeText={setNewPassword}
                       secureTextEntry={!showNewPassword}
                       leftIcon="lock"
-                      rightIcon={showNewPassword ? "eye-off" : "eye"}
-                      onRightIconPress={() => setShowNewPassword(!showNewPassword)}
+                      rightIcon={showNewPassword ? 'eye-off' : 'eye'}
+                      onRightIconPress={() =>
+                        setShowNewPassword(!showNewPassword)
+                      }
                       autoComplete="new-password"
                     />
                     <HelperText type="info" visible={newPassword.length === 0}>
@@ -183,20 +222,36 @@ const ResetPassword = () => {
                       onChangeText={setConfirmPassword}
                       secureTextEntry={!showConfirmPassword}
                       leftIcon="lock-check"
-                      rightIcon={showConfirmPassword ? "eye-off" : "eye"}
-                      onRightIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                      rightIcon={showConfirmPassword ? 'eye-off' : 'eye'}
+                      onRightIconPress={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       autoComplete="new-password"
                     />
-                    {confirmPassword.length > 0 && newPassword !== confirmPassword && (
-                      <HelperText type="error" visible={true}>
-                        {`Passwords don't match`}
-                      </HelperText>
-                    )}
+                    {confirmPassword.length > 0 &&
+                      newPassword !== confirmPassword && (
+                        <HelperText type="error" visible={true}>
+                          {`Passwords don't match`}
+                        </HelperText>
+                      )}
                   </View>
 
                   {error ? (
-                    <Surface style={[styles.errorCard, { backgroundColor: colors.errorContainer }]} elevation={0}>
-                      <Text style={[styles.errorText, { color: colors.onErrorContainer }]}>{error}</Text>
+                    <Surface
+                      style={[
+                        styles.errorCard,
+                        { backgroundColor: colors.errorContainer },
+                      ]}
+                      elevation={0}
+                    >
+                      <Text
+                        style={[
+                          styles.errorText,
+                          { color: colors.onErrorContainer },
+                        ]}
+                      >
+                        {error}
+                      </Text>
                     </Surface>
                   ) : null}
 
@@ -205,7 +260,10 @@ const ResetPassword = () => {
                     onPress={handleResetPassword}
                     disabled={!isPasswordValid || loading}
                     loading={loading}
-                    style={[styles.actionButton, { backgroundColor: colors.primary }]}
+                    style={[
+                      styles.actionButton,
+                      { backgroundColor: colors.primary },
+                    ]}
                     contentStyle={styles.buttonContent}
                     labelStyle={styles.buttonLabel}
                   >

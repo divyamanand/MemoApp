@@ -33,7 +33,8 @@ const QuestionsListScreen = () => {
   const { colors } = useTheme();
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [selectedQuestion, setSelectedQuestion] = useState<ResponseQuestion | null>(null);
+  const [selectedQuestion, setSelectedQuestion] =
+    useState<ResponseQuestion | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<SortOption>('difficulty');
 
@@ -70,7 +71,7 @@ const QuestionsListScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-     <Surface
+      <Surface
         style={[styles.header, { backgroundColor: colors.surface }]}
         elevation={0}
       >
@@ -93,14 +94,13 @@ const QuestionsListScreen = () => {
         </View>
       </Surface>
 
-
       <View style={styles.sortContainer}>
         <Text style={[styles.sortLabel, { color: colors.onSurfaceVariant }]}>
           SORT BY
         </Text>
         <FlatList
           horizontal
-          data={(['Difficulty', 'Topic', 'Recency', 'Priority'] as const)}
+          data={['Difficulty', 'Topic', 'Recency', 'Priority'] as const}
           keyExtractor={(i) => i}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => {
@@ -130,7 +130,9 @@ const QuestionsListScreen = () => {
       </View>
 
       <View style={styles.questionsHeader}>
-        <Text style={[styles.questionsLabel, { color: colors.onSurfaceVariant }]}>
+        <Text
+          style={[styles.questionsLabel, { color: colors.onSurfaceVariant }]}
+        >
           QUESTIONS
         </Text>
       </View>
@@ -193,7 +195,9 @@ const EnhancedQuestionItem: React.FC<EnhancedQuestionItemProps> = ({
 }) => {
   const { colors } = useTheme();
 
-  const getSubjectColor = (difficulty: ResponseQuestion['difficulty'] | undefined): string => {
+  const getSubjectColor = (
+    difficulty: ResponseQuestion['difficulty'] | undefined,
+  ): string => {
     if (!difficulty) return colors.outline;
     const level = difficulty.toLowerCase();
     switch (level) {
@@ -218,12 +222,17 @@ const EnhancedQuestionItem: React.FC<EnhancedQuestionItemProps> = ({
 
       <View style={styles.questionContent}>
         <View style={styles.questionHeader}>
-          <Text style={[styles.subjectText, { color: colors.onSurfaceVariant }]}>
+          <Text
+            style={[styles.subjectText, { color: colors.onSurfaceVariant }]}
+          >
             {question.tags?.[0] || 'General'}
           </Text>
         </View>
 
-        <Text style={[styles.questionTitle, { color: colors.onSurface }]} numberOfLines={2}>
+        <Text
+          style={[styles.questionTitle, { color: colors.onSurface }]}
+          numberOfLines={2}
+        >
           {question.questionName}
         </Text>
       </View>
@@ -245,7 +254,9 @@ const EmptyState = () => {
   return (
     <View style={styles.emptyWrap}>
       <IconButton icon="inbox" size={30} iconColor={colors.onSurfaceVariant} />
-      <Text style={[styles.emptyTitle, { color: colors.onSurface }]}>Nothing here yet</Text>
+      <Text style={[styles.emptyTitle, { color: colors.onSurface }]}>
+        Nothing here yet
+      </Text>
       <Text style={[styles.emptySub, { color: colors.onSurfaceVariant }]}>
         New questions will appear once available.
       </Text>
@@ -256,13 +267,13 @@ const EmptyState = () => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  paddingHorizontal: 16,
-  paddingTop: 8,
-  paddingBottom: 8,
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+  },
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
@@ -291,9 +302,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   headerIcons: {
-  flexDirection: 'row',
-  alignItems: 'center',
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   questionsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

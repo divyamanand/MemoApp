@@ -14,8 +14,8 @@ export type RootStackParamList = {
   Roadmap: undefined;
   Timeline: undefined;
 
-  Questions: undefined;            
-  AddQuestion: undefined;       
+  Questions: undefined;
+  AddQuestion: undefined;
   EditQuestion: { id: string } | undefined;
   GenerateQuestion: { id?: string } | undefined;
 
@@ -28,7 +28,6 @@ export type RootStackParamList = {
   About: undefined;
   ResetPassword: undefined;
 };
-
 
 export type ErrorResponse = {
   statusCode?: number | null;
@@ -64,7 +63,7 @@ export type ResponseQuestion = {
   completedCount?: number;
 };
 
-export type difficulty = "easy" | "medium" | "hard"
+export type difficulty = 'easy' | 'medium' | 'hard';
 
 export type PostQuestion = {
   _id: string;
@@ -78,8 +77,7 @@ export type PostQuestion = {
   createdAt: Date;
   updatedAt: Date;
   isPending?: boolean;
-}
-
+};
 
 export type ApiResponse<T = any> = {
   statusCode?: number;
