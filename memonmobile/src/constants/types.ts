@@ -63,8 +63,14 @@ export type ResponseQuestion = {
   completedCount?: number;
 };
 
+
+type HeatMapElement = {
+  date: string | Date;
+  count: number
+}
+
 export type HeatMap = {
-  data: {count: number, day: string}[]
+  data: HeatMapElement[]
 }
 
 export type difficulty = 'easy' | 'medium' | 'hard';

@@ -467,7 +467,7 @@ export const getHeatmap = asyncHandler(async (req, res) => {
     {
       $project: {
         _id: 0,
-        day: "$_id",
+        date: "$_id",
         count: 1,
       }
     }

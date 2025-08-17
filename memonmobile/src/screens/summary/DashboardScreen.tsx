@@ -25,6 +25,7 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/constants/types';
+import HeatMap from '@/src/components/HeatMap';
 
 const DashboardScreen = () => {
   const theme = useTheme();
@@ -453,25 +454,32 @@ const DashboardScreen = () => {
           </View>
         </Surface>
 
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
-          <View style={styles.rowBetween}>
-            <Text style={[styles.cardTitle, { color: colors.onSurface }]}>
-              Activity Heatmap
-            </Text>
-            <Text style={{ color: colors.onSurfaceVariant }}>October 2024</Text>
-          </View>
-          <View style={styles.heatmapBox}>
-            <View
-              style={[styles.heatDot, { backgroundColor: colors.primary }]}
-            />
-            <View
-              style={[styles.heatDot, { backgroundColor: colors.primary }]}
-            />
-          </View>
-        </Surface>
+            <Surface
+      style={[styles.card, { backgroundColor: colors.surface }]}
+      elevation={1}
+    >
+      <View style={styles.rowBetween}>
+        <Text style={[styles.cardTitle, { color: colors.onSurface }]}>
+          Activity Heatmap
+        </Text>
+      </View>
+      
+      {heatmap && heatmap.length > 0 ? (
+        <View style={styles.heatmapContainer}>
+          <HeatMap 
+            commitsData={heatmap} 
+            colors={colors}
+          />
+        </View>
+      ) : (
+        <View style={[styles.heatmapPlaceholder, { backgroundColor: colors.surfaceVariant }]}>
+          <Text style={[styles.placeholderText, { color: colors.onSurfaceVariant }]}>
+            No activity data available
+          </Text>
+        </View>
+      )}
+    </Surface>
+
 
         <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
@@ -861,6 +869,23 @@ const styles = StyleSheet.create({
     bottom: 40,
     alignSelf: 'center',
   },
+  // Add these to your existing styles object
+  heatmapContainer: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  heatmapPlaceholder: {
+    height: 180,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  placeholderText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+
 });
 
 export default DashboardScreen;

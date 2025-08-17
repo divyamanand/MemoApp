@@ -5,7 +5,7 @@ import { handleError } from '../errorService';
 import { handleReset } from '../resetService';
 
 export const api = axios.create({
-  baseURL: 'http://172.27.71.60:5000',
+  baseURL: 'http://172.27.70.150:5000',
   headers: {
     'Content-Type': 'application/json',
     'x-client-type': 'mobile',
