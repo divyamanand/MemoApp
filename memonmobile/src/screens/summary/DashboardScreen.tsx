@@ -454,32 +454,20 @@ const DashboardScreen = () => {
           </View>
         </Surface>
 
-            <Surface
-      style={[styles.card, { backgroundColor: colors.surface }]}
-      elevation={1}
-    >
-      <View style={styles.rowBetween}>
-        <Text style={[styles.cardTitle, { color: colors.onSurface }]}>
-          Activity Heatmap
-        </Text>
-      </View>
-      
-      {heatmap && heatmap.length > 0 ? (
-        <View style={styles.heatmapContainer}>
-          <HeatMap 
-            commitsData={heatmap} 
-            colors={colors}
-          />
-        </View>
-      ) : (
-        <View style={[styles.heatmapPlaceholder, { backgroundColor: colors.surfaceVariant }]}>
-          <Text style={[styles.placeholderText, { color: colors.onSurfaceVariant }]}>
-            No activity data available
-          </Text>
-        </View>
-      )}
-    </Surface>
-
+        <Surface
+            style={[styles.card, { backgroundColor: colors.surface, paddingVertical: 0, paddingHorizontal: 10 }]}
+            elevation={1}
+          >
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingVertical: 0, paddingHorizontal: 0 }}
+            >
+              <View style={{ margin: 0, padding: 0, marginLeft: -25 }}> 
+                <HeatMap/>
+              </View>
+            </ScrollView>
+          </Surface>
 
         <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
@@ -869,23 +857,6 @@ const styles = StyleSheet.create({
     bottom: 40,
     alignSelf: 'center',
   },
-  // Add these to your existing styles object
-  heatmapContainer: {
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  heatmapPlaceholder: {
-    height: 180,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  placeholderText: {
-    fontSize: 14,
-    fontStyle: 'italic',
-  },
-
 });
 
 export default DashboardScreen;
