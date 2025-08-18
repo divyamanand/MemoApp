@@ -16,6 +16,10 @@ import {
 } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { difficulty } from '@/src/constants/types';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
+import { useNavigation } from '@react-navigation/native';
+import { resetUser } from '@/src/store/app/appSlice'; // optional: if you want to reset firstLogin after onboarding
+import { finishOnboarding } from '@/src/features/app/appSlice';
 
 interface Question {
   id: string;
@@ -27,6 +31,9 @@ interface Question {
 
 const SuggestionScreen = () => {
   const { colors } = useTheme();
+  const { firstLogin } = useAppSelector((state) => state.app);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const [questions, setQuestions] = useState<Question[]>([
     {
@@ -93,7 +100,6 @@ const SuggestionScreen = () => {
   };
 
   const handleBack = () => {
-    // TODO: Navigate back
     console.log('Navigate back');
   };
 
@@ -104,8 +110,15 @@ const SuggestionScreen = () => {
   };
 
   const handleQuestionPress = (question: Question) => {
-    // TODO: Navigate to question details or add to practice
     console.log('Question pressed:', question);
+  };
+
+  const handleProceed = () => {
+    dispatch(finishOnboarding());
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Dashboard' }],
+    });
   };
 
   return (
@@ -236,15 +249,24 @@ const SuggestionScreen = () => {
             </TouchableOpacity>
           ))
         )}
+
+        {/* Show proceed button only on firstLogin */}
+        {firstLogin && (
+          <PaperButton
+            mode="contained"
+            style={styles.proceedButton}
+            onPress={handleProceed}
+          >
+            Proceed to Dashboard
+          </PaperButton>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -259,6 +281,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 16,
     paddingHorizontal: 16,
+    paddingBottom: 40,
   },
   questionCard: {
     borderRadius: 16,
@@ -316,6 +339,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingHorizontal: 32,
     lineHeight: 20,
+  },
+  proceedButton: {
+    marginTop: 24,
+    borderRadius: 12,
+    paddingVertical: 6,
   },
 });
 

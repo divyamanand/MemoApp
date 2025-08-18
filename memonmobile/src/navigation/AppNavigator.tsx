@@ -24,114 +24,104 @@ import SuggestionScreen from '../screens/questions/SuggestionScreen';
 const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   const Tab = createBottomTabNavigator<RootStackParamList>();
-  const { tokenValid } = useAppSelector((state) => state.app);
   const { colors } = useTheme();
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
   const barStyle = isDarkMode ? 'dark-content' : 'light-content';
 
-  if (!tokenValid) {
-    return (
-      <>
-        <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          {/* <Stack.Screen name="Help" component={HelpScreen} /> */}
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="ResetPassword" component={ResetPassword} />
-          <Stack.Screen name="Topic" component={TopicScreen} />
-          <Stack.Screen name="Topictags" component={TagsScreen} />
-          <Stack.Screen name="Suggestions" component={SuggestionScreen} />
-        </Stack.Navigator>
-      </>
-    );
-  }
+  const { tokenValid, firstLogin } = useAppSelector((state) => state.app);
 
+if (!tokenValid) {
   return (
     <>
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
-      <Tab.Navigator
-        initialRouteName="Dashboard"
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: colors.surface,
-            borderTopColor: colors.outline,
-            borderTopWidth: 0.5,
-          },
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.onSurfaceVariant,
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: '600',
-          },
-        }}
-      >
-        <Tab.Screen
-          name="Dashboard"
-          component={DashboardNavigator}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="view-dashboard"
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-
-        <Tab.Screen
-          name="Practice"
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="book-open-variant"
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        >
-          {() => (
-            <SafeAreaView style={styles.safe}>
-              <PracticeScreen />
-            </SafeAreaView>
-          )}
-        </Tab.Screen>
-
-        <Tab.Screen
-          name="Question"
-          component={QuestionNavigator}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="format-list-bulleted"
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-
-        <Tab.Screen
-          name="Profile"
-          component={ProfileNavigator}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons
-                name="account"
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      </Stack.Navigator>
     </>
   );
-};
+}
+
+if (firstLogin) {
+  return (
+    <>
+      <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Topic" component={TopicScreen} />
+        <Stack.Screen name="Suggestions" component={SuggestionScreen} />
+      </Stack.Navigator>
+    </>
+  );
+}
+
+return (
+  <>
+    <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
+    <Tab.Navigator
+      initialRouteName="Dashboard"
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.outline,
+          borderTopWidth: 0.5,
+        },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.onSurfaceVariant,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Dashboard"
+        component={DashboardNavigator}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="view-dashboard" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Practice"
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="book-open-variant" size={size} color={color} />
+          ),
+        }}
+      >
+        {() => (
+          <SafeAreaView style={styles.safe}>
+            <PracticeScreen />
+          </SafeAreaView>
+        )}
+      </Tab.Screen>
+      <Tab.Screen
+        name="Question"
+        component={QuestionNavigator}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileNavigator}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  </>
+);
+}
 
 const styles = StyleSheet.create({
   safe: { flex: 1 },

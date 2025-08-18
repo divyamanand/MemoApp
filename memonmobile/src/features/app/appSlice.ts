@@ -49,11 +49,13 @@ interface AppState {
   userInfo?: UserInfo;
   tokenValid: boolean;
   tags: string[];
+  firstLogin: boolean,
 }
 
 const initialState: AppState = {
   userInfo: undefined,
   tokenValid: false,
+  firstLogin: false,
   tags: [],
 };
 
@@ -69,19 +71,26 @@ const appSlice = createSlice({
     addTags: (state, action: PayloadAction<string[]>) => {
       state.tags = [...new Set([...state.tags, ...action.payload])];
     },
+    finishOnboarding: (state) => {
+      state.firstLogin = false;
+    },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(logoutUser.fulfilled, () => initialState)
-      .addMatcher(
-        isAnyOf(registerUser.fulfilled, loginUser.fulfilled),
-        (state, action: PayloadAction<UserInfo>) => {
-          state.userInfo = action.payload;
-          state.tokenValid = true;
-        },
-      );
-  },
+  builder
+    .addCase(logoutUser.fulfilled, () => initialState)
+    .addCase(registerUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
+      state.userInfo = action.payload
+      state.tokenValid = true
+      state.firstLogin = true
+    })
+    .addCase(loginUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
+      state.userInfo = action.payload
+      state.tokenValid = true
+      state.firstLogin = false
+    })
+}
+
 });
 
-export const { setCredentials, resetUser, addTags } = appSlice.actions;
+export const { setCredentials, resetUser, addTags, finishOnboarding } = appSlice.actions;
 export default appSlice.reducer;

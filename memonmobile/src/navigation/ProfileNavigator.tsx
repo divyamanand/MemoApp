@@ -37,9 +37,6 @@ const ProfileNavigator: React.FC = () => {
           name="Settings"
           component={withSafeArea(SettingsScreen)}
         />
-        <Stack.Screen name="Login" component={withSafeArea(LoginScreen)} />
-        {/* <Stack.Screen name="Help" component={withSafeArea(HelpScreen)} /> */}
-        {/* <Stack.Screen name="EditProfile" component={withSafeArea(EditProfileScreen)} /> */}
       </Stack.Navigator>
     </>
   );
