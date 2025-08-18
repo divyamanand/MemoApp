@@ -7,19 +7,15 @@ import { StyleSheet, StatusBar, useColorScheme } from 'react-native';
 import { RootStackParamList } from '@/src/constants/types';
 import { useAppSelector } from '@/src/store/hooks';
 import LoginScreen from '../screens/auth/LoginScreen';
-import HelpScreen from '../screens/summary/HelpScreen';
 import PracticeScreen from '../screens/questions/PracticeScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from 'react-native-paper';
-
 import DashboardNavigator from './DashboardNavigator';
 import QuestionNavigator from './QuestionNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import ResetPassword from '../screens/auth/ResetPassword';
 import TopicScreen from '../screens/auth/TopicScreen';
-import TagsScreen from '../screens/auth/TagsScreen';
-import SuggestionScreen from '../screens/questions/SuggestionScreen';
 
 const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -51,7 +47,6 @@ if (firstLogin) {
       <StatusBar barStyle={barStyle} backgroundColor={colors.background} />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Topic" component={TopicScreen} />
-        <Stack.Screen name="Suggestions" component={SuggestionScreen} />
       </Stack.Navigator>
     </>
   );

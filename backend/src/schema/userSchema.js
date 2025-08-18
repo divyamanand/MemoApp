@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema(
       type: Date,
     },
 
+    targetDate: {
+      type: Date,
+    },
+
+    maximumHours: {
+      type: Number
+    },
+
     currentPOTD: {
       questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
       assignedAt: { type: Date, default: Date.now },
@@ -59,6 +67,7 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String
     },
+    
   },
   {
     timestamps: true,

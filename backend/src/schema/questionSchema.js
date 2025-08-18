@@ -2,18 +2,12 @@ import mongoose from "mongoose";
 
 const revisionSchema = new mongoose.Schema(
   {
-    date: {
-      type: Date,
-      required: true,
-    },
-    completed: {
-      type: Boolean,
-      default: false,
-    },
+    date: { type: Date, required: true },
+    completed: { type: Boolean, default: false },
   },
-  { _id: true },
-  {timestamps: true}
+  { _id: true, timestamps: true }
 );
+
 
 const questionSchema = new mongoose.Schema(
   {
@@ -50,7 +44,7 @@ const questionSchema = new mongoose.Schema(
     },
 
     choices: {
-      options: {type: [String]},
+      options: {type: [String], default: []},
       multipleCorrect: {type: Boolean, default: false},
     },
 
@@ -58,14 +52,13 @@ const questionSchema = new mongoose.Schema(
       type: String
     },
 
-    formData: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {}
-    },
-
     favourite: {
       type: Boolean,
       default: false
+    },
+    
+    revisionFormula: {
+      type: Object
     }
 
   },
@@ -74,26 +67,26 @@ const questionSchema = new mongoose.Schema(
   }
 );
 
-questionSchema.methods.generateRevision = function () {
+// questionSchema.methods.generateRevision = function () {
 
-  if (!this.formData?.revisionFormula) return []
+//   if (!this.revisionFormula) return []
 
-  const {k,c,i} = this.formData.revisionFormula
-  const baseDate = this.createdAt || new Date()
+//   const {k,c,i} = this.revisionFormula
+//   const baseDate = this.createdAt || new Date()
 
 
-  for (let index = 0; index< i; index++) {
-    const day = Math.round(k* (c**index))
-    const newDate = new Date(baseDate)
+//   for (let index = 0; index< i; index++) {
+//     const day = Math.round(k* (c**index))
+//     const newDate = new Date(baseDate)
 
-    newDate.setDate(newDate.getDate() + day);
-    newDate.setUTCHours(0, 0, 0, 0);
+//     newDate.setDate(newDate.getDate() + day);
+//     newDate.setUTCHours(0, 0, 0, 0);
 
-    this.revisions.push({date: newDate})
-  }
+//     this.revisions.push({date: newDate})
+//   }
 
-  return this.revisions
-}
+//   return this.revisions
+// }
 
 questionSchema.methods.deleteRevision = async function (revisionId) {
   this.revisions = this.revisions.filter(rev => rev._id.toString() !== revisionId.toString());

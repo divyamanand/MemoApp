@@ -153,7 +153,7 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
 
   if (!user) throw new ApiError(401, "Login to update details")
 
-  const { name, email, k_vals, c_vals, iterations } = req.body
+  const { name, email, k_vals, c_vals, iterations, targetDate, maximumHours } = req.body
   if (!name && !email && !k_vals && !c_vals && !iterations) {
     throw new ApiError(400, "Nothing to Update")
   }
@@ -170,6 +170,8 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
   if (k_vals) updates.k_vals = k_vals
   if (c_vals) updates.c_vals = c_vals
   if (iterations) updates.iterations = iterations
+  if (targetDate) updates.targetDate = targetDate
+  if (maximumHours) updates.maximumHours = maximumHours
 
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id },

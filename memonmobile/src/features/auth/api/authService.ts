@@ -4,6 +4,7 @@ import { axiosBaseQuery } from '../../axiosQuery';
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: axiosBaseQuery(),
+  tagTypes: ['User'],
   endpoints: (build) => ({
     getUserDetails: build.query<any, void>({
       query: () => ({
@@ -11,8 +12,19 @@ export const authApi = createApi({
         method: 'GET',
       }),
       keepUnusedDataFor: Infinity,
+      providesTags: () => ['User']
     }),
+
+    updateUserDetails: build.mutation<any, any>({
+      query: (data) => ({
+        url: '/api/v1/user/updateUserDetails',
+        method: "PATCH",
+        data
+      }),
+
+      invalidatesTags: () => ['User']
+    })
   }),
 });
 
-export const { useGetUserDetailsQuery } = authApi;
+export const { useGetUserDetailsQuery, useUpdateUserDetailsMutation } = authApi;

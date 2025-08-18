@@ -4,44 +4,58 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
 
-const createRevisionPlan = async (questionId) => {
-    const question = await Question.findById(questionId)
+const createRevisionPlan = async (questionId, revisionFormula, baseDate, targetDate) => {
+  const question = await Question.findById(questionId);
 
-    if (!question) {
-        throw new ApiError(401, "Question Not Found. No Revision Can be Created")
-    }
+  if (!question) {
+    throw new ApiError(401, "Question Not Found. No Revision Can be Created");
+  }
 
-    const revisions = question.generateRevision()
-    question.revisions = revisions
-    await question.save()
+  const { k, c, i } = revisionFormula;
+  const finalBaseDate = baseDate || question.createdAt || new Date();
 
-    return revisions
-}
+  const revisions = [];
+  const target = targetDate ? new Date(targetDate) : null;
+
+  for (let index = 0; index < i; index++) {
+    const day = Math.round(k * (c ** index));
+    const newDate = new Date(finalBaseDate);
+
+    newDate.setDate(newDate.getDate() + day);
+    newDate.setUTCHours(0, 0, 0, 0);
+
+    if (target && newDate > target) break;
+
+    revisions.push({ date: newDate });
+    question.revisions.push({ date: newDate });
+  }
+
+  await question.save();
+  return revisions;
+};
+
 
 export const createQuestion = asyncHandler(async (req, res) => {
   const {_id, ...rest} = req.body
   const questionData = { ...rest, userId: req.user._id };
 
-  console.log("Data received from question", questionData)
-
-  if (!questionData.formData) questionData.formData = {};
-
-  if (!questionData.formData.revisionFormula) {
     const diff = questionData.difficulty;
 
-    if (!diff) throw new ApiError(401, "Difficulty is Missing for the Question")
+    if (!diff) throw new ApiError(404, "Difficulty is Missing for the Question")
 
     const getVal = (m) => (m instanceof Map ? m.get(diff) : m[diff]);
     const k = getVal(req.user.k_vals);
     const c = getVal(req.user.c_vals);
     const i = getVal(req.user.iterations);
-    questionData.formData.revisionFormula = { k, c, i };
-  }
+    questionData.revisionFormula = { k, c, i };
 
   const question = await Question.create(questionData);
-  if (!question) throw new ApiError(401, "Error adding the question");
+  if (!question) throw new ApiError(404, "Error adding the question");
 
-  await createRevisionPlan(question._id);
+  const baseDate = questionData.baseDate
+  const targetDate = req.user.targetDate
+
+  await createRevisionPlan(question._id, {k,c,i}, baseDate, targetDate);
 
   const updatedQuestion = await Question.findById(question._id);
   return res
