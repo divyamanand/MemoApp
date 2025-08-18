@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyJWT } from "../middleware/verifyJWT.middleware.js";
-import { countNCompleted, countTotalCompleted, createQuestion, deleteQuestion, getAllQuestionsOfUser, getHeatmap, getTodaysRevisions, markPOTDCompleted, markRevisionCompleted } from "../controller/question.controller.js";
+import { countNCompleted, countTotalCompleted, createQuestion, deleteQuestion, getAllQuestionsOfUser, getHeatmap, getTagsCount, getTodaysRevisions, markPOTDCompleted, markRevisionCompleted } from "../controller/question.controller.js";
 
 const router = Router()
 
@@ -13,5 +13,6 @@ router.get("/complete-n-count/:numberOfTimes", verifyJWT, countNCompleted)
 router.get("/total-count", verifyJWT, countTotalCompleted)
 router.patch("/mark-revision/:questionID/:revisionID", verifyJWT, markRevisionCompleted)
 router.get("/heatmap", verifyJWT, getHeatmap)
+router.get("/tags", verifyJWT, getTagsCount)
 
 export default router

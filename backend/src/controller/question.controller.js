@@ -478,3 +478,21 @@ export const getHeatmap = asyncHandler(async (req, res) => {
   );
 
 })
+
+
+export const getTagsCount = asyncHandler(async (req, res) => {
+  const user = req.user
+
+  const result = await Question.aggregate([
+    {$match: {userId: user._id}},
+    {$unwind: "$tags"},
+    {$group: {_id: "$tags", count: {$sum: 1}}},
+    { $project: { _id: 0, tag: "$_id", count: 1 } },
+    {$sort: {count: -1}}
+  ])
+
+  return res.status(200).json(
+    new ApiResponse(200, result, "Tags Fetched Successfully")
+  )
+
+})

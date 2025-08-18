@@ -5,6 +5,8 @@ import {
   ScrollView,
   RefreshControl,
   Modal,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import {
   useTheme,
@@ -33,6 +35,10 @@ const PracticeScreen = () => {
     useState<ResponseQuestion | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
+  // Search state
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { data, isLoading, isFetching, refetch } =
     useGetRevisionsInfiniteQuery(undefined);
 
@@ -43,15 +49,15 @@ const PracticeScreen = () => {
     [data],
   );
 
-  const allTags = useMemo(() => {
-      return [...new Set(allQuestions.flatMap(q => q.tags))];
-    }, [allQuestions]);
-  
-  const dispatch = useAppDispatch()
-  
+  const allTags = useMemo(
+    () => [...new Set(allQuestions.flatMap(q => q.tags))],
+    [allQuestions]
+  );
+
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(addTags(allTags))
-  }, [dispatch, allTags])
+    dispatch(addTags(allTags));
+  }, [dispatch, allTags]);
 
   const completedCount = useMemo(
     () =>
@@ -71,8 +77,7 @@ const PracticeScreen = () => {
 
   const totalTarget = allQuestions.length;
   const progress = completedCount / totalTarget;
-  const displayLabel =
-    totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0';
+  const displayLabel = totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0';
 
   const openQuestionModal = (question: ResponseQuestion): void => {
     setSelectedQuestion(question);
@@ -82,6 +87,24 @@ const PracticeScreen = () => {
   const closeQuestionModal = (): void => {
     setIsModalVisible(false);
     setSelectedQuestion(null);
+  };
+
+  // SEARCH LOGIC
+  const filteredQuestions = useMemo(() => {
+    if (!searchQuery) return [];
+    return allQuestions.filter(q =>
+      (q.questionName ?? '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, allQuestions]);
+
+  // Dialog handlers
+  const openSearch = () => {
+    setSearchQuery('');
+    setIsSearchVisible(true);
+  };
+
+  const closeSearch = () => {
+    setIsSearchVisible(false);
   };
 
   return (
@@ -104,12 +127,13 @@ const PracticeScreen = () => {
             icon="magnify"
             size={22}
             iconColor={colors.onSurfaceVariant}
-            onPress={() => {}}
+            onPress={openSearch}
           />
         </View>
       </Surface>
 
-      {/* <Surface
+      {/* Progress Bar Section (Uncomment if needed)
+      <Surface
         style={[styles.progressWrap, { backgroundColor: colors.surface }]}
         elevation={1}
       >
@@ -147,7 +171,8 @@ const PracticeScreen = () => {
         </View>
       </Surface>
 
-      <Divider style={{ opacity: 0.4 }} /> */}
+      <Divider style={{ opacity: 0.4 }} />
+      */}
 
       {isLoading ? (
         <View style={styles.loader}>
@@ -166,7 +191,9 @@ const PracticeScreen = () => {
           <Text style={{ color: colors.onSurface, fontWeight: '600' }}>
             No items
           </Text>
-          <Text style={{ color: colors.onSurfaceVariant, marginTop: 4 }}>
+          <Text
+            style={{ color: colors.onSurfaceVariant, marginTop: 4 }}
+          >
             New recommendations will appear here.
           </Text>
         </View>
@@ -189,9 +216,9 @@ const PracticeScreen = () => {
               difficulty={q.difficulty}
               description={q.formData?.description}
               estimateTime="5-7 minutes"
-              completed={q.upcomingRevisions[0].completed}
+              completed={q.upcomingRevisions[0]?.completed}
               onMarkDone={() =>
-                handleMarkDone(q._id, q.upcomingRevisions[0]._id)
+                handleMarkDone(q._id, q.upcomingRevisions[0]?._id)
               }
               onStartTimer={() => {
                 // TODO: Implement start timer
@@ -211,6 +238,7 @@ const PracticeScreen = () => {
         </ScrollView>
       )}
 
+      {/* Info Modal */}
       <Modal
         visible={isModalVisible}
         animationType="slide"
@@ -223,6 +251,57 @@ const PracticeScreen = () => {
             onClose={closeQuestionModal}
           />
         )}
+      </Modal>
+
+      {/* Search Modal */}
+      <Modal
+        visible={isSearchVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeSearch}
+      >
+        <View style={searchStyles.overlay}>
+          <View style={[searchStyles.dialog, { backgroundColor: colors.surface }]}>
+            <TextInput
+              style={[
+                searchStyles.input,
+                { borderColor: colors.outline, color: colors.onSurface }
+              ]}
+              placeholder="Search questions..."
+              placeholderTextColor={colors.onSurfaceVariant}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+            />
+
+            {searchQuery && filteredQuestions.length === 0 ? (
+              <Text style={[searchStyles.notFound, { color: colors.error }]}>No questions found</Text>
+            ) : (
+              <ScrollView style={searchStyles.list}>
+                {filteredQuestions.map(q => (
+                  <TouchableOpacity
+                    key={q._id}
+                    style={searchStyles.item}
+                    onPress={() => {
+                      setIsSearchVisible(false);
+                      openQuestionModal(q);
+                    }}
+                  >
+                    <Text style={[searchStyles.itemText, { color: colors.onSurface }]}>
+                      {q.questionName}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
+            <TouchableOpacity
+              style={searchStyles.closeBtn}
+              onPress={closeSearch}
+            >
+              <Text style={[searchStyles.closeBtnText, { color: colors.primary }]}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -239,7 +318,6 @@ const styles = StyleSheet.create({
   },
   title: { flex: 1, fontSize: 22, fontWeight: '800' },
   actions: { flexDirection: 'row', alignItems: 'center' },
-
   progressWrap: {
     marginHorizontal: 16,
     marginBottom: 12,
@@ -255,9 +333,7 @@ const styles = StyleSheet.create({
   progressSub: { fontSize: 12, marginTop: 2 },
   progressChips: { flexDirection: 'row', gap: 8, marginTop: 10 },
   chip: { height: 28, borderRadius: 16 },
-
   listContent: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 24 },
-
   loader: {
     flex: 1,
     alignItems: 'center',
@@ -270,6 +346,38 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     gap: 2,
   },
+});
+
+// Styles for search dialog/modal
+const searchStyles = StyleSheet.create({
+  overlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center', alignItems: 'center'
+  },
+  dialog: {
+    width: '88%', maxHeight: '81%', borderRadius: 14, padding: 18
+  },
+  input: {
+    borderWidth: 1, borderRadius: 8, padding: 11, fontSize: 16, marginBottom: 15
+  },
+  list: {
+    maxHeight: 260, marginBottom: 12
+  },
+  item: {
+    paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#EEE'
+  },
+  itemText: {
+    fontSize: 16,
+  },
+  notFound: {
+    textAlign: 'center', fontSize: 16, marginVertical: 22
+  },
+  closeBtn: {
+    alignSelf: 'center', padding: 10,
+  },
+  closeBtnText: {
+    fontSize: 16, fontWeight: '700'
+  }
 });
 
 export default PracticeScreen;

@@ -26,12 +26,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '@/src/constants/types';
 import HeatMap from '@/src/components/HeatMap';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const DashboardScreen = () => {
   const theme = useTheme();
   const { colors } = theme;
   const { userInfo } = useAppSelector((s) => s.app);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const { isConnected } = useNetInfo()
 
   const {data: heatmap} = useGetHeatMapQuery({from: "2025-01-01", to: "2025-12-31"})
 
@@ -61,7 +64,6 @@ const DashboardScreen = () => {
 
   console.log(heatmap)
 
-  // Sample data for new features
   const aiSuggestions = [
     { id: 1, title: 'Algebra Practice', subject: 'Math', difficulty: 'Medium' },
     {
@@ -137,8 +139,8 @@ const DashboardScreen = () => {
           </View>
 
           <IconButton
-            icon={'wifi-off'}
-            iconColor={'red'}
+            icon={isConnected? 'wifi' : 'wifi-off'}
+            iconColor={isConnected ? 'green' : 'red'}
             size={24}
             onPress={() => {
               // TODO: Navigate to profile
@@ -464,7 +466,7 @@ const DashboardScreen = () => {
               contentContainerStyle={{ paddingVertical: 0, paddingHorizontal: 0 }}
             >
               <View style={{ margin: 0, padding: 0, marginLeft: -25 }}> 
-                <HeatMap/>
+                {/* <HeatMap/> */}
               </View>
             </ScrollView>
           </Surface>

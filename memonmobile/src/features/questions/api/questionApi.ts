@@ -9,6 +9,7 @@ import { updateQuestionEndPoint } from './endPoints/updateQuestion';
 import { getRevisionsEndpoint } from './endPoints/getRevisions';
 import { getCompletedCountUptoDate } from './endPoints/countCompletedUptoDate';
 import { getHeatmapEndpoint } from './endPoints/getHeatmap';
+import { getQuestionTags } from './endPoints/getQuestionTags';
 
 export const questionApi = createApi({
   reducerPath: 'questionApi',
@@ -23,6 +24,7 @@ export const questionApi = createApi({
     updateQuestion: updateQuestionEndPoint(build),
     getCountTillDate: getCompletedCountUptoDate(build),
     getHeatMap: getHeatmapEndpoint(build),
+    getTags: getQuestionTags(build),
   }),
 });
 
@@ -35,4 +37,5 @@ export const {
   useUpdateRevisionMutation,
   useGetCountTillDateQuery,
   useGetHeatMapQuery,
+  useGetTagsQuery,
 } = questionApi;

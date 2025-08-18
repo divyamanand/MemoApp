@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 import {
   Text,
@@ -17,7 +19,7 @@ import {
 } from 'react-native-paper';
 
 import TextInputField from '../../components/TextInputField';
-import { useGetQuestionsInfiniteQuery } from '@/src/features/questions/api/questionApi';
+import { useGetQuestionsInfiniteQuery, useGetTagsQuery } from '@/src/features/questions/api/questionApi';
 import QuestionInfoScreen from './QuestionInfoScreen';
 import { ResponseQuestion, RootStackParamList } from '@/src/constants/types';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -25,6 +27,7 @@ import { useAppDispatch } from '@/src/store/hooks';
 import { addTags } from '@/src/features/app/appSlice';
 
 type SortOption = 'difficulty' | 'topic' | 'recency' | 'priority';
+type SortDirection = 'asc' | 'desc';
 
 interface EnhancedQuestionItemProps {
   question: ResponseQuestion;
@@ -39,6 +42,11 @@ const QuestionsListScreen = () => {
     useState<ResponseQuestion | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<SortOption>('difficulty');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   const {
     data: questions,
@@ -55,18 +63,73 @@ const QuestionsListScreen = () => {
     [questions],
   );
 
-  const allTags = useMemo(() => {
-    return [...new Set(allQuestions.flatMap(q => q.tags))];
-  }, [allQuestions]);
+  const {data: tagsCount} = useGetTagsQuery(undefined)
 
-  const dispatch = useAppDispatch()
+  const allTags = useMemo(() => {
+    return [...new Set(tagsCount?.map(t => t.tag))];
+  }, [tagsCount]);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(addTags(allTags))
-  }, [dispatch, allTags])
-  
+    dispatch(addTags(allTags));
+  }, [dispatch, allTags]);
 
-  const currentData = allQuestions;
+  const filteredAndSortedData = useMemo(() => {
+    let filtered = [...allQuestions];
+
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(q =>
+        q.tags?.some(tag => selectedTags.includes(tag))
+      );
+    }
+
+    const difficultyMap: { [key: string]: number } = {
+      easy: 1,
+      medium: 2,
+      hard: 3,
+    };
+
+    switch (sortBy) {
+      case 'difficulty':
+        filtered.sort((a, b) => {
+          const valA = difficultyMap[a.difficulty?.toLowerCase() ?? 'medium'] ?? 2;
+          const valB = difficultyMap[b.difficulty?.toLowerCase() ?? 'medium'] ?? 2;
+          return sortDirection === 'asc' ? valA - valB : valB - valA;
+        });
+        break;
+
+      case 'topic':
+        filtered.sort((a, b) => {
+          const tagA = (a.tags?.[0] ?? '').toLowerCase();
+          const tagB = (b.tags?.[0] ?? '').toLowerCase();
+          return sortDirection === 'asc'
+            ? tagA.localeCompare(tagB)
+            : tagB.localeCompare(tagA);
+        });
+        break;
+
+      case 'recency':
+        filtered.sort((a, b) => {
+          const dateA = new Date(a.createdAt ?? 0).getTime();
+          const dateB = new Date(b.createdAt ?? 0).getTime();
+          return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+        });
+        break;
+
+      default:
+        break;
+    }
+
+    return filtered;
+  }, [allQuestions, sortBy, sortDirection, selectedTags]);
+
+  const filteredQuestions = useMemo(() => {
+    if (!searchQuery) return [];
+    return allQuestions.filter(q =>
+      q.questionName.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, allQuestions]);
 
   const handleNextPage = async () => {
     if (hasNextQuestionPage) await fetchNextPageQuestions();
@@ -82,6 +145,33 @@ const QuestionsListScreen = () => {
     setSelectedQuestion(null);
   };
 
+  const openSearch = () => {
+    setSearchQuery('');
+    setIsSearchVisible(true);
+  };
+
+  const closeSearch = () => {
+    setIsSearchVisible(false);
+  };
+
+  const openFilter = () => {
+    setIsFilterVisible(true);
+  };
+
+  const closeFilter = () => {
+    setIsFilterVisible(false);
+  };
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  console.log(tagsCount)
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Surface
@@ -93,10 +183,16 @@ const QuestionsListScreen = () => {
         </Text>
         <View style={styles.headerIcons}>
           <IconButton
+            icon="filter-variant"
+            size={24}
+            iconColor={colors.onSurface}
+            onPress={openFilter}
+          />
+          <IconButton
             icon="magnify"
             size={24}
             iconColor={colors.onSurface}
-            onPress={() => {}}
+            onPress={openSearch}
           />
           <IconButton
             icon="plus"
@@ -106,41 +202,6 @@ const QuestionsListScreen = () => {
           />
         </View>
       </Surface>
-
-      <View style={styles.sortContainer}>
-        <Text style={[styles.sortLabel, { color: colors.onSurfaceVariant }]}>
-          SORT BY
-        </Text>
-        <FlatList
-          horizontal
-          data={['Difficulty', 'Topic', 'Recency', 'Priority'] as const}
-          keyExtractor={(i) => i}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => {
-            const option = item.toLowerCase() as SortOption;
-            const active = sortBy === option;
-            return (
-              <Chip
-                mode={active ? 'flat' : 'outlined'}
-                selected={active}
-                onPress={() => setSortBy(option)}
-                style={[
-                  styles.sortChip,
-                  active && { backgroundColor: colors.primaryContainer },
-                ]}
-                textStyle={{
-                  color: active ? colors.primary : colors.onSurfaceVariant,
-                  fontSize: 12,
-                  fontWeight: '600',
-                }}
-              >
-                {item}
-              </Chip>
-            );
-          }}
-          contentContainerStyle={styles.sortChips}
-        />
-      </View>
 
       <View style={styles.questionsHeader}>
         <Text
@@ -157,7 +218,7 @@ const QuestionsListScreen = () => {
       ) : (
         <FlatList
           contentContainerStyle={styles.listContent}
-          data={currentData}
+          data={filteredAndSortedData}
           keyExtractor={(item: ResponseQuestion) => item._id}
           renderItem={({ item }) => (
             <EnhancedQuestionItem
@@ -197,6 +258,138 @@ const QuestionsListScreen = () => {
             onClose={closeQuestionModal}
           />
         )}
+      </Modal>
+
+      <Modal
+        visible={isSearchVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeSearch}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.searchDialog, { backgroundColor: colors.surface }]}>
+            <TextInput
+              style={[styles.searchInput, { borderColor: colors.outline, color: colors.onSurface }]}
+              placeholder="Search questions..."
+              placeholderTextColor={colors.onSurfaceVariant}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoFocus
+            />
+            {searchQuery && filteredQuestions.length === 0 ? (
+              <Text style={[styles.notFound, { color: colors.error }]}>
+                No questions found
+              </Text>
+            ) : (
+              <FlatList
+                data={filteredQuestions}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.searchItem}
+                    onPress={() => {
+                      closeSearch();
+                      openQuestionModal(item);
+                    }}
+                  >
+                    <Text style={[styles.searchItemText, { color: colors.onSurface }]}>
+                      {item.questionName}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                style={styles.searchList}
+              />
+            )}
+            <TouchableOpacity onPress={closeSearch} style={styles.closeBtn}>
+              <Text style={[styles.closeBtnText, { color: colors.primary }]}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={isFilterVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeFilter}
+      >
+        <TouchableOpacity
+          style={styles.filterOverlay}
+          activeOpacity={1}
+          onPress={closeFilter}
+        >
+          <ScrollView style={[styles.filterDialog, { backgroundColor: colors.surface }]}>
+            <View style={styles.sortContainer}>
+              <Text style={[styles.sortLabel, { color: colors.onSurfaceVariant }]}>
+                SORT BY
+              </Text>
+              <View style={styles.wrapContainer}>
+                {['Difficulty', 'Topic', 'Recency', 'Priority'].map((item) => {
+                  const option = item.toLowerCase() as SortOption;
+                  const active = sortBy === option;
+                  return (
+                    <Chip
+                      key={item}
+                      mode={active ? 'flat' : 'outlined'}
+                      selected={active}
+                      onPress={() => {
+                        if (active) {
+                          setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+                        } else {
+                          setSortBy(option);
+                          setSortDirection('asc');
+                        }
+                      }}
+                      style={[
+                        styles.sortChip,
+                        active && { backgroundColor: colors.primaryContainer },
+                      ]}
+                      textStyle={{
+                        color: active ? colors.primary : colors.onSurfaceVariant,
+                        fontSize: 12,
+                        fontWeight: '600',
+                      }}
+                      icon={active ? (sortDirection === 'asc' ? 'arrow-up' : 'arrow-down') : undefined}
+                    >
+                      {item}
+                    </Chip>
+                  );
+                })}
+              </View>
+            </View>
+
+            <View style={styles.filterContainer}>
+              <Text style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}>
+                FILTER BY TAG
+              </Text>
+              <View style={styles.wrapContainer}>
+                {tagsCount?.map((t) => {
+                  const active = selectedTags.includes(t.tag);
+                  const label = `${t.tag} (${t.count})`;
+                  return (
+                    <Chip
+                      key={t.tag}
+                      mode={active ? 'flat' : 'outlined'}
+                      selected={active}
+                      onPress={() => toggleTag(t.tag)}
+                      style={[
+                        styles.filterChip,
+                        active && { backgroundColor: colors.secondaryContainer },
+                      ]}
+                      textStyle={{
+                        color: active ? colors.onSecondary : colors.onSurfaceVariant,
+                        fontSize: 12,
+                        fontWeight: '600',
+                      }}
+                    >
+                      {label}
+                    </Chip>
+                  );
+                })}
+              </View>
+            </View>
+          </ScrollView>
+        </TouchableOpacity>
       </Modal>
     </View>
   );
@@ -299,20 +492,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 12,
   },
+  filterContainer: {
+    paddingHorizontal: 16,
+    marginTop: 12,
+  },
   sortLabel: {
     fontSize: 12,
     fontWeight: '600',
     marginBottom: 8,
     letterSpacing: 0.5,
   },
-  sortChips: {
-    alignItems: 'center',
-    paddingRight: 16,
+  filterLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  wrapContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingVertical: 8,
   },
   sortChip: {
-    height: 32,
     borderRadius: 16,
-    marginRight: 8,
+  },
+  filterChip: {
+    borderRadius: 16,
   },
   headerIcons: {
     flexDirection: 'row',
@@ -383,6 +589,64 @@ const styles = StyleSheet.create({
   },
   emptyTitle: { fontWeight: '700', fontSize: 15 },
   emptySub: { fontSize: 13 },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'flex-start',
+    paddingTop: 80, // Adjust to position below header
+  },
+  filterDialog: {
+    width: '100%',
+    maxHeight: '80%',
+    padding: 16,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    elevation: 4,
+  },
+  searchDialog: {
+    width: '90%',
+    maxHeight: '80%',
+    borderRadius: 16,
+    padding: 16,
+    elevation: 4,
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  searchList: {
+    maxHeight: 300,
+  },
+  searchItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  searchItemText: {
+    fontSize: 16,
+  },
+  notFound: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginVertical: 16,
+  },
+  closeBtn: {
+    alignSelf: 'center',
+    padding: 12,
+  },
+  closeBtnText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
 export default QuestionsListScreen;
