@@ -53,6 +53,8 @@ export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body
   const clientType = req.get("x-client-type")
 
+  console.log("Logging in", clientType)
+
   if (!email?.trim() || !password?.trim()) {
     throw new ApiError(400, "Email and Password are required")
   }
@@ -118,6 +120,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
   if (!refreshToken) throw new ApiError(401, "Refresh Token Missing. Login Again")
 
+
   let decoded
   try {
     decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_KEY)
@@ -135,10 +138,13 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   const opts = { httpOnly: true, secure: true }
 
   if (clientType === "mobile") {
+    console.log("returning refreshed tokens to mobile")
     return res
       .status(200)
       .json(new ApiResponse(200, { accessToken: newAccessToken, refreshToken: newRefreshToken }, "Access Token Refreshed"))
   }
+
+  console.log("returning refreshed tokens to web")
 
   return res
     .status(200)
@@ -154,9 +160,8 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
   if (!user) throw new ApiError(401, "Login to update details")
 
   const { name, email, k_vals, c_vals, iterations, targetDate, maximumHours } = req.body
-  if (!name && !email && !k_vals && !c_vals && !iterations) {
-    throw new ApiError(400, "Nothing to Update")
-  }
+
+  console.log("Data Received", targetDate, maximumHours)
 
   const updates = {}
   if (name) updates.name = name
@@ -172,6 +177,10 @@ export const updateUserDetails = asyncHandler(async (req, res) => {
   if (iterations) updates.iterations = iterations
   if (targetDate) updates.targetDate = targetDate
   if (maximumHours) updates.maximumHours = maximumHours
+
+  if (!updates) {
+    throw new ApiError(400, "Nothing to Update")
+  }
 
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id },

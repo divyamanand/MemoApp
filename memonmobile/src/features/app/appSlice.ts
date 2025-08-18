@@ -49,13 +49,13 @@ interface AppState {
   userInfo?: UserInfo;
   tokenValid: boolean;
   tags: string[];
-  firstLogin: boolean,
+  firstLogin: boolean;
 }
 
 const initialState: AppState = {
   userInfo: undefined,
   tokenValid: false,
-  firstLogin: false,
+  firstLogin: true,
   tags: [],
 };
 
@@ -76,21 +76,27 @@ const appSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-  builder
-    .addCase(logoutUser.fulfilled, () => initialState)
-    .addCase(registerUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
-      state.userInfo = action.payload
-      state.tokenValid = true
-      state.firstLogin = true
-    })
-    .addCase(loginUser.fulfilled, (state, action: PayloadAction<UserInfo>) => {
-      state.userInfo = action.payload
-      state.tokenValid = true
-      state.firstLogin = false
-    })
-}
-
+    builder
+      .addCase(logoutUser.fulfilled, () => initialState)
+      .addCase(
+        registerUser.fulfilled,
+        (state, action: PayloadAction<UserInfo>) => {
+          state.userInfo = action.payload;
+          state.tokenValid = true;
+          state.firstLogin = true;
+        },
+      )
+      .addCase(
+        loginUser.fulfilled,
+        (state, action: PayloadAction<UserInfo>) => {
+          state.userInfo = action.payload;
+          state.tokenValid = true;
+          state.firstLogin = false;
+        },
+      );
+  },
 });
 
-export const { setCredentials, resetUser, addTags, finishOnboarding } = appSlice.actions;
+export const { setCredentials, resetUser, addTags, finishOnboarding } =
+  appSlice.actions;
 export default appSlice.reducer;

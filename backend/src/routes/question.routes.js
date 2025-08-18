@@ -1,10 +1,11 @@
 import { Router } from "express";
 import { verifyJWT } from "../middleware/verifyJWT.middleware.js";
-import { countNCompleted, countTotalCompleted, createQuestion, deleteQuestion, getAllQuestionsOfUser, getHeatmap, getTagsCount, getTodaysRevisions, markPOTDCompleted, markRevisionCompleted } from "../controller/question.controller.js";
+import { countNCompleted, countTotalCompleted, createMultipleQuestions, createQuestion, deleteQuestion, getAllQuestionsOfUser, getHeatmap, getTagsCount, getTodaysRevisions, markPOTDCompleted, markRevisionCompleted } from "../controller/question.controller.js";
 
 const router = Router()
 
 router.post("/add-question", verifyJWT, createQuestion)
+router.post("/add-multiple-questions", verifyJWT, createMultipleQuestions)
 router.delete("/delete-question/:questionId", verifyJWT, deleteQuestion)
 router.get("/questions", verifyJWT, getAllQuestionsOfUser)
 router.get("/revisions", verifyJWT, getTodaysRevisions)

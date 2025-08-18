@@ -62,7 +62,11 @@ const RevisionStep: React.FC<RevisionStepProps> = ({
       <TextInput
         style={[
           styles.input,
-          { borderColor: colors.outline, color: colors.onSurface, backgroundColor: colors.surfaceVariant },
+          {
+            borderColor: colors.outline,
+            color: colors.onSurface,
+            backgroundColor: colors.surfaceVariant,
+          },
         ]}
         placeholder="Hours (e.g., 2)"
         placeholderTextColor={colors.onSurfaceDisabled}
@@ -71,7 +75,12 @@ const RevisionStep: React.FC<RevisionStepProps> = ({
         onChangeText={setRevisionHours}
       />
 
-      <Text style={[styles.subText, { color: colors.onSurfaceVariant, marginTop: 20 }]}>
+      <Text
+        style={[
+          styles.subText,
+          { color: colors.onSurfaceVariant, marginTop: 20 },
+        ]}
+      >
         Select a target completion date
       </Text>
 
@@ -94,7 +103,10 @@ const RevisionStep: React.FC<RevisionStepProps> = ({
       )}
 
       <TouchableOpacity
-        style={[styles.proceedButton, { backgroundColor: colors.primary, marginTop: 40 }]}
+        style={[
+          styles.proceedButton,
+          { backgroundColor: colors.primary, marginTop: 40 },
+        ]}
         onPress={onContinue}
         disabled={disabled || loading}
       >
@@ -113,7 +125,12 @@ type TopicStepProps = {
   onBack: () => void;
 };
 
-const TopicStep: React.FC<TopicStepProps> = ({ topic, setTopic, onGetTags, onBack }) => {
+const TopicStep: React.FC<TopicStepProps> = ({
+  topic,
+  setTopic,
+  onGetTags,
+  onBack,
+}) => {
   const { colors } = useTheme();
   return (
     <View style={styles.content}>
@@ -121,7 +138,8 @@ const TopicStep: React.FC<TopicStepProps> = ({ topic, setTopic, onGetTags, onBac
         What would you like to learn?
       </Text>
       <Text style={[styles.subText, { color: colors.onSurfaceVariant }]}>
-        (Write a topic, exam, or subject. The more details you give, the better suggestions you’ll get.)
+        (Write a topic, exam, or subject. The more details you give, the better
+        suggestions you’ll get.)
       </Text>
 
       <TextInput
@@ -156,8 +174,14 @@ const TopicStep: React.FC<TopicStepProps> = ({ topic, setTopic, onGetTags, onBac
           onPress={onGetTags}
           disabled={!topic.trim()}
         >
-          <MaterialIcons name="arrow-forward" size={22} color={colors.onPrimary} />
-          <Text style={[styles.primaryWideText, { color: colors.onPrimary }]}>Get tags</Text>
+          <MaterialIcons
+            name="arrow-forward"
+            size={22}
+            color={colors.onPrimary}
+          />
+          <Text style={[styles.primaryWideText, { color: colors.onPrimary }]}>
+            Get tags
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -174,12 +198,22 @@ type TagsStepProps = {
   loading?: boolean;
 };
 
-const TagsStep: React.FC<TagsStepProps> = ({ tags, selectedTags, toggleTag, onProceed, onBack, onReset, loading }) => {
+const TagsStep: React.FC<TagsStepProps> = ({
+  tags,
+  selectedTags,
+  toggleTag,
+  onProceed,
+  onBack,
+  onReset,
+  loading,
+}) => {
   const { colors } = useTheme();
 
   return (
     <ScrollView contentContainerStyle={styles.tagsContainer}>
-      <Text style={[styles.tagsTitle, { color: colors.onSurface }]}>Recommended Tags</Text>
+      <Text style={[styles.tagsTitle, { color: colors.onSurface }]}>
+        Recommended Tags
+      </Text>
       <Text style={[styles.tagsSubtitle, { color: colors.onSurfaceVariant }]}>
         Select tags to customize your learning
       </Text>
@@ -193,9 +227,14 @@ const TagsStep: React.FC<TagsStepProps> = ({ tags, selectedTags, toggleTag, onPr
               mode={active ? 'flat' : 'outlined'}
               selected={active}
               onPress={() => toggleTag(tag)}
-              style={[styles.tagChip, active && { backgroundColor: colors.primaryContainer }]}
+              style={[
+                styles.tagChip,
+                active && { backgroundColor: colors.primaryContainer },
+              ]}
               textStyle={{
-                color: active ? colors.onPrimaryContainer : colors.onSurfaceVariant,
+                color: active
+                  ? colors.onPrimaryContainer
+                  : colors.onSurfaceVariant,
                 fontSize: 14,
                 fontWeight: '600',
               }}
@@ -210,18 +249,28 @@ const TagsStep: React.FC<TagsStepProps> = ({ tags, selectedTags, toggleTag, onPr
 
       <View style={{ flexDirection: 'row', gap: 12 }}>
         <TouchableOpacity
-          style={[styles.secondaryButton, { borderColor: colors.outline, flex: 1 }]}
+          style={[
+            styles.secondaryButton,
+            { borderColor: colors.outline, flex: 1 },
+          ]}
           onPress={onBack}
         >
           <Text style={{ color: colors.onSurface }}>Back</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.primaryWide, { backgroundColor: colors.primary, flex: 1 }]}
+          style={[
+            styles.primaryWide,
+            { backgroundColor: colors.primary, flex: 1 },
+          ]}
           onPress={onProceed}
           disabled={selectedTags.length === 0 || Boolean(loading)}
         >
-          <MaterialIcons name="arrow-forward" size={22} color={colors.onPrimary} />
+          <MaterialIcons
+            name="arrow-forward"
+            size={22}
+            color={colors.onPrimary}
+          />
           <Text style={[styles.primaryWideText, { color: colors.onPrimary }]}>
             {loading ? 'Loading...' : `Proceed (${selectedTags.length})`}
           </Text>
@@ -229,7 +278,9 @@ const TagsStep: React.FC<TagsStepProps> = ({ tags, selectedTags, toggleTag, onPr
       </View>
 
       <TouchableOpacity onPress={onReset} style={{ marginTop: 16 }}>
-        <Text style={[styles.resetText, { color: colors.error }]}>Reset & start over</Text>
+        <Text style={[styles.resetText, { color: colors.error }]}>
+          Reset & start over
+        </Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -241,43 +292,70 @@ type QuestionsStepProps = {
   onFinish: () => void;
 };
 
-const QuestionsStep: React.FC<QuestionsStepProps> = ({ questions, onBack, onFinish }) => {
+const QuestionsStep: React.FC<QuestionsStepProps> = ({
+  questions,
+  onBack,
+  onFinish,
+}) => {
   const { colors } = useTheme();
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.questionsContainer}>
-        <Text style={[styles.tagsTitle, { color: colors.onSurface }]}>AI Generated Questions</Text>
+        <Text style={[styles.tagsTitle, { color: colors.onSurface }]}>
+          AI Generated Questions
+        </Text>
         {questions.map((q, i) => (
           <View
             key={i}
             style={[
               styles.questionCard,
-              { backgroundColor: colors.surfaceVariant, borderColor: colors.outline },
+              {
+                backgroundColor: colors.surfaceVariant,
+                borderColor: colors.outline,
+              },
             ]}
           >
-            <Text style={[styles.question, { color: colors.onSurface }]}>{q.title || q}</Text>
-            <Text style={[styles.questionDesc, { color: colors.onSurfaceVariant }]}>
+            <Text style={[styles.question, { color: colors.onSurface }]}>
+              {q.title || q}
+            </Text>
+            <Text
+              style={[styles.questionDesc, { color: colors.onSurfaceVariant }]}
+            >
               {q.description || ''}
             </Text>
           </View>
         ))}
       </ScrollView>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 16 }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 16,
+        }}
+      >
         <TouchableOpacity
-          style={[styles.secondaryButton, { borderColor: colors.outline, flex: 1, marginRight: 8 }]}
+          style={[
+            styles.secondaryButton,
+            { borderColor: colors.outline, flex: 1, marginRight: 8 },
+          ]}
           onPress={onBack}
         >
           <Text style={{ color: colors.onSurface }}>Back</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.primaryWide, { backgroundColor: colors.primary, flex: 1, marginLeft: 8 }]}
+          style={[
+            styles.primaryWide,
+            { backgroundColor: colors.primary, flex: 1, marginLeft: 8 },
+          ]}
           onPress={onFinish}
         >
           <MaterialIcons name="check" size={22} color={colors.onPrimary} />
-          <Text style={[styles.primaryWideText, { color: colors.onPrimary }]}>Finish</Text>
+          <Text style={[styles.primaryWideText, { color: colors.onPrimary }]}>
+            Finish
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -316,7 +394,9 @@ const TopicScreen: React.FC = () => {
 
   // helper toggles
   const toggleTag = (tag: string) => {
-    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
   };
 
   const resetAllToStep1 = () => {
@@ -342,19 +422,29 @@ const TopicScreen: React.FC = () => {
 
     const hoursNum = Number(revisionHours);
     if (Number.isNaN(hoursNum) || hoursNum <= 0) {
-      Alert.alert('Invalid hours', 'Please enter a valid positive number for hours.');
+      Alert.alert(
+        'Invalid hours',
+        'Please enter a valid positive number for hours.',
+      );
       return;
     }
 
     // convert targetDate to UTC midnight ISO string
     const utcMidnightIso = new Date(
-      Date.UTC(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate())
+      Date.UTC(
+        targetDate.getFullYear(),
+        targetDate.getMonth(),
+        targetDate.getDate(),
+      ),
     ).toISOString();
 
     try {
       setLoadingUpdateUser(true);
       // backend expects: { targetDate, maximumHours }
-      await updateUser({ targetDate: utcMidnightIso, maximumHours: hoursNum }).unwrap();
+      await updateUser({
+        targetDate: utcMidnightIso,
+        maximumHours: hoursNum,
+      }).unwrap();
       setCurrentStep(2);
     } catch (err) {
       console.log('updateUser failed', err);
@@ -367,7 +457,10 @@ const TopicScreen: React.FC = () => {
   // Step 2 -> fetch recommended tags and go to Step 3
   const handleGetRecommendedTags = async () => {
     if (!topic.trim()) {
-      Alert.alert('Empty topic', 'Please enter something to get recommendations.');
+      Alert.alert(
+        'Empty topic',
+        'Please enter something to get recommendations.',
+      );
       return;
     }
 
@@ -412,10 +505,16 @@ const TopicScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.background }]}
+    >
       {/* Progress */}
       <View style={styles.progressWrapper}>
-        <ProgressBar progress={currentStep / totalSteps} color={colors.primary} style={styles.progress} />
+        <ProgressBar
+          progress={currentStep / totalSteps}
+          color={colors.primary}
+          style={styles.progress}
+        />
         <Text style={[styles.stepText, { color: colors.onSurfaceVariant }]}>
           Step {currentStep} of {totalSteps}
         </Text>
@@ -458,7 +557,11 @@ const TopicScreen: React.FC = () => {
       )}
 
       {currentStep === 4 && (
-        <QuestionsStep questions={questions} onBack={() => setCurrentStep(3)} onFinish={handleFinish} />
+        <QuestionsStep
+          questions={questions}
+          onBack={() => setCurrentStep(3)}
+          onFinish={handleFinish}
+        />
       )}
     </SafeAreaView>
   );
@@ -474,21 +577,63 @@ const styles = StyleSheet.create({
   progress: { height: 8, borderRadius: 4 },
   stepText: { textAlign: 'center', marginTop: 8, fontWeight: '600' },
 
-  content: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
 
-  questionText: { fontSize: 28, fontWeight: '700', textAlign: 'center', marginBottom: 8 },
-  subText: { fontSize: 16, fontWeight: '400', textAlign: 'center', marginBottom: 16 },
+  questionText: {
+    fontSize: 28,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  subText: {
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
 
-  input: { width: '100%', height: 60, borderWidth: 1, borderRadius: 12, padding: 16, fontSize: 16 },
+  input: {
+    width: '100%',
+    height: 60,
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 16,
+    fontSize: 16,
+  },
 
   // Buttons
-  proceedButton: { marginTop: 24, paddingVertical: 16, borderRadius: 12, alignItems: 'center', width: '100%' },
+  proceedButton: {
+    marginTop: 24,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    width: '100%',
+  },
   proceedText: { fontSize: 16, fontWeight: '600' },
 
-  primaryWide: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 14, paddingHorizontal: 18, borderRadius: 12 },
+  primaryWide: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+  },
   primaryWideText: { fontSize: 16, fontWeight: '700' },
 
-  secondaryButton: { paddingVertical: 14, paddingHorizontal: 18, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  secondaryButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderRadius: 12,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
   // Tags
   tagsContainer: { padding: 24 },
@@ -500,7 +645,12 @@ const styles = StyleSheet.create({
 
   // Questions
   questionsContainer: { padding: 24 },
-  questionCard: { padding: 16, borderWidth: 1, borderRadius: 12, marginBottom: 16 },
+  questionCard: {
+    padding: 16,
+    borderWidth: 1,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
   question: { fontSize: 16, fontWeight: '700', marginBottom: 6 },
   questionDesc: { fontSize: 14 },
 });

@@ -12,18 +12,18 @@ export const authApi = createApi({
         method: 'GET',
       }),
       keepUnusedDataFor: Infinity,
-      providesTags: () => ['User']
+      providesTags: () => ['User'],
     }),
 
     updateUserDetails: build.mutation<any, any>({
       query: (data) => ({
-        url: '/api/v1/user/updateUserDetails',
-        method: "PATCH",
-        data
+        url: '/api/v1/user/update',
+        method: 'PATCH',
+        data,
       }),
 
-      invalidatesTags: () => ['User']
-    })
+      invalidatesTags: () => ['User'],
+    }),
   }),
 });
 

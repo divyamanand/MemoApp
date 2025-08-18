@@ -21,15 +21,16 @@ export const getRecommendedTags = async (
 
 export const getGeneratedQuestions = async (tags: string[]) => {
   try {
-    const { data } = await api.get("/api/v1/ai/generated-questions", {
+    const { data } = await api.get('/api/v1/ai/generated-questions', {
       params: { tags },
       paramsSerializer: (params) =>
-        params.tags.map((t: string) => `tags=${encodeURIComponent(t)}`).join("&"),
-    })
-    return data
+        params.tags
+          .map((t: string) => `tags=${encodeURIComponent(t)}`)
+          .join('&'),
+    });
+    return data;
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
-}
-
+};

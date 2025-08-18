@@ -1,32 +1,22 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
-import {
-  Text,
-  useTheme,
-  IconButton,
-  Card,
-  ActivityIndicator,
-  Surface,
-  Chip,
-  Button as PaperButton,
-} from 'react-native-paper';
-import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
+import { RootStackParamList } from '@/src/constants/types';
 import {
   useGetCountTillDateQuery,
   useGetHeatMapQuery,
   useGetRevisionsInfiniteQuery,
 } from '@/src/features/questions/api/questionApi';
-import { MaterialIcons } from '@expo/vector-icons';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/constants/types';
-import HeatMap from '@/src/components/HeatMap';
+import { useAppSelector } from '@/src/store/hooks';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Card,
+  IconButton,
+  Surface,
+  Text,
+  useTheme,
+} from 'react-native-paper';
 
 const DashboardScreen = () => {
   const theme = useTheme();
@@ -65,7 +55,7 @@ const DashboardScreen = () => {
     (completedUptodate?.totalCompleted ?? 0) + completedToday;
   const loading = loadingRevisions || loadingCounts;
 
-  console.log(heatmap);
+  console.log(userInfo);
 
   const aiSuggestions = [
     { id: 1, title: 'Algebra Practice', subject: 'Math', difficulty: 'Medium' },
@@ -175,7 +165,7 @@ const DashboardScreen = () => {
         />
 
         {/* AI Suggestions Section */}
-        <Surface
+        {/* <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
           elevation={1}
         >
@@ -249,10 +239,10 @@ const DashboardScreen = () => {
               </TouchableOpacity>
             ))}
           </View>
-        </Surface>
+        </Surface> */}
 
         {/* Learning Roadmap Section */}
-        <Surface
+        {/* <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
           elevation={1}
         >
@@ -315,10 +305,10 @@ const DashboardScreen = () => {
               Next: {roadmapData.nextTopic}
             </Text>
           </TouchableOpacity>
-        </Surface>
+        </Surface> */}
 
         {/* Recent Timeline Section */}
-        <Surface
+        {/* <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
           elevation={1}
         >
@@ -374,10 +364,10 @@ const DashboardScreen = () => {
               </TouchableOpacity>
             ))}
           </View>
-        </Surface>
+        </Surface> */}
 
         {/* Test Center Section */}
-        <Surface
+        {/* <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}
           elevation={1}
         >
@@ -457,7 +447,7 @@ const DashboardScreen = () => {
               </TouchableOpacity>
             ))}
           </View>
-        </Surface>
+        </Surface> */}
 
         <Surface
           style={[

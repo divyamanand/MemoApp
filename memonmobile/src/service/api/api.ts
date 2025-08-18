@@ -1,11 +1,15 @@
 import { ErrorResponse } from '@/src/constants/types';
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import Constants from 'expo-constants';
 import * as SecureStorage from 'expo-secure-store';
 import { handleError } from '../errorService';
 import { handleReset } from '../resetService';
+import { handleApiResponse } from '../responseService';
+
+const { API_URL } = Constants.expoConfig?.extra || {};
 
 export const api = axios.create({
-  baseURL: 'http://172.27.70.150:5000',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
     'x-client-type': 'mobile',
@@ -35,26 +39,31 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = await SecureStorage.getItemAsync('refreshToken');
+        console.log(
+          'Trying to refresh token. RefreshToken found',
+          refreshToken,
+        );
         if (refreshToken) {
-          console.log('Trying to refresh token. RefreshToken found');
+          console.log(
+            'Trying to refresh token. RefreshToken found',
+            refreshToken,
+          );
           const res = await axios.post(
             `${api.defaults.baseURL}/api/v1/user/refresh-token`,
             {},
             {
               headers: {
                 Authorization: `Bearer ${refreshToken}`,
+                'Content-Type': 'application/json',
+                'x-client-type': 'mobile',
               },
             },
           );
 
-          const newAccessToken = res.data.accessToken;
-          const newRefreshToken = res.data.refreshToken;
+          const formattedData = handleApiResponse(res)
 
-          console.log('Refresh API Response:', res.data);
-          console.log('New Tokens:', {
-            accessToken: res.data.accessToken,
-            refreshToken: res.data.refreshToken,
-          });
+          const newAccessToken = formattedData.data.accessToken;
+          const newRefreshToken = formattedData.data.refreshToken;
 
           await SecureStorage.setItemAsync(
             'accessToken',

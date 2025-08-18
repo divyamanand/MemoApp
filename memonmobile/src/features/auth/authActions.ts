@@ -1,10 +1,10 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { api } from '../../service/api/api';
-import * as SecureStorage from 'expo-secure-store';
 import { ErrorResponse } from '@/src/constants/types';
 import { handleError } from '@/src/service/errorService';
-import { handleApiResponse } from '@/src/service/responseService';
 import { handleReset } from '@/src/service/resetService';
+import { handleApiResponse } from '@/src/service/responseService';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import * as SecureStorage from 'expo-secure-store';
+import { api } from '../../service/api/api';
 
 const authHandler = async (
   endpoint: string,
@@ -16,8 +16,7 @@ const authHandler = async (
     const { data } = handleApiResponse(response);
 
     const { accessToken, refreshToken, user } = data;
-    console.log('Token from api', accessToken);
-    console.log(refreshToken);
+    console.log('Token from api', accessToken, refreshToken);
     await SecureStorage.setItemAsync('accessToken', String(accessToken));
     await SecureStorage.setItemAsync('refreshToken', String(refreshToken));
     return user;

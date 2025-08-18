@@ -63,6 +63,60 @@ export const createQuestion = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, updatedQuestion, "Question added successfully"));
 });
 
+export const createMultipleQuestions = asyncHandler(async (req, res) => {
+  const questions = req.body;
+
+  if (!Array.isArray(questions) || questions.length === 0) {
+    throw new ApiError(400, "Questions array is required");
+  }
+
+  const preparedQuestions = questions.map((q) => {
+    const { ...rest } = q;
+    const questionData = { ...rest, userId: req.user._id };
+
+    const diff = questionData.difficulty;
+    if (!diff) throw new ApiError(404, "Difficulty is missing for a question");
+
+    const getVal = (m) => (m instanceof Map ? m.get(diff) : m[diff]);
+    const k = getVal(req.user.k_vals);
+    const c = getVal(req.user.c_vals);
+    const i = getVal(req.user.iterations);
+
+    questionData.revisionFormula = { k, c, i };
+
+    return questionData;
+  });
+
+  // Insert all at once
+  const createdQuestions = await Question.insertMany(preparedQuestions);
+  if (!createdQuestions || createdQuestions.length === 0) {
+    throw new ApiError(500, "Error adding questions");
+  }
+
+  // Create revision plans for each question
+  const targetDate = req.user.targetDate;
+  await Promise.all(
+    createdQuestions.map((question) =>
+      createRevisionPlan(
+        question._id,
+        question.revisionFormula,
+        question.baseDate,
+        targetDate
+      )
+    )
+  );
+
+  // Fetch updated versions with all calculated fields
+  const updatedQuestions = await Question.find({
+    _id: { $in: createdQuestions.map((q) => q._id) },
+  });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, updatedQuestions, "Questions added successfully"));
+});
+
+
 
 export const deleteQuestion = asyncHandler(async (req, res) => {
 
