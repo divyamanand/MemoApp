@@ -1,22 +1,32 @@
-import { RootStackParamList } from '@/src/constants/types';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  Text,
+  useTheme,
+  IconButton,
+  Card,
+  ActivityIndicator,
+  Surface,
+  Chip,
+  Button as PaperButton,
+} from 'react-native-paper';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
 import {
   useGetCountTillDateQuery,
   useGetHeatMapQuery,
   useGetRevisionsInfiniteQuery,
 } from '@/src/features/questions/api/questionApi';
-import { useAppSelector } from '@/src/store/hooks';
-import { useNetInfo } from '@react-native-community/netinfo';
+import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import React, { useEffect, useMemo, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import {
-  ActivityIndicator,
-  Card,
-  IconButton,
-  Surface,
-  Text,
-  useTheme,
-} from 'react-native-paper';
+import { RootStackParamList } from '@/src/constants/types';
+import HeatMap from '@/src/components/HeatMap';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const DashboardScreen = () => {
   const theme = useTheme();
@@ -55,7 +65,6 @@ const DashboardScreen = () => {
     (completedUptodate?.totalCompleted ?? 0) + completedToday;
   const loading = loadingRevisions || loadingCounts;
 
-  console.log(userInfo);
 
   const aiSuggestions = [
     { id: 1, title: 'Algebra Practice', subject: 'Math', difficulty: 'Medium' },
