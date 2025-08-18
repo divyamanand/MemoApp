@@ -10,8 +10,10 @@ import {
 import { Text, useTheme, Surface } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '@/src/constants/types';
-import { useAppSelector } from '@/src/store/hooks';
+import { ErrorResponse, RootStackParamList } from '@/src/constants/types';
+import { useAppDispatch, useAppSelector } from '@/src/store/hooks';
+import { logoutUser } from '@/src/features/auth/authActions';
+import { handleError } from '@/src/service/errorService';
 
 const ProfileScreen = () => {
   const { colors } = useTheme();
@@ -23,6 +25,17 @@ const ProfileScreen = () => {
     email: userInfo?.email || null,
     avatar:
       userInfo?.avatar ?? 'https://randomuser.me/api/portraits/men/32.jpg',
+  };
+  const dispatch = useAppDispatch()
+  const handleLogout = async () => {
+    try {
+      await dispatch(logoutUser());
+      navigation.navigate('Login');
+    } catch (error) {
+      const formattedError: ErrorResponse = handleError(error);
+      if (formattedError.statusCode === 403) navigation.navigate('Login');
+      //else error logout.
+    }
   };
 
   // Achievement badges
@@ -90,7 +103,7 @@ const ProfileScreen = () => {
 
           <TouchableOpacity
             style={[styles.actionButton, { backgroundColor: colors.surface }]}
-            onPress={() => alert('Logout action placeholder')}
+            onPress={handleLogout}
           >
             <MaterialIcons
               name="logout"
