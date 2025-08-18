@@ -50,8 +50,8 @@ const PracticeScreen = () => {
   );
 
   const allTags = useMemo(
-    () => [...new Set(allQuestions.flatMap(q => q.tags))],
-    [allQuestions]
+    () => [...new Set(allQuestions.flatMap((q) => q.tags))],
+    [allQuestions],
   );
 
   const dispatch = useAppDispatch();
@@ -77,7 +77,8 @@ const PracticeScreen = () => {
 
   const totalTarget = allQuestions.length;
   const progress = completedCount / totalTarget;
-  const displayLabel = totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0';
+  const displayLabel =
+    totalTarget > 0 ? `${completedCount}/${totalTarget}` : '0/0';
 
   const openQuestionModal = (question: ResponseQuestion): void => {
     setSelectedQuestion(question);
@@ -92,8 +93,8 @@ const PracticeScreen = () => {
   // SEARCH LOGIC
   const filteredQuestions = useMemo(() => {
     if (!searchQuery) return [];
-    return allQuestions.filter(q =>
-      (q.questionName ?? '').toLowerCase().includes(searchQuery.toLowerCase())
+    return allQuestions.filter((q) =>
+      (q.questionName ?? '').toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [searchQuery, allQuestions]);
 
@@ -191,9 +192,7 @@ const PracticeScreen = () => {
           <Text style={{ color: colors.onSurface, fontWeight: '600' }}>
             No items
           </Text>
-          <Text
-            style={{ color: colors.onSurfaceVariant, marginTop: 4 }}
-          >
+          <Text style={{ color: colors.onSurfaceVariant, marginTop: 4 }}>
             New recommendations will appear here.
           </Text>
         </View>
@@ -261,11 +260,13 @@ const PracticeScreen = () => {
         onRequestClose={closeSearch}
       >
         <View style={searchStyles.overlay}>
-          <View style={[searchStyles.dialog, { backgroundColor: colors.surface }]}>
+          <View
+            style={[searchStyles.dialog, { backgroundColor: colors.surface }]}
+          >
             <TextInput
               style={[
                 searchStyles.input,
-                { borderColor: colors.outline, color: colors.onSurface }
+                { borderColor: colors.outline, color: colors.onSurface },
               ]}
               placeholder="Search questions..."
               placeholderTextColor={colors.onSurfaceVariant}
@@ -275,10 +276,12 @@ const PracticeScreen = () => {
             />
 
             {searchQuery && filteredQuestions.length === 0 ? (
-              <Text style={[searchStyles.notFound, { color: colors.error }]}>No questions found</Text>
+              <Text style={[searchStyles.notFound, { color: colors.error }]}>
+                No questions found
+              </Text>
             ) : (
               <ScrollView style={searchStyles.list}>
-                {filteredQuestions.map(q => (
+                {filteredQuestions.map((q) => (
                   <TouchableOpacity
                     key={q._id}
                     style={searchStyles.item}
@@ -287,7 +290,12 @@ const PracticeScreen = () => {
                       openQuestionModal(q);
                     }}
                   >
-                    <Text style={[searchStyles.itemText, { color: colors.onSurface }]}>
+                    <Text
+                      style={[
+                        searchStyles.itemText,
+                        { color: colors.onSurface },
+                      ]}
+                    >
                       {q.questionName}
                     </Text>
                   </TouchableOpacity>
@@ -298,7 +306,11 @@ const PracticeScreen = () => {
               style={searchStyles.closeBtn}
               onPress={closeSearch}
             >
-              <Text style={[searchStyles.closeBtnText, { color: colors.primary }]}>Close</Text>
+              <Text
+                style={[searchStyles.closeBtnText, { color: colors.primary }]}
+              >
+                Close
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -351,33 +363,49 @@ const styles = StyleSheet.create({
 // Styles for search dialog/modal
 const searchStyles = StyleSheet.create({
   overlay: {
-    flex: 1, backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center', alignItems: 'center'
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   dialog: {
-    width: '88%', maxHeight: '81%', borderRadius: 14, padding: 18
+    width: '88%',
+    maxHeight: '81%',
+    borderRadius: 14,
+    padding: 18,
   },
   input: {
-    borderWidth: 1, borderRadius: 8, padding: 11, fontSize: 16, marginBottom: 15
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 11,
+    fontSize: 16,
+    marginBottom: 15,
   },
   list: {
-    maxHeight: 260, marginBottom: 12
+    maxHeight: 260,
+    marginBottom: 12,
   },
   item: {
-    paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#EEE'
+    paddingVertical: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEE',
   },
   itemText: {
     fontSize: 16,
   },
   notFound: {
-    textAlign: 'center', fontSize: 16, marginVertical: 22
+    textAlign: 'center',
+    fontSize: 16,
+    marginVertical: 22,
   },
   closeBtn: {
-    alignSelf: 'center', padding: 10,
+    alignSelf: 'center',
+    padding: 10,
   },
   closeBtnText: {
-    fontSize: 16, fontWeight: '700'
-  }
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });
 
 export default PracticeScreen;

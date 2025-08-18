@@ -14,7 +14,7 @@ import { getQuestionTags } from './endPoints/getQuestionTags';
 export const questionApi = createApi({
   reducerPath: 'questionApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Questions', 'Revisions'], 
+  tagTypes: ['Questions', 'Revisions'],
   endpoints: (build) => ({
     getQuestions: getQuestionsEndpoint(build),
     getRevisions: getRevisionsEndpoint(build),

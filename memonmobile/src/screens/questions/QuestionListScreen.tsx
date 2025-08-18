@@ -19,7 +19,10 @@ import {
 } from 'react-native-paper';
 
 import TextInputField from '../../components/TextInputField';
-import { useGetQuestionsInfiniteQuery, useGetTagsQuery } from '@/src/features/questions/api/questionApi';
+import {
+  useGetQuestionsInfiniteQuery,
+  useGetTagsQuery,
+} from '@/src/features/questions/api/questionApi';
 import QuestionInfoScreen from './QuestionInfoScreen';
 import { ResponseQuestion, RootStackParamList } from '@/src/constants/types';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -63,10 +66,10 @@ const QuestionsListScreen = () => {
     [questions],
   );
 
-  const {data: tagsCount} = useGetTagsQuery(undefined)
+  const { data: tagsCount } = useGetTagsQuery(undefined);
 
   const allTags = useMemo(() => {
-    return [...new Set(tagsCount?.map(t => t.tag))];
+    return [...new Set(tagsCount?.map((t) => t.tag))];
   }, [tagsCount]);
 
   const dispatch = useAppDispatch();
@@ -79,8 +82,8 @@ const QuestionsListScreen = () => {
     let filtered = [...allQuestions];
 
     if (selectedTags.length > 0) {
-      filtered = filtered.filter(q =>
-        q.tags?.some(tag => selectedTags.includes(tag))
+      filtered = filtered.filter((q) =>
+        q.tags?.some((tag) => selectedTags.includes(tag)),
       );
     }
 
@@ -93,8 +96,10 @@ const QuestionsListScreen = () => {
     switch (sortBy) {
       case 'difficulty':
         filtered.sort((a, b) => {
-          const valA = difficultyMap[a.difficulty?.toLowerCase() ?? 'medium'] ?? 2;
-          const valB = difficultyMap[b.difficulty?.toLowerCase() ?? 'medium'] ?? 2;
+          const valA =
+            difficultyMap[a.difficulty?.toLowerCase() ?? 'medium'] ?? 2;
+          const valB =
+            difficultyMap[b.difficulty?.toLowerCase() ?? 'medium'] ?? 2;
           return sortDirection === 'asc' ? valA - valB : valB - valA;
         });
         break;
@@ -126,8 +131,8 @@ const QuestionsListScreen = () => {
 
   const filteredQuestions = useMemo(() => {
     if (!searchQuery) return [];
-    return allQuestions.filter(q =>
-      q.questionName.toLowerCase().includes(searchQuery.toLowerCase())
+    return allQuestions.filter((q) =>
+      q.questionName.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [searchQuery, allQuestions]);
 
@@ -163,14 +168,12 @@ const QuestionsListScreen = () => {
   };
 
   const toggleTag = (tag: string) => {
-    setSelectedTags(prev =>
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
   };
 
-  console.log(tagsCount)
+  console.log(tagsCount);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -267,9 +270,14 @@ const QuestionsListScreen = () => {
         onRequestClose={closeSearch}
       >
         <View style={styles.modalOverlay}>
-          <View style={[styles.searchDialog, { backgroundColor: colors.surface }]}>
+          <View
+            style={[styles.searchDialog, { backgroundColor: colors.surface }]}
+          >
             <TextInput
-              style={[styles.searchInput, { borderColor: colors.outline, color: colors.onSurface }]}
+              style={[
+                styles.searchInput,
+                { borderColor: colors.outline, color: colors.onSurface },
+              ]}
               placeholder="Search questions..."
               placeholderTextColor={colors.onSurfaceVariant}
               value={searchQuery}
@@ -292,7 +300,12 @@ const QuestionsListScreen = () => {
                       openQuestionModal(item);
                     }}
                   >
-                    <Text style={[styles.searchItemText, { color: colors.onSurface }]}>
+                    <Text
+                      style={[
+                        styles.searchItemText,
+                        { color: colors.onSurface },
+                      ]}
+                    >
                       {item.questionName}
                     </Text>
                   </TouchableOpacity>
@@ -301,7 +314,9 @@ const QuestionsListScreen = () => {
               />
             )}
             <TouchableOpacity onPress={closeSearch} style={styles.closeBtn}>
-              <Text style={[styles.closeBtnText, { color: colors.primary }]}>Close</Text>
+              <Text style={[styles.closeBtnText, { color: colors.primary }]}>
+                Close
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -318,9 +333,13 @@ const QuestionsListScreen = () => {
           activeOpacity={1}
           onPress={closeFilter}
         >
-          <ScrollView style={[styles.filterDialog, { backgroundColor: colors.surface }]}>
+          <ScrollView
+            style={[styles.filterDialog, { backgroundColor: colors.surface }]}
+          >
             <View style={styles.sortContainer}>
-              <Text style={[styles.sortLabel, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[styles.sortLabel, { color: colors.onSurfaceVariant }]}
+              >
                 SORT BY
               </Text>
               <View style={styles.wrapContainer}>
@@ -334,7 +353,9 @@ const QuestionsListScreen = () => {
                       selected={active}
                       onPress={() => {
                         if (active) {
-                          setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+                          setSortDirection((prev) =>
+                            prev === 'asc' ? 'desc' : 'asc',
+                          );
                         } else {
                           setSortBy(option);
                           setSortDirection('asc');
@@ -345,11 +366,19 @@ const QuestionsListScreen = () => {
                         active && { backgroundColor: colors.primaryContainer },
                       ]}
                       textStyle={{
-                        color: active ? colors.primary : colors.onSurfaceVariant,
+                        color: active
+                          ? colors.primary
+                          : colors.onSurfaceVariant,
                         fontSize: 12,
                         fontWeight: '600',
                       }}
-                      icon={active ? (sortDirection === 'asc' ? 'arrow-up' : 'arrow-down') : undefined}
+                      icon={
+                        active
+                          ? sortDirection === 'asc'
+                            ? 'arrow-up'
+                            : 'arrow-down'
+                          : undefined
+                      }
                     >
                       {item}
                     </Chip>
@@ -359,7 +388,9 @@ const QuestionsListScreen = () => {
             </View>
 
             <View style={styles.filterContainer}>
-              <Text style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}>
+              <Text
+                style={[styles.filterLabel, { color: colors.onSurfaceVariant }]}
+              >
                 FILTER BY TAG
               </Text>
               <View style={styles.wrapContainer}>
@@ -374,10 +405,14 @@ const QuestionsListScreen = () => {
                       onPress={() => toggleTag(t.tag)}
                       style={[
                         styles.filterChip,
-                        active && { backgroundColor: colors.secondaryContainer },
+                        active && {
+                          backgroundColor: colors.secondaryContainer,
+                        },
                       ]}
                       textStyle={{
-                        color: active ? colors.onSecondary : colors.onSurfaceVariant,
+                        color: active
+                          ? colors.onSecondary
+                          : colors.onSurfaceVariant,
                         fontSize: 12,
                         fontWeight: '600',
                       }}

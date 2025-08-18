@@ -34,9 +34,12 @@ const DashboardScreen = () => {
   const { userInfo } = useAppSelector((s) => s.app);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const { isConnected } = useNetInfo()
+  const { isConnected } = useNetInfo();
 
-  const {data: heatmap} = useGetHeatMapQuery({from: "2025-01-01", to: "2025-12-31"})
+  const { data: heatmap } = useGetHeatMapQuery({
+    from: '2025-01-01',
+    to: '2025-12-31',
+  });
 
   const [completedToday, setCompletedToday] = useState(0);
 
@@ -62,7 +65,7 @@ const DashboardScreen = () => {
     (completedUptodate?.totalCompleted ?? 0) + completedToday;
   const loading = loadingRevisions || loadingCounts;
 
-  console.log(heatmap)
+  console.log(heatmap);
 
   const aiSuggestions = [
     { id: 1, title: 'Algebra Practice', subject: 'Math', difficulty: 'Medium' },
@@ -139,7 +142,7 @@ const DashboardScreen = () => {
           </View>
 
           <IconButton
-            icon={isConnected? 'wifi' : 'wifi-off'}
+            icon={isConnected ? 'wifi' : 'wifi-off'}
             iconColor={isConnected ? 'green' : 'red'}
             size={24}
             onPress={() => {
@@ -457,19 +460,26 @@ const DashboardScreen = () => {
         </Surface>
 
         <Surface
-            style={[styles.card, { backgroundColor: colors.surface, paddingVertical: 0, paddingHorizontal: 10 }]}
-            elevation={1}
+          style={[
+            styles.card,
+            {
+              backgroundColor: colors.surface,
+              paddingVertical: 0,
+              paddingHorizontal: 10,
+            },
+          ]}
+          elevation={1}
+        >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ paddingVertical: 0, paddingHorizontal: 0 }}
           >
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingVertical: 0, paddingHorizontal: 0 }}
-            >
-              <View style={{ margin: 0, padding: 0, marginLeft: -25 }}> 
-                {/* <HeatMap/> */}
-              </View>
-            </ScrollView>
-          </Surface>
+            <View style={{ margin: 0, padding: 0, marginLeft: -25 }}>
+              {/* <HeatMap/> */}
+            </View>
+          </ScrollView>
+        </Surface>
 
         <Surface
           style={[styles.card, { backgroundColor: colors.surface }]}

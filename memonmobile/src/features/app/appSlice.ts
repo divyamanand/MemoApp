@@ -48,13 +48,13 @@ interface UserInfo {
 interface AppState {
   userInfo?: UserInfo;
   tokenValid: boolean;
-  tags: string[]
+  tags: string[];
 }
 
 const initialState: AppState = {
   userInfo: undefined,
   tokenValid: false,
-  tags: []
+  tags: [],
 };
 
 const appSlice = createSlice({
@@ -67,9 +67,8 @@ const appSlice = createSlice({
     },
     resetUser: () => ({ ...initialState }),
     addTags: (state, action: PayloadAction<string[]>) => {
-        state.tags = [...new Set([...state.tags, ...action.payload])];
-      }
-
+      state.tags = [...new Set([...state.tags, ...action.payload])];
+    },
   },
   extraReducers: (builder) => {
     builder

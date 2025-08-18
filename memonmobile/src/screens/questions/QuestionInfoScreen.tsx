@@ -71,16 +71,16 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
     }
   };
 
-  const [deleteQuestion] = useDeleteQuestionMutation()
+  const [deleteQuestion] = useDeleteQuestionMutation();
 
   const handleDelete = async (questionId: string) => {
     try {
-      await deleteQuestion(questionId).unwrap()
-      onClose?.()
+      await deleteQuestion(questionId).unwrap();
+      onClose?.();
     } catch (error) {
-      console.log("Error deleting question", error)
+      console.log('Error deleting question', error);
     }
-  }
+  };
 
   const difficultyColor = getDifficultyColor(editableDifficulty);
 

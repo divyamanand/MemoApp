@@ -29,7 +29,6 @@ import { useAddQuestionMutation } from '@/src/features/questions/api/questionApi
 import { nanoid } from '@reduxjs/toolkit';
 import { useAppSelector } from '@/src/store/hooks';
 
-
 const DIFFICULTY_SUGGESTIONS: difficulty[] = ['easy', 'medium', 'hard'];
 
 const AddQuestionScreen = () => {
@@ -45,9 +44,9 @@ const AddQuestionScreen = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const {tags: tag_suggestions} = useAppSelector(state => state.app)
+  const { tags: tag_suggestions } = useAppSelector((state) => state.app);
 
-  console.log(tag_suggestions)
+  console.log(tag_suggestions);
 
   // AI Suggestion states
   const [showDifficultySuggestions, setShowDifficultySuggestions] =

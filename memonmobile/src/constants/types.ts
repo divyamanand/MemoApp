@@ -8,6 +8,8 @@ export type RootStackParamList = {
   EditProfile: undefined;
   ProfileScreen: undefined;
   DashboardScreen: undefined;
+  Topic: undefined;
+  Topictags: undefined;
 
   Suggestions: undefined;
   Test: undefined;
@@ -63,15 +65,14 @@ export type ResponseQuestion = {
   completedCount?: number;
 };
 
-
 type HeatMapElement = {
   date: string | Date;
-  count: number
-}
+  count: number;
+};
 
 export type HeatMap = {
-  data: HeatMapElement[]
-}
+  data: HeatMapElement[];
+};
 
 export type difficulty = 'easy' | 'medium' | 'hard';
 

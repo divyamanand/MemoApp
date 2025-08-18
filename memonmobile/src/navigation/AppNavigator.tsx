@@ -17,6 +17,9 @@ import DashboardNavigator from './DashboardNavigator';
 import QuestionNavigator from './QuestionNavigator';
 import ProfileNavigator from './ProfileNavigator';
 import ResetPassword from '../screens/auth/ResetPassword';
+import TopicScreen from '../screens/auth/TopicScreen';
+import TagsScreen from '../screens/auth/TagsScreen';
+import SuggestionScreen from '../screens/questions/SuggestionScreen';
 
 const AppNavigator: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,6 +40,9 @@ const AppNavigator: React.FC = () => {
           {/* <Stack.Screen name="Help" component={HelpScreen} /> */}
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPassword} />
+          <Stack.Screen name="Topic" component={TopicScreen} />
+          <Stack.Screen name="Topictags" component={TagsScreen} />
+          <Stack.Screen name="Suggestions" component={SuggestionScreen} />
         </Stack.Navigator>
       </>
     );
