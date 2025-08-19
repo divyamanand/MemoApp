@@ -7,11 +7,9 @@ export const getRecommendedTags = async (
   topicDescription: string,
 ): Promise<RecommendedTagsResponse> => {
   try {
-    const { data } = await api.get<RecommendedTagsResponse>(
+    const { data } = await api.post<RecommendedTagsResponse>(
       '/api/v1/ai/recommended-topic',
-      {
-        params: { description: topicDescription }, // query param
-      },
+      { topicDescription },
     );
     return data;
   } catch (error) {
@@ -21,12 +19,8 @@ export const getRecommendedTags = async (
 
 export const getGeneratedQuestions = async (tags: string[]) => {
   try {
-    const { data } = await api.get('/api/v1/ai/generated-questions', {
-      params: { tags },
-      paramsSerializer: (params) =>
-        params.tags
-          .map((t: string) => `tags=${encodeURIComponent(t)}`)
-          .join('&'),
+    const { data } = await api.post('/api/v1/ai/generated-questions', {
+      tags,
     });
     return data;
   } catch (error) {

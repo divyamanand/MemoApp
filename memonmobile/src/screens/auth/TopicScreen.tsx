@@ -390,7 +390,7 @@ const TopicScreen: React.FC = () => {
   const [loadingQuestions, setLoadingQuestions] = useState(false);
 
   // RTK mutation hook
-  const [updateUser] = useUpdateUserDetailsMutation();
+  const [updateUser, {data}] = useUpdateUserDetailsMutation();
 
   // helper toggles
   const toggleTag = (tag: string) => {
@@ -440,11 +440,12 @@ const TopicScreen: React.FC = () => {
 
     try {
       setLoadingUpdateUser(true);
-      // backend expects: { targetDate, maximumHours }
       await updateUser({
         targetDate: utcMidnightIso,
         maximumHours: hoursNum,
       }).unwrap();
+      console.log(data)
+      // dispatch(updateUser(data))
       setCurrentStep(2);
     } catch (err) {
       console.log('updateUser failed', err);
@@ -466,9 +467,12 @@ const TopicScreen: React.FC = () => {
 
     try {
       setLoadingTags(true);
+      await updateUser({
+        topicDescription: topic
+      }).unwrap();
       const data = await getRecommendedTags(topic);
       setTags(data?.tags || []);
-      setSelectedTags([]); // reset any previous selection
+      setSelectedTags([]);
       setCurrentStep(3);
     } catch (err) {
       console.log('getRecommendedTags error', err);
@@ -489,7 +493,7 @@ const TopicScreen: React.FC = () => {
       setLoadingQuestions(true);
       dispatch(addTags(selectedTags));
       const data = await getGeneratedQuestions(selectedTags);
-      setQuestions(data?.questions || data || []); // backend might return different shapes
+      setQuestions(data?.questions || data || []);
       setCurrentStep(4);
     } catch (err) {
       console.log('getGeneratedQuestions error', err);
@@ -499,7 +503,6 @@ const TopicScreen: React.FC = () => {
     }
   };
 
-  // Step 4 finish
   const handleFinish = () => {
     dispatch(finishOnboarding());
   };

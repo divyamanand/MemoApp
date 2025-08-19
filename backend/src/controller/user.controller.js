@@ -154,43 +154,53 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 })
 
 export const updateUserDetails = asyncHandler(async (req, res) => {
-  const user = req.user
-  const clientType = req.get("x-client-type")
+  const user = req.user;
 
-  if (!user) throw new ApiError(401, "Login to update details")
+  if (!user) {
+    throw new ApiError(401, "Login to update details");
+  }
 
-  const { name, email, k_vals, c_vals, iterations, targetDate, maximumHours } = req.body
+  const {
+    name,
+    email,
+    k_vals,
+    c_vals,
+    iterations,
+    targetDate,
+    maximumHours,
+    topicDescription,
+  } = req.body;
 
-  console.log("Data Received", targetDate, maximumHours)
+  const updates = {};
 
-  const updates = {}
-  if (name) updates.name = name
+  if (name) updates.name = name;
+
   if (email) {
-    const emailExist = await User.findOne({ email }).lean()
-    if (emailExist && emailExist._id.toString() !== user._id.toString()) {
-      throw new ApiError(400, "Email already exists. Can't be updated!")
+    const existingUser = await User.findOne({ email }).lean();
+    if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+      throw new ApiError(400, "Email already exists. Can't be updated!");
     }
-    updates.email = email
-  }
-  if (k_vals) updates.k_vals = k_vals
-  if (c_vals) updates.c_vals = c_vals
-  if (iterations) updates.iterations = iterations
-  if (targetDate) updates.targetDate = targetDate
-  if (maximumHours) updates.maximumHours = maximumHours
-
-  if (!updates) {
-    throw new ApiError(400, "Nothing to Update")
+    updates.email = email;
   }
 
-  const updatedUser = await User.findOneAndUpdate(
-    { _id: user._id },
+  if (k_vals !== undefined) updates.k_vals = k_vals;
+  if (c_vals !== undefined) updates.c_vals = c_vals;
+  if (iterations !== undefined) updates.iterations = iterations;
+  if (targetDate !== undefined) updates.targetDate = targetDate;
+  if (maximumHours !== undefined) updates.maximumHours = maximumHours;
+  if (topicDescription !== undefined) updates.topicDescription = topicDescription;
+
+  if (Object.keys(updates).length === 0) {
+    throw new ApiError(400, "Nothing to update");
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
     { $set: updates },
     { new: true, runValidators: true }
-  ).select("-password -refreshToken")
+  ).select("-password -refreshToken");
 
   return res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "User Details Updated Successfully"))
-})
-
-
+    .json(new ApiResponse(200, updatedUser, "User details updated successfully"));
+});

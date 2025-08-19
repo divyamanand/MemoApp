@@ -64,6 +64,15 @@ const userSchema = new mongoose.Schema(
       completed: { type: Boolean, default: false },
     },
 
+    topicDescription: {
+      type: String
+    },
+
+    firstTimeUser: {
+      type: Boolean,
+      default: true
+    },
+
     refreshToken: {
       type: String
     },
