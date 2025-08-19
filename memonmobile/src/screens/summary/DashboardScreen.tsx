@@ -65,7 +65,6 @@ const DashboardScreen = () => {
     (completedUptodate?.totalCompleted ?? 0) + completedToday;
   const loading = loadingRevisions || loadingCounts;
 
-
   const aiSuggestions = [
     { id: 1, title: 'Algebra Practice', subject: 'Math', difficulty: 'Medium' },
     {

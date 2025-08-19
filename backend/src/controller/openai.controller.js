@@ -95,3 +95,44 @@ Generate important questions and return JSON strictly matching this schema:
     .status(201)
     .json(new ApiResponse(201, response.output_parsed, "Here are recommended questions."));
 });
+
+
+export const generateQuestionsFromPrompt = asyncHandler(async (req, res) => {
+  const { description, questionCount } = req.body;
+
+  const response = await openai.responses.parse({
+    model: "gpt-4.1-mini-2025-04-14",
+    input: [
+      { role: "system", content: "You output only JSON matching the schema." },
+      {
+        role: "user",
+        content: `You are given question description: "${description}". 
+Generate ${questionCount} important questions and return JSON strictly matching this schema:
+{
+  "questions": [
+    {
+      "questionName": "string",
+      "difficulty": "Easy | Medium | Hard",
+      "tags": ["string"],
+      "description": "string",
+      "choices": {
+        "options": ["string"],
+        "multipleCorrect": true
+      },
+      "link": "string or null"
+    }
+  ]
+}`,
+      },
+    ],
+    text: {
+      format: zodTextFormat(QuestionsSchema, "questions"),
+    },
+  });
+
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, response.output_parsed, "Here are recommended questions."));
+});
+

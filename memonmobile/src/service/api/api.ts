@@ -60,7 +60,7 @@ api.interceptors.response.use(
             },
           );
 
-          const formattedData = handleApiResponse(res)
+          const formattedData = handleApiResponse(res);
 
           const newAccessToken = formattedData.data.accessToken;
           const newRefreshToken = formattedData.data.refreshToken;

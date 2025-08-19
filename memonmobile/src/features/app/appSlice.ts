@@ -75,8 +75,8 @@ const appSlice = createSlice({
       state.firstLogin = false;
     },
     updateUser: (state, action: PayloadAction<UserInfo>) => {
-      state.userInfo = action.payload
-    }
+      state.userInfo = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -100,6 +100,11 @@ const appSlice = createSlice({
   },
 });
 
-export const { setCredentials, resetUser, addTags, finishOnboarding, updateUser } =
-  appSlice.actions;
+export const {
+  setCredentials,
+  resetUser,
+  addTags,
+  finishOnboarding,
+  updateUser,
+} = appSlice.actions;
 export default appSlice.reducer;
