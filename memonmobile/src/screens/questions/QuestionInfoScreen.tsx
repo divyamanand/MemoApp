@@ -15,10 +15,11 @@ import {
   Button as PaperButton,
   Divider,
   List,
-  Menu,
-  TouchableRipple,
+  TextInput,
+  Avatar,
+  Snackbar,
+  FAB,
 } from 'react-native-paper';
-import TextInputField from '../../components/TextInputField';
 import { difficulty, ResponseQuestion } from '@/src/constants/types';
 import { useDeleteQuestionMutation } from '@/src/features/questions/api/questionApi';
 
@@ -27,20 +28,19 @@ interface QuestionInfoScreenProps {
   onClose?: () => void;
 }
 
+const compactDifficulties: difficulty[] = ['easy', 'medium', 'hard'];
+
 const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
   question,
   onClose,
 }) => {
   const { colors } = useTheme();
 
-  // State management
   const [isFavorite, setIsFavorite] = useState(false);
   const [doubtText, setDoubtText] = useState('');
   const [notesText, setNotesText] = useState('');
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [editMode, setEditMode] = useState(false);
-
-  // Editable fields state
   const [editableQuestionName, setEditableQuestionName] = useState(
     question.questionName || '',
   );
@@ -51,100 +51,80 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
     question.tags || [],
   );
   const [editableDifficulty, setEditableDifficulty] = useState(
-    question.difficulty || 'Medium',
+    question.difficulty || 'medium',
   );
   const [newTag, setNewTag] = useState('');
-  const [showDifficultyMenu, setShowDifficultyMenu] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState('');
 
-  const difficulties: difficulty[] = ['easy', 'medium', 'hard'];
+  const [deleteQuestion] = useDeleteQuestionMutation();
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty?.toLowerCase()) {
+  const getDifficultyColor = (diff: string) => {
+    switch (diff?.toLowerCase()) {
       case 'easy':
-        return '#7BCEDB';
+        return '#2DBF73';
       case 'medium':
-        return '#FFC15A';
+        return '#F6A623';
       case 'hard':
-        return '#FF6B6B';
+        return '#E64A19';
       default:
         return colors.primary;
     }
   };
 
-  const [deleteQuestion] = useDeleteQuestionMutation();
-
-  const handleDelete = async (questionId: string) => {
-    try {
-      await deleteQuestion(questionId).unwrap();
-      onClose?.();
-    } catch (error) {
-      console.log('Error deleting question', error);
-    }
-  };
-
   const difficultyColor = getDifficultyColor(editableDifficulty);
 
-  // Check if question has a reference link
-  const hasReferenceLink =
-    question?.formData?.link && question.formData.link.trim() !== '';
+  const hasReferenceLink = !!(
+    question?.formData?.link && question.formData.link.trim()
+  );
 
-  // Handle opening the reference link
   const openReferenceLink = async () => {
-    if (hasReferenceLink) {
-      try {
-        const url = question.formData.link;
-        const supported = await Linking.canOpenURL(url);
-        if (supported) {
-          await Linking.openURL(url);
-        } else {
-          console.log("Don't know how to open URI: " + url);
-        }
-      } catch (error) {
-        console.error('Error opening link:', error);
-      }
-    }
-  };
-
-  // Handle saving edits
-  const handleSaveEdit = async () => {
+    if (!hasReferenceLink) return;
     try {
-      // TODO: Save edited data to backend
-      const updatedQuestion = {
-        ...question,
-        questionName: editableQuestionName,
-        difficulty: editableDifficulty,
-        tags: editableTags,
-        formData: {
-          ...question.formData,
-          description: editableDescription,
-        },
-      };
-
-      console.log('Saving updated question:', updatedQuestion);
-
-      // Exit edit mode
-      setEditMode(false);
-    } catch (error) {
-      console.error('Error saving question:', error);
+      const url = question.formData.link;
+      const supported = await Linking.canOpenURL(url);
+      if (supported) await Linking.openURL(url);
+    } catch (err) {
+      console.error('open link error', err);
     }
   };
 
-  // Handle adding new tag
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteQuestion(id).unwrap();
+      onClose?.();
+    } catch (err) {
+      console.log(err);
+      setSnackbarMsg('Failed to delete');
+      setShowSnackbar(true);
+    }
+  };
+
+  const handleSaveEdit = () => {
+    const updated = {
+      ...question,
+      questionName: editableQuestionName.trim() || question.questionName,
+      difficulty: editableDifficulty,
+      tags: editableTags,
+      formData: { ...question.formData, description: editableDescription },
+    };
+    console.log('save', updated);
+    setEditMode(false);
+    setSnackbarMsg('Saved');
+    setShowSnackbar(true);
+  };
+
   const handleAddTag = () => {
-    if (newTag.trim() && !editableTags.includes(newTag.trim())) {
-      setEditableTags([...editableTags, newTag.trim()]);
-      setNewTag('');
-    }
+    const t = newTag.trim();
+    if (!t || editableTags.includes(t)) return;
+    setEditableTags((p) => [...p, t]);
+    setNewTag('');
   };
 
-  // Handle removing tag
-  const handleRemoveTag = (tagToRemove: string) => {
-    setEditableTags(editableTags.filter((tag) => tag !== tagToRemove));
-  };
+  const handleRemoveTag = (t: string) =>
+    setEditableTags((p) => p.filter((x) => x !== t));
 
-  // Cancel edit mode
   const handleCancelEdit = () => {
-    // Reset to original values
     setEditableQuestionName(question.questionName || '');
     setEditableDescription(question.formData?.description || '');
     setEditableTags(question.tags || []);
@@ -153,761 +133,384 @@ const QuestionInfoScreen: React.FC<QuestionInfoScreenProps> = ({
     setEditMode(false);
   };
 
-  // Sample data for FAQs and Related Questions
   const faqs = [
     {
       question: 'What is the time complexity of this algorithm?',
       answer:
-        'The time complexity is O(log n) for binary search as we eliminate half of the elements in each iteration.',
+        'Generally O(log n) in binary search because the search space halves each step.',
     },
     {
       question: 'When should I use this approach?',
       answer:
-        'This approach is best used when you have a sorted array and need to find a specific element efficiently.',
+        'Use it when the data is sorted and lookups need to be fast with minimal memory.',
     },
     {
-      question: 'What are common pitfalls?',
+      question: 'Common pitfalls?',
       answer:
-        'Common mistakes include not handling edge cases properly and incorrect boundary calculations.',
+        'Off-by-one errors and incorrect mid computation are frequent bugs.',
     },
   ];
 
   const relatedQuestions = [
     'Linear Search vs Binary Search',
-    'Implementing Binary Search Tree',
+    'Implement Binary Search Tree',
     'Search Algorithms Comparison',
-    'Time Complexity Analysis',
   ];
-
-  const toggleFAQ = (index: number) => {
-    setExpandedFAQ(expandedFAQ === index ? null : index);
-  };
-
-  const handleSubmitDoubt = () => {
-    if (doubtText.trim()) {
-      // TODO: Submit doubt to backend
-      console.log('Submitting doubt:', doubtText);
-      setDoubtText('');
-    }
-  };
-
-  const handleSaveNotes = () => {
-    if (notesText.trim()) {
-      // TODO: Save notes to backend
-      console.log('Saving notes:', notesText);
-    }
-  };
 
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
     >
-      {/* Header with Favorite and Link Icons */}
-      <Surface
-        style={[styles.header, { backgroundColor: colors.surface }]}
-        elevation={0}
-      >
-        <IconButton
-          icon="arrow-left"
-          size={24}
-          iconColor={colors.onSurface}
-          onPress={onClose}
-        />
-
-        {editMode ? (
-          <TextInputField
-            value={editableQuestionName}
-            onChangeText={setEditableQuestionName}
-            style={[
-              styles.headerTitleInput,
-              { backgroundColor: colors.surface },
-            ]}
-            contentStyle={{ fontSize: 16, fontWeight: '700' }}
-          />
-        ) : (
-          <Text
-            style={[styles.headerTitle, { color: colors.onSurface }]}
-            numberOfLines={1}
-          >
-            {editableQuestionName}
-          </Text>
-        )}
+      <Surface style={[styles.header, { backgroundColor: colors.surface }]}>
+        <View style={styles.headerLeft}>
+          <Avatar.Text size={36} label={(question.questionName || 'Q')[0]} />
+          <View style={styles.headerTitleWrap}>
+            {editMode ? (
+              <TextInput
+                value={editableQuestionName}
+                onChangeText={setEditableQuestionName}
+                mode="flat"
+                placeholder="Question title"
+                style={styles.titleInput}
+              />
+            ) : (
+              <Text
+                numberOfLines={1}
+                style={[styles.title, { color: colors.onSurface }]}
+              >
+                {editableQuestionName}
+              </Text>
+            )}
+            <Text
+              style={[styles.subtitle, { color: colors.onSurfaceVariant }]}
+              numberOfLines={1}
+            >
+              {question.formData?.source ||
+                'Self practice • ' +
+                  (question.tags || []).slice(0, 3).join(', ')}
+            </Text>
+          </View>
+        </View>
 
         <View style={styles.headerActions}>
           <IconButton
             icon={isFavorite ? 'star' : 'star-outline'}
-            size={24}
-            iconColor={isFavorite ? '#FFD700' : colors.onSurfaceVariant}
-            onPress={() => setIsFavorite(!isFavorite)}
+            size={20}
+            onPress={() => setIsFavorite((s) => !s)}
           />
           {hasReferenceLink && (
             <IconButton
-              icon="link"
-              size={24}
-              iconColor={colors.primary}
+              icon="link-variant"
+              size={20}
               onPress={openReferenceLink}
-              style={styles.linkIcon}
             />
           )}
-
           {editMode ? (
             <>
-              <IconButton
-                icon="close"
-                size={20}
-                iconColor={colors.error}
-                onPress={handleCancelEdit}
-              />
-              <IconButton
-                icon="check"
-                size={20}
-                iconColor={colors.primary}
-                onPress={handleSaveEdit}
-              />
+              <IconButton icon="close" size={20} onPress={handleCancelEdit} />
+              <IconButton icon="check" size={20} onPress={handleSaveEdit} />
             </>
           ) : (
             <IconButton
               icon="pencil"
               size={20}
-              iconColor={colors.onSurfaceVariant}
               onPress={() => setEditMode(true)}
             />
           )}
-
           <IconButton
-            icon="delete-outline"
+            icon="delete"
             size={20}
-            iconColor={colors.onSurfaceVariant}
             onPress={() => handleDelete(question._id)}
           />
-          <IconButton
-            icon="close"
-            size={24}
-            iconColor={colors.onSurface}
-            onPress={onClose}
-          />
+          <IconButton icon="close" size={20} onPress={onClose} />
         </View>
       </Surface>
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Tags and Difficulty */}
-        <View style={styles.tagsSection}>
-          <View style={styles.tagsContainer}>
-            {editableTags.map((tag) => (
-              <Chip
-                key={tag}
-                compact
-                style={[
-                  styles.tagChip,
-                  { backgroundColor: colors.primaryContainer },
-                ]}
-                textStyle={{
-                  color: colors.primary,
-                  fontSize: 12,
-                  fontWeight: '600',
-                }}
-                onClose={editMode ? () => handleRemoveTag(tag) : undefined}
-              >
-                {tag}
-              </Chip>
-            ))}
-
-            {editMode && (
-              <View style={styles.addTagContainer}>
-                <TextInputField
-                  value={newTag}
-                  onChangeText={setNewTag}
-                  placeholder="Add tag..."
-                  style={styles.tagInput}
-                  onSubmitEditing={handleAddTag}
-                  rightIcon="plus"
-                  onRightIconPress={handleAddTag}
-                />
-              </View>
-            )}
-
-            {/* Difficulty Chip */}
-            {editMode ? (
-              <Menu
-                visible={showDifficultyMenu}
-                onDismiss={() => setShowDifficultyMenu(false)}
-                anchor={
-                  <TouchableRipple onPress={() => setShowDifficultyMenu(true)}>
-                    <Chip
-                      compact
-                      style={[
-                        styles.difficultyChip,
-                        { backgroundColor: difficultyColor + '20' },
-                      ]}
-                      textStyle={{
-                        color: difficultyColor,
-                        fontSize: 12,
-                        fontWeight: '700',
-                      }}
-                    >
-                      {editableDifficulty} ▼
-                    </Chip>
-                  </TouchableRipple>
-                }
-              >
-                {difficulties.map((diff) => (
-                  <Menu.Item
-                    key={diff}
-                    onPress={() => {
-                      setEditableDifficulty(diff);
-                      setShowDifficultyMenu(false);
-                    }}
-                    title={diff}
-                  />
-                ))}
-              </Menu>
-            ) : (
-              <Chip
-                compact
-                style={[
-                  styles.difficultyChip,
-                  { backgroundColor: difficultyColor + '20' },
-                ]}
-                textStyle={{
-                  color: difficultyColor,
-                  fontSize: 12,
-                  fontWeight: '700',
-                }}
-              >
-                {editableDifficulty}
-              </Chip>
-            )}
-          </View>
-        </View>
-
-        {/* Question Description */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
             Question
           </Text>
-
           {editMode ? (
-            <TextInputField
+            <TextInput
               value={editableDescription}
               onChangeText={setEditableDescription}
               multiline
+              mode="outlined"
               numberOfLines={4}
-              placeholder="Enter question description..."
-              style={{ backgroundColor: colors.surface }}
+              placeholder="Describe the question"
+              style={styles.multilineInput}
             />
           ) : (
-            <Text
-              style={[styles.description, { color: colors.onSurfaceVariant }]}
-            >
-              {editableDescription ||
-                'Explain the process of photosynthesis, detailing the roles of chloroplasts, sunlight, water, and carbon dioxide. What are the primary products of this essential biological process?'}
+            <Text style={[styles.body, { color: colors.onSurfaceVariant }]}>
+              {editableDescription || 'No description provided.'}
             </Text>
           )}
 
           {hasReferenceLink && (
-            <View style={styles.referenceSection}>
-              <Text
-                style={[
-                  styles.referenceLabel,
-                  { color: colors.onSurfaceVariant },
-                ]}
-              >
-                Reference:
-              </Text>
+            <View style={styles.referenceRow}>
               <PaperButton
                 mode="text"
                 onPress={openReferenceLink}
+                uppercase={false}
                 icon="open-in-new"
-                labelStyle={{ color: colors.primary, fontSize: 12 }}
-                style={styles.referenceButton}
               >
-                View Reference Link
+                View reference
               </PaperButton>
             </View>
           )}
         </Surface>
 
-        {/* Rest of the sections remain the same */}
-        {/* Insights */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
-            Insights
-          </Text>
-          <View style={styles.insightsGrid}>
-            <View style={styles.insightItem}>
-              <Text
-                style={[
-                  styles.insightLabel,
-                  { color: colors.onSurfaceVariant },
-                ]}
-              >
-                Practiced
-              </Text>
-              <Text style={[styles.insightValue, { color: colors.onSurface }]}>
-                5 times
-              </Text>
-            </View>
-            <View style={styles.insightItem}>
-              <Text
-                style={[
-                  styles.insightLabel,
-                  { color: colors.onSurfaceVariant },
-                ]}
-              >
-                Last Practiced
-              </Text>
-              <Text style={[styles.insightValue, { color: colors.onSurface }]}>
-                3 minutes
-              </Text>
-            </View>
-            <View style={styles.insightItem}>
-              <Text
-                style={[
-                  styles.insightLabel,
-                  { color: colors.onSurfaceVariant },
-                ]}
-              >
-                AI Estimated Time
-              </Text>
-              <Text style={[styles.insightValue, { color: colors.onSurface }]}>
-                5-7 minutes
-              </Text>
-            </View>
-          </View>
-        </Surface>
-
-        {/* Revision History */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
-          <View style={styles.revisionHeader}>
-            <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
-              Revision History
+        <View style={styles.compactRow}>
+          <Surface
+            style={[styles.smallCard, { backgroundColor: colors.surface }]}
+          >
+            <Text
+              style={[styles.smallLabel, { color: colors.onSurfaceVariant }]}
+            >
+              Difficulty
             </Text>
             <Chip
-              compact
-              style={{ backgroundColor: '#E7F7EE' }}
-              textStyle={{ color: '#1E7F4B', fontSize: 12, fontWeight: '600' }}
+              style={[styles.smallChip, { borderColor: difficultyColor }]}
+              textStyle={{ color: difficultyColor }}
+              onPress={() => setEditMode(true)}
             >
-              +10% vs Last 7 days
+              {editableDifficulty}
             </Chip>
-          </View>
+          </Surface>
 
-          <View style={styles.historyStats}>
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.onSurface }]}>
-                88%
-              </Text>
-              <Text
-                style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
-              >
-                Accuracy
-              </Text>
-            </View>
-            <Divider style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.onSurface }]}>
-                12
-              </Text>
-              <Text
-                style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
-              >
-                Total Reviews
-              </Text>
-            </View>
-            <Divider style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: colors.onSurface }]}>
-                4.2m
-              </Text>
-              <Text
-                style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
-              >
-                Avg Time
-              </Text>
-            </View>
-          </View>
-        </Surface>
-
-        {/* FAQs Section */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
-            FAQs
-          </Text>
-          {faqs.map((faq, index) => (
-            <View key={index} style={styles.faqItem}>
-              <List.Accordion
-                title={faq.question}
-                expanded={expandedFAQ === index}
-                onPress={() => toggleFAQ(index)}
-                titleStyle={{
-                  color: colors.onSurface,
-                  fontSize: 14,
-                  fontWeight: '600',
-                }}
-                style={{ backgroundColor: 'transparent', paddingHorizontal: 0 }}
-              >
-                <Text
-                  style={[styles.faqAnswer, { color: colors.onSurfaceVariant }]}
-                >
-                  {faq.answer}
+          <Surface
+            style={[styles.smallCard, { backgroundColor: colors.surface }]}
+          >
+            <Text
+              style={[styles.smallLabel, { color: colors.onSurfaceVariant }]}
+            >
+              Quick Stats
+            </Text>
+            <View style={styles.statsRow}>
+              <View style={styles.statItem}>
+                <Text style={[styles.statValue, { color: colors.onSurface }]}>
+                  88%
                 </Text>
-              </List.Accordion>
-              {index < faqs.length - 1 && <Divider style={styles.faqDivider} />}
+                <Text
+                  style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
+                >
+                  Accuracy
+                </Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={[styles.statValue, { color: colors.onSurface }]}>
+                  12
+                </Text>
+                <Text
+                  style={[styles.statLabel, { color: colors.onSurfaceVariant }]}
+                >
+                  Reviews
+                </Text>
+              </View>
             </View>
-          ))}
-        </Surface>
+          </Surface>
+        </View>
 
-        {/* Related Questions */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
-            Related Questions
+            Tags
           </Text>
-          <View style={styles.relatedQuestionsContainer}>
-            {relatedQuestions.map((relatedQuestion, index) => (
+          <View style={styles.tagsWrap}>
+            {editableTags.map((t) => (
               <Chip
-                key={index}
-                mode="outlined"
-                onPress={() => {
-                  // TODO: Navigate to related question
-                  console.log('Navigate to:', relatedQuestion);
-                }}
-                style={[
-                  styles.relatedQuestionChip,
-                  { borderColor: colors.outline },
-                ]}
-                textStyle={{ color: colors.onSurfaceVariant, fontSize: 12 }}
+                key={t}
+                compact
+                onClose={editMode ? () => handleRemoveTag(t) : undefined}
+                style={styles.tag}
               >
-                {relatedQuestion}
+                {t}
               </Chip>
             ))}
+
+            {editMode && (
+              <View style={styles.addTag}>
+                <TextInput
+                  value={newTag}
+                  onChangeText={setNewTag}
+                  placeholder="Add tag"
+                  mode="outlined"
+                  style={styles.tagInput}
+                  onSubmitEditing={handleAddTag}
+                />
+                <PaperButton
+                  onPress={handleAddTag}
+                  mode="contained"
+                  style={styles.addTagBtn}
+                >
+                  Add
+                </PaperButton>
+              </View>
+            )}
           </View>
-          <PaperButton
-            mode="text"
-            onPress={() => {}}
-            icon="lightbulb-outline"
-            labelStyle={{ color: colors.primary, fontSize: 12 }}
-            style={styles.generateMoreButton}
-          >
-            Generate More Related Questions
-          </PaperButton>
         </Surface>
 
-        {/* Ask Doubt Section */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
+        <List.Section style={styles.card}>
+          <List.Accordion
+            title="FAQs"
+            left={(props) => (
+              <List.Icon {...props} icon="help-circle-outline" />
+            )}
+          >
+            {faqs.map((f, i) => (
+              <List.Item key={i} title={f.question} description={f.answer} />
+            ))}
+          </List.Accordion>
+
+          <List.Accordion
+            title="Related Questions"
+            left={(props) => (
+              <List.Icon {...props} icon="lightbulb-on-outline" />
+            )}
+          >
+            {relatedQuestions.map((r, i) => (
+              <List.Item
+                key={i}
+                title={r}
+                onPress={() => console.log('navigate', r)}
+              />
+            ))}
+          </List.Accordion>
+        </List.Section>
+
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]}>
           <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
             Ask a Doubt
           </Text>
-          <Text
-            style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}
-          >
-            Have questions? Ask our AI assistant or community
-          </Text>
-          <View style={styles.doubtInputContainer}>
-            <TextInputField
-              label="Type your question..."
-              value={doubtText}
-              onChangeText={setDoubtText}
-              multiline
-              numberOfLines={3}
-              leftIcon="help-circle"
-            />
-            <View style={styles.doubtActions}>
-              <PaperButton
-                mode="outlined"
-                onPress={handleSubmitDoubt}
-                disabled={!doubtText.trim()}
-                style={[styles.doubtButton, { borderColor: colors.primary }]}
-                labelStyle={{ color: colors.primary, fontWeight: '600' }}
-                icon="send"
-              >
-                Ask AI
-              </PaperButton>
-              <PaperButton
-                mode="text"
-                onPress={handleSubmitDoubt}
-                disabled={!doubtText.trim()}
-                labelStyle={{ color: colors.secondary, fontWeight: '600' }}
-                icon="account-group"
-              >
-                Ask Community
-              </PaperButton>
-            </View>
-          </View>
-        </Surface>
-
-        {/* Notes Section */}
-        <Surface
-          style={[styles.card, { backgroundColor: colors.surface }]}
-          elevation={1}
-        >
-          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
-            Personal Notes
-          </Text>
-          <Text
-            style={[styles.sectionSubtitle, { color: colors.onSurfaceVariant }]}
-          >
-            Add your own notes and thoughts about this question
-          </Text>
-          <View style={styles.notesContainer}>
-            <TextInputField
-              label="Write your notes here..."
-              value={notesText}
-              onChangeText={setNotesText}
-              multiline
-              numberOfLines={4}
-              leftIcon="note-text"
-            />
+          <TextInput
+            value={doubtText}
+            onChangeText={setDoubtText}
+            placeholder="Type your question"
+            mode="outlined"
+            multiline
+            numberOfLines={3}
+            style={styles.multilineInput}
+          />
+          <View style={styles.rowActions}>
             <PaperButton
-              mode="contained"
-              onPress={handleSaveNotes}
-              disabled={!notesText.trim()}
-              style={[
-                styles.saveNotesButton,
-                { backgroundColor: colors.primary },
-              ]}
-              labelStyle={{ fontWeight: '700' }}
-              icon="content-save"
+              mode="outlined"
+              onPress={() => {
+                console.log('ask ai');
+                setSnackbarMsg('Asked AI');
+                setShowSnackbar(true);
+              }}
+              disabled={!doubtText.trim()}
             >
-              Save Notes
+              Ask AI
+            </PaperButton>
+
+            <PaperButton
+              mode="text"
+              onPress={() => {
+                console.log('ask community');
+                setSnackbarMsg('Asked Community');
+                setShowSnackbar(true);
+              }}
+              disabled={!doubtText.trim()}
+            >
+              Ask community
             </PaperButton>
           </View>
         </Surface>
 
-        {/* Action Buttons */}
-        <View style={styles.actionButtons}>
-          <PaperButton
+        <Surface style={[styles.card, { backgroundColor: colors.surface }]}>
+          <Text style={[styles.sectionTitle, { color: colors.onSurface }]}>
+            Personal Notes
+          </Text>
+          <TextInput
+            value={notesText}
+            onChangeText={setNotesText}
+            placeholder="Your notes"
             mode="outlined"
-            onPress={() => {}}
-            style={[styles.actionButton, { borderColor: colors.error }]}
-            labelStyle={{ color: colors.error, fontWeight: '700' }}
-            icon="minus"
-          >
-            Decrease
-          </PaperButton>
-          <PaperButton
-            mode="outlined"
-            onPress={() => {}}
-            style={[styles.actionButton, { borderColor: colors.primary }]}
-            labelStyle={{ color: colors.primary, fontWeight: '700' }}
-            icon="plus"
-          >
-            Increase
-          </PaperButton>
-        </View>
+            multiline
+            numberOfLines={4}
+            style={styles.multilineInput}
+          />
+          <View style={styles.rowActions}>
+            <PaperButton
+              mode="contained"
+              onPress={() => {
+                console.log('save notes');
+                setSnackbarMsg('Notes saved');
+                setShowSnackbar(true);
+              }}
+              disabled={!notesText.trim()}
+            >
+              Save
+            </PaperButton>
+          </View>
+        </Surface>
 
-        <PaperButton
-          mode="contained"
-          onPress={() => {}}
-          style={[styles.actionButton, { backgroundColor: colors.secondary }]}
-          labelStyle={{ fontWeight: '700' }}
-          icon="lightbulb-outline"
-        >
-          Generate Related Questions
-        </PaperButton>
+        <View style={{ height: 80 }} />
       </ScrollView>
+
+      <FAB
+        style={[styles.fab, { backgroundColor: colors.primary }]}
+        icon="lightbulb-on-outline"
+        label="Generate"
+        onPress={() => {
+          console.log('generate related');
+          setSnackbarMsg('Generating...');
+          setShowSnackbar(true);
+        }}
+      />
+
+      <Snackbar visible={showSnackbar} onDismiss={() => setShowSnackbar(false)}>
+        {snackbarMsg}
+      </Snackbar>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    justifyContent: 'space-between',
+    padding: 12,
   },
-  headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '700',
-    marginLeft: 8,
-  },
-  headerTitleInput: {
-    flex: 1,
-    marginLeft: 8,
-    marginRight: 8,
-  },
-  headerActions: {
+  headerLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  headerTitleWrap: { marginLeft: 12, flex: 1 },
+  title: { fontSize: 16, fontWeight: '700' },
+  subtitle: { fontSize: 12, marginTop: 2 },
+  titleInput: { backgroundColor: 'transparent' },
+  headerActions: { flexDirection: 'row', alignItems: 'center' },
+  content: { padding: 12, paddingBottom: 24 },
+  card: { borderRadius: 12, padding: 12, marginBottom: 12 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', marginBottom: 8 },
+  body: { fontSize: 14, lineHeight: 20 },
+  referenceRow: { marginTop: 10 },
+  compactRow: {
     flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'space-between',
   },
-  linkIcon: {
-    margin: 0,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  tagsSection: {
-    marginBottom: 16,
-  },
-  tagsContainer: {
+  smallCard: { flex: 1, borderRadius: 12, padding: 10, marginRight: 8 },
+  smallLabel: { fontSize: 12, marginBottom: 6 },
+  smallChip: { borderWidth: 1, height: 28 },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  statItem: { alignItems: 'center', flex: 1 },
+  statValue: { fontSize: 16, fontWeight: '800' },
+  statLabel: { fontSize: 12 },
+  tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  tag: { marginRight: 8, marginBottom: 8 },
+  addTag: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
+  tagInput: { minWidth: 120, flex: 1 },
+  addTagBtn: { marginLeft: 8 },
+  multilineInput: { backgroundColor: 'transparent' },
+  rowActions: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
     gap: 8,
-  },
-  tagChip: {
-    height: 28,
-  },
-  difficultyChip: {
-    height: 28,
-  },
-  addTagContainer: {
-    minWidth: 120,
-  },
-  tagInput: {
-    height: 28,
-    backgroundColor: 'transparent',
-  },
-  card: {
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  sectionSubtitle: {
-    fontSize: 12,
-    marginBottom: 12,
-    opacity: 0.8,
-  },
-  description: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  referenceSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginTop: 12,
-    gap: 8,
   },
-  referenceLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  referenceButton: {
-    margin: 0,
-    paddingHorizontal: 0,
-  },
-  insightsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  insightItem: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  insightLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  insightValue: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  revisionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  historyStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: '800',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  statDivider: {
-    height: 30,
-    width: 1,
-  },
-  faqItem: {
-    marginBottom: 8,
-  },
-  faqAnswer: {
-    fontSize: 13,
-    lineHeight: 18,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  faqDivider: {
-    marginTop: 8,
-    opacity: 0.3,
-  },
-  relatedQuestionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
-  relatedQuestionChip: {
-    marginBottom: 4,
-  },
-  generateMoreButton: {
-    alignSelf: 'flex-start',
-  },
-  doubtInputContainer: {
-    gap: 12,
-  },
-  doubtActions: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  doubtButton: {
-    flex: 1,
-    borderRadius: 12,
-  },
-  notesContainer: {
-    gap: 12,
-  },
-  saveNotesButton: {
-    alignSelf: 'flex-start',
-    borderRadius: 12,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 12,
-    marginBottom: 16,
-  },
-  actionButton: {
-    flex: 1,
-    borderRadius: 12,
-  },
+  fab: { position: 'absolute', right: 16, bottom: 20 },
 });
 
 export default QuestionInfoScreen;

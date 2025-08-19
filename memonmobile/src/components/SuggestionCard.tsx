@@ -4,13 +4,9 @@ import { StyleSheet } from 'react-native';
 import { Card, Text, Button, useTheme, MD3Theme } from 'react-native-paper';
 
 type SuggestionCardProps = {
-  /** Title shown on top of the card */
   questionName: string;
-  /** Optional longer text under the title */
   description?: string;
-  /** Callback when the user taps the button */
   onAddToPractice?: () => void;
-  /** Disable the button (optional) */
   disabled?: boolean;
 };
 
