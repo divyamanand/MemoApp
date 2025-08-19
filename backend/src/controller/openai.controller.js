@@ -1,103 +1,97 @@
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { LLMRequest } from "../utils/LLMRequest.js";
-import { sendLLMRequest } from "../utils/OpenAiClient.js";
+import OpenAI from "openai";
+import { zodTextFormat } from "openai/helpers/zod";
+import { z } from "zod";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_KEY
+});
+
+const TagsSchema = z.object({
+  tags: z.array(z.string().min(1)).max(20),
+});
+
+const QuestionsSchema = z.object({
+  questions: z.array(
+    z.object({
+      questionName: z.string(),
+      difficulty: z.enum(["Easy", "Medium", "Hard"]),
+      tags: z.array(z.string()),
+      description: z.string(),
+      choices: z.object({
+        options: z.array(z.string()),
+        multipleCorrect: z.boolean(),
+      }),
+      link: z.string().nullable(),
+    })
+  ),
+});
 
 export const getRecommendedTags = asyncHandler(async (req, res) => {
-  const {topicDescription} = req.body;
+  const { topicDescription } = req.body;
 
-  const prompt = `
-        You are given a topic description: "${topicDescription}".
-
-        Your task:
-        1. Break this topic into smaller, well-defined subtopics and related areas of study.  
-        2. Return these as concise tags (single words or short forms, maximum 20).  
-        3. Only output valid JSON in the following format:
-
-        {
-        "tags": ["tag1", "tag2", "tag3", ...]
-        }
-    `;
-
-    const systemRole = `
-        You are a precise assistant that extracts academic subtopics.  
-        - Always break the given topic into smaller, well-defined subtopics or related fields.  
-        - Output only concise, single-word or short-form tags (max 20).  
-        - Do not explain or add extra text.  
-        - Respond strictly in valid JSON with the format:  
-        {
-            "tags": ["tag1", "tag2", "tag3", ...]
-        }
-        `;
-
-  const llmRequest = new LLMRequest(
-    systemRole,
-    prompt
-  );
-
-  const generatedtags = await sendLLMRequest(llmRequest);
-
-    let parsedTags;
-    try {
-    parsedTags = JSON.parse(generatedtags);
-    } catch (e) {
-    throw new ApiError(500, "LLM returned invalid JSON");
-    }
+  const response = await openai.responses.parse({
+    model: "gpt-4.1-mini-2025-04-14",
+    input: [
+      { role: "system", content: "You output only JSON matching the schema." },
+      {
+        role: "user",
+        content: `You are given a topic description: "${topicDescription}".  
+Analyze the full syllabus and related content for this topic.  
+Identify the most relevant topics and syllabus tags, using **only 1–2 words per tag**.  
+Break the topic into clear, well-defined subtopics (maximum 20).  
+Return the result as valid JSON strictly matching this schema: { "tags": ["tag1", "tag2"] }  
+Do not include explanations or extra text outside the JSON.  
+`,
+      },
+    ],
+    text: {
+      format: zodTextFormat(TagsSchema, "tags"),
+    },
+  });
 
   return res
     .status(201)
-    .json(new ApiResponse(201, parsedTags, "Here is a recommended question for you."));
+    .json(new ApiResponse(201, response.output_parsed, "Here are recommended tags."));
 });
+
 
 export const generateQuestions = asyncHandler(async (req, res) => {
   const { tags } = req.body;
 
-  const prompt = `
-    You are given tags related to some study syllabus a student wants to learn about: "${tags}".
-
-    Your task:
-    1. Take these tags and generate some very important questions.  
-    2. Follow this JSON schema strictly:
+  const response = await openai.responses.parse({
+    model: "gpt-4.1-mini-2025-04-14",
+    input: [
+      { role: "system", content: "You output only JSON matching the schema." },
+      {
+        role: "user",
+        content: `You are given study tags: "${tags}". 
+Generate important questions and return JSON strictly matching this schema:
+{
+  "questions": [
     {
-      "questions": [
-        {
-          "questionName": "string",
-          "difficulty": "Easy | Medium | Hard",
-          "tags": ["string"],
-          "description": "string",
-          "choices": {
-            "options": ["string"],
-            "multipleCorrect": true
-          },
-          "link": "string"
-        }
-      ]
+      "questionName": "string",
+      "difficulty": "Easy | Medium | Hard",
+      "tags": ["string"],
+      "description": "string",
+      "choices": {
+        "options": ["string"],
+        "multipleCorrect": true
+      },
+      "link": "string or null"
     }
-  `;
+  ]
+}`,
+      },
+    ],
+    text: {
+      format: zodTextFormat(QuestionsSchema, "questions"),
+    },
+  });
 
-  const llmRequest = new LLMRequest("", prompt);
-
-  const generatedQuestions = await sendLLMRequest(llmRequest);
-
-  let parsedQuestions;
-  try {
-    // First parse response wrapper
-    let firstParse = JSON.parse(generatedQuestions);
-
-    // If "data" is still a stringified JSON → parse again
-    if (typeof firstParse === "string") {
-      parsedQuestions = JSON.parse(firstParse);
-    } else if (typeof firstParse.data === "string") {
-      parsedQuestions = JSON.parse(firstParse.data);
-    } else {
-      parsedQuestions = firstParse;
-    }
-  } catch (e) {
-    throw new ApiError(500, "LLM returned invalid JSON");
-  }
 
   return res
     .status(201)
-    .json(new ApiResponse(201, parsedQuestions, "Here is a recommended question for you."));
+    .json(new ApiResponse(201, response.output_parsed, "Here are recommended questions."));
 });
